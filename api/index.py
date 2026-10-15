@@ -4,13 +4,11 @@ from datetime import datetime, timezone, timedelta
 from flask import Flask, request, jsonify, abort
 from werkzeug.exceptions import HTTPException
 
-# ============================ PRO TECH PHONE HUB ============================
 SHOP_NAME     = "Pro Tech Phone Hub"
 PHONE_DISPLAY = "0720 890 018"
 PHONE_TEL     = "+254720890018"
 WA_NUMBER     = "254720890018"
 SHOP_EMAIL    = "protechphonehub@gmail.com"
-OFFER_NOTE    = "Offer valid till the 20th"
 SHEET_WEBHOOK = os.environ.get("PROTECH_SHEET_WEBHOOK", "")
 APP_FILE      = os.path.join(os.path.dirname(os.path.abspath(__file__)), "applications.jsonl")
 
@@ -33,10 +31,10 @@ def placeholder_image(text):
     clean = re.sub(r"[^A-Za-z0-9 ]+", "", str(text))[:18].strip() or "ProTech"
     clean = escape(clean, quote=True)
     svg = ("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'>"
-           "<rect width='100%' height='100%' fill='#faf7f2'/>"
-           "<rect x='18' y='18' width='864' height='864' rx='430' ry='300' fill='#f0e6da'/>"
-           f"<text x='50%' y='52%' fill='#4b2440' font-family='Georgia' font-size='46' font-weight='700' text-anchor='middle'>{clean}</text>"
-           "<text x='50%' y='63%' fill='#b95c72' font-family='Georgia' font-size='24' text-anchor='middle'>Pro Tech Phone Hub</text></svg>")
+           "<rect width='100%' height='100%' fill='#1a2332'/>"
+           "<rect x='20' y='20' width='860' height='860' rx='20' fill='#243447'/>"
+           f"<text x='50%' y='52%' fill='#e8b4a0' font-family='Arial' font-size='48' font-weight='700' text-anchor='middle'>{clean}</text>"
+           "<text x='50%' y='63%' fill='#8fa4b8' font-family='Arial' font-size='22' text-anchor='middle'>Pro Tech</text></svg>")
     return "data:image/svg+xml;utf8," + urllib.parse.quote(svg, safe="")
 
 def post_to_google_sheet(payload):
@@ -64,7 +62,6 @@ def save_application_local(payload):
     except Exception:
         return False
 
-# ------------------------- POLE POLE STOCK (ProTech wording) -------------------------
 def L(slug, name, apply_name, image, tagline, weekly, deposit, storage, colors, specs, review, storage_pricing=None, condition=None):
     d = {"slug": slug, "name": name, "apply_name": apply_name, "image": image, "tagline": tagline,
          "weekly": weekly, "deposit": deposit, "storage": storage, "colors": colors, "specs": specs, "review": review}
@@ -78,117 +75,117 @@ MOP = "https://mophones.co/cdn/shop/"
 LIPA_PRODUCTS = [
 L("motorola-g-power", "Motorola G Power", "Motorola G Power 2023",
   MOP + "files/motorola-moto-g-power-5g-1_673x.jpg?v=1770894988",
-  'Two-day battery • 5G • Roomy 6.5" screen', 560, 4299, ["128GB"], ["Mineral Black", "Bright White"],
-  {"Network": "5G ready", "Screen": '6.5" IPS LCD, 120Hz', "System": "Android 16", "Battery": "5000mAh with fast charging"},
-  (5, "Wanjiku M.", "PP-101", "Battery ya kitu! Two full days out and I never carry a power bank anymore.")),
+  '5G connectivity • 5000mAh endurance • 6.5" HD+', 560, 4299, ["128GB"], ["Mineral Black", "Bright White"],
+  {"Network": "5G capable", "Display": "6.5-inch IPS LCD, 120Hz refresh", "OS": "Android 16", "Power": "5000mAh, fast charging"},
+  (5, "Wanjiku M.", "PT-101", "Battery lasts two full days on a single charge. Never worry about finding an outlet.")),
 L("motorola-g-stylus", "Motorola G Stylus", "Motorola G Stylus 2024",
   AM + "412KEd+cz3L.AC_US1000.jpg?v=1771506465",
-  'Built-in pen • 5G • Silky 120Hz P-OLED', 910, 6999, ["128GB", "256GB"], ["Caramel Latte", "Scarlet Wave"],
-  {"Network": "5G ready", "Screen": '6.7" P-OLED, 120Hz', "System": "Android 16", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "Achieng O.", "PP-102", "The pen makes my notes and sketches so easy. Screen colours are pure magic."),
+  'Built-in stylus • 5G • 120Hz P-OLED', 910, 6999, ["128GB", "256GB"], ["Caramel Latte", "Scarlet Wave"],
+  {"Network": "5G capable", "Display": "6.7-inch P-OLED, 120Hz", "OS": "Android 16", "Power": "5000mAh, fast + wireless"},
+  (5, "Achieng O.", "PT-102", "The stylus transforms how I take notes. Colors are vivid, screen is buttery smooth."),
   storage_pricing={"128GB": {"weekly": 910, "deposit": 6999}, "256GB": {"weekly": 1040, "deposit": 7999}}),
 L("samsung-galaxy-s21-fe", "Samsung Galaxy S21 FE 5G", "Samsung Galaxy S21 FE 5G",
   AM + "61PPEjwAkYL._AC_SY300_SX300_QL70_FMwebp_.jpg",
-  'The people\'s flagship • 5G • 120Hz AMOLED', 970, 7499, ["128GB"], ["Graphite", "White", "Lavender", "Olive"],
-  {"Network": "5G ready", "Screen": '6.4" Dynamic AMOLED 2X, 120Hz', "System": "Android 15, upgradable", "Battery": "4500mAh, fast + wireless charging"},
-  (5, "Peter K.", "PP-103", "Feels like a flagship, priced like a friend. Smooth screen and clean battery life.")),
+  'Flagship features • 5G • Dynamic AMOLED', 970, 7499, ["128GB"], ["Graphite", "White", "Lavender", "Olive"],
+  {"Network": "5G capable", "Display": "6.4-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 15, upgradeable", "Power": "4500mAh, fast + wireless"},
+  (5, "Peter K.", "PT-103", "Premium feel without the premium price. Screen is gorgeous, performance is snappy.")),
 L("samsung-galaxy-note-20", "Samsung Galaxy Note 20", "Samsung Note 20 5G",
   MOP + "files/0c5ffb9f-1e94-480c-bdb1-71566919cc1d-1_46397bdd-1274-44a3-b4e9-52df8ac4fdbc_600x.jpg?v=1703753426",
-  'S-Pen elegance • 5G • Big 6.7" AMOLED', 1160, 8999, ["128GB"], ["Black", "Green", "Rose-Gold"],
-  {"Network": "5G ready", "Screen": '6.7" Super AMOLED Plus, HDR10+', "System": "Android 15, upgradable", "Battery": "4300mAh, fast + wireless charging"},
-  (5, "Daniel E.", "PP-104", "I sign documents and take notes with the S-Pen daily. Office life became soft.")),
+  'S-Pen productivity • 5G • Super AMOLED', 1160, 8999, ["128GB"], ["Black", "Green", "Rose-Gold"],
+  {"Network": "5G capable", "Display": "6.7-inch Super AMOLED Plus, HDR10+", "OS": "Android 15, upgradeable", "Power": "4300mAh, fast + wireless"},
+  (5, "Daniel E.", "PT-104", "S-Pen is indispensable for work. Sign docs, sketch ideas, annotate everything.")),
 L("samsung-galaxy-s21-plus", "Samsung Galaxy S21+", "Samsung Galaxy S21 Plus 5G",
   MOP + "products/BLACK_d72adc1a-b989-4cf6-a641-b2919ad0a2de_500x.jpg?v=1676990538",
-  'All-day battery • 5G • 120Hz beauty', 1110, 8499, ["128GB", "256GB"], ["Black", "Silver", "Purple"],
-  {"Network": "5G ready", "Screen": '6.7" Dynamic AMOLED 2X, 120Hz', "System": "Android 15, upgradable", "Battery": "4800mAh, fast + wireless charging"},
-  (5, "Samuel O.", "PP-105", "Carries me through long hospital shifts and still has juice for movies at night."),
+  'All-day power • 5G • 120Hz AMOLED', 1110, 8499, ["128GB", "256GB"], ["Black", "Silver", "Purple"],
+  {"Network": "5G capable", "Display": "6.7-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 15, upgradeable", "Power": "4800mAh, fast + wireless"},
+  (5, "Samuel O.", "PT-105", "Gets me through 12-hour shifts without breaking a sweat. Reliable workhorse."),
   storage_pricing={"128GB": {"weekly": 1110, "deposit": 8499}, "256GB": {"weekly": 1420, "deposit": 10999}}),
 L("samsung-galaxy-s22-plus", "Samsung Galaxy S22+", "Samsung Galaxy S22 Plus 5G",
   AM + "714oVGJtWeL.AC_SY300_SY300_QL70_FMwebp.jpg",
-  'Compact flagship • 5G • Night-loving camera', 1230, 9499, ["128GB"], ["Phantom Black", "Lavender", "Green"],
-  {"Network": "5G ready", "Screen": '6.6" Dynamic AMOLED 2X, 120Hz', "System": "Android 16, upgradable", "Battery": "4500mAh, fast + wireless charging"},
-  (5, "Grace W.", "PP-106", "Perfect size for my hand and my bag. Night photos come out shockingly clean.")),
+  'Compact powerhouse • 5G • Nightography', 1230, 9499, ["128GB"], ["Phantom Black", "Lavender", "Green"],
+  {"Network": "5G capable", "Display": "6.6-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 16, upgradeable", "Power": "4500mAh, fast + wireless"},
+  (5, "Grace W.", "PT-106", "Perfect size, amazing low-light photos. Fits my lifestyle perfectly.")),
 L("samsung-galaxy-s20-ultra", "Samsung Galaxy S20 Ultra", "Samsung Galaxy S20 Ultra",
   MOP + "files/S20Ultra1_455x.jpg?v=1718780519",
-  '100x zoom beast • 5G • Cinema 6.9" screen', 1230, 9499, ["128GB"], ["Black", "Grey"],
-  {"Network": "5G ready", "Screen": '6.9" Dynamic AMOLED 2X, 120Hz', "System": "Android 15, upgradable", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "Brian M.", "PP-107", "That space zoom is entertainment on its own. Streaming on this screen is cinema.")),
+  '100x Space Zoom • 5G • Cinema display', 1230, 9499, ["128GB"], ["Black", "Grey"],
+  {"Network": "5G capable", "Display": "6.9-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 15, upgradeable", "Power": "5000mAh, fast + wireless"},
+  (5, "Brian M.", "PT-107", "That zoom is unreal. Streaming on this screen feels like a private cinema.")),
 L("samsung-galaxy-s21-ultra", "Samsung Galaxy S21 Ultra", "Samsung Galaxy S21 Ultra",
   MOP + "files/8322653a-f2b7-44cf-a74c-6336bcec9f43-1_cadd4530-09b4-449e-aa1d-3894bad6e808_1024x.jpg?v=1700145645",
-  'Pro cameras, S-Pen ready • 5G • 120Hz', 1490, 11499, ["128GB"], ["Black", "Silver"],
-  {"Network": "5G ready", "Screen": '6.8" Dynamic AMOLED 2X, 120Hz', "System": "Android 15, upgradable", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "David K.", "PP-108", "My outdoor photos look professional. The zoom still beats many newer phones.")),
+  'Pro-grade cameras • 5G • S-Pen support', 1490, 11499, ["128GB"], ["Black", "Silver"],
+  {"Network": "5G capable", "Display": "6.8-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 15, upgradeable", "Power": "5000mAh, fast + wireless"},
+  (5, "David K.", "PT-108", "Photography game-changer. Zoom capability still impresses years later.")),
 L("apple-iphone-12-mini", "Apple iPhone 12 Mini", "Apple iPhone 12 Mini",
   AM + "61bbqGftbUL.AC_SY879.jpg",
-  'Pocket-sized 5G iPhone • OLED • MagSafe', 1290, 9999, ["128GB"], ["Black", "Purple", "Blue", "Green", "Red", "White"],
-  {"Network": "5G ready", "Screen": '5.4" Super Retina XDR OLED', "System": "iOS 26, upgradable", "Battery": "2227mAh, fast charge + MagSafe"},
-  (5, "Simon A.", "PP-109", "Small, light and fast — fits every pocket and every handbag perfectly.")),
+  'Pocket flagship • 5G • OLED • MagSafe', 1290, 9999, ["128GB"], ["Black", "Purple", "Blue", "Green", "Red", "White"],
+  {"Network": "5G capable", "Display": "5.4-inch Super Retina XDR OLED", "OS": "iOS 26, upgradeable", "Power": "2227mAh, fast charge + MagSafe"},
+  (5, "Simon A.", "PT-109", "Compact without compromise. Fast, fits anywhere, premium build.")),
 L("apple-iphone-12", "Apple iPhone 12", "Apple iPhone 12",
   MOP + "products/12black_640x.jpg?v=1674896241",
-  'The people\'s iPhone • 5G • Crisp OLED', 1540, 11899, ["128GB", "256GB"], ["Black", "Purple", "Blue", "Green", "Red", "White"],
-  {"Network": "5G ready", "Screen": '6.1" Super Retina XDR OLED', "System": "iOS 26, upgradable", "Battery": "2815mAh, fast charge + MagSafe"},
-  (5, "Faith W.", "PP-110", "My colour choice turns heads everywhere. Fast, clean and the camera loves me."),
+  '5G iPhone • OLED display • MagSafe', 1540, 11899, ["128GB", "256GB"], ["Black", "Purple", "Blue", "Green", "Red", "White"],
+  {"Network": "5G capable", "Display": "6.1-inch Super Retina XDR OLED", "OS": "iOS 26, upgradeable", "Power": "2815mAh, fast charge + MagSafe"},
+  (5, "Faith W.", "PT-110", "Stunning colors, blazing speed. Camera quality exceeded expectations."),
   storage_pricing={"128GB": {"weekly": 1540, "deposit": 11899}, "256GB": {"weekly": 1480, "deposit": 18199}}),
 L("samsung-galaxy-note-20-ultra", "Samsung Galaxy Note 20 Ultra", "Samsung Note 20 Ultra",
   MOP + "files/NOte20Black_23da7f6b-cc29-41a0-9eac-63d0385cc238_500x.jpg?v=1718362656",
-  'The legendary giant • 120Hz • S-Pen inside', 1550, 11999, ["128GB"], ["Black", "White", "Rose-Gold"],
-  {"Network": "5G ready", "Screen": '6.9" Dynamic AMOLED 2X, 120Hz', "System": "Android 15, upgradable", "Battery": "4500mAh, fast + wireless charging"},
-  (5, "Cynthia W.", "PP-111", "Buttery 120Hz screen and that bronze S-Pen — still the most beautiful Note ever.")),
+  'Ultimate Note • 120Hz • S-Pen integrated', 1550, 11999, ["128GB"], ["Black", "White", "Rose-Gold"],
+  {"Network": "5G capable", "Display": "6.9-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 15, upgradeable", "Power": "4500mAh, fast + wireless"},
+  (5, "Cynthia W.", "PT-111", "Smooth 120Hz scrolling, gorgeous display. The S-Pen is pure luxury.")),
 L("samsung-galaxy-s22-ultra", "Samsung Galaxy S22 Ultra", "Samsung Galaxy S22 Ultra",
   MOP + "files/Screenshot_2025-03-20_at_15.05.15_1010x.png?v=1742472440",
-  'S-Pen built in • 5G • 100x pro camera', 1900, 23399, ["256GB", "512GB"], ["Black", "Purple", "Green"],
-  {"Network": "5G ready", "Screen": '6.8" Dynamic AMOLED 2X, 120Hz', "System": "Android 16, upgradable", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "Benard O.", "PP-112", "I sketch my architectural ideas straight on the screen. Pole pole made it possible.")),
+  'Built-in S-Pen • 5G • 100x zoom', 1900, 23399, ["256GB", "512GB"], ["Black", "Purple", "Green"],
+  {"Network": "5G capable", "Display": "6.8-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 16, upgradeable", "Power": "5000mAh, fast + wireless"},
+  (5, "Benard O.", "PT-112", "Sketch architectural plans directly on screen. Productivity redefined.")),
 L("apple-iphone-12-pro-max", "Apple iPhone 12 Pro Max", "Apple iPhone 12 Pro Max",
   AM + "41SLL9Zws6L.AC_SY300_SY300_QL70_FMwebp.jpg",
-  'Big screen, big battery • Pro cameras • 5G', 1960, 24099, ["256GB"], ["Pacific Blue", "Graphite", "Gold", "Silver"],
-  {"Network": "5G ready", "Screen": '6.7" Super Retina XDR OLED', "System": "iOS 26, upgradable", "Battery": "3687mAh, fast charge + MagSafe"},
-  (5, "Kevin O.", "PP-113", "Business calls, photos, everything — the big battery simply refuses to die early.")),
+  'Large OLED • Pro cameras • 5G', 1960, 24099, ["256GB"], ["Pacific Blue", "Graphite", "Gold", "Silver"],
+  {"Network": "5G capable", "Display": "6.7-inch Super Retina XDR OLED", "OS": "iOS 26, upgradeable", "Power": "3687mAh, fast charge + MagSafe"},
+  (5, "Kevin O.", "PT-113", "Big screen, big battery. Handles business calls and creative work flawlessly.")),
 L("apple-iphone-13-pro-max", "Apple iPhone 13 Pro Max", "Apple iPhone 13 Pro Max",
   MOP + "products/apple_iphone_13_pro_max_gold_image_0_1024x.jpg?v=1674389404",
-  '120Hz ProMotion • Marathon battery • 5G', 2190, 26899, ["256GB", "512GB", "1TB"], ["Blue", "Black", "Gold", "Silver", "Alpine Green"],
-  {"Network": "5G ready", "Screen": '6.7" Super Retina XDR OLED, 120Hz', "System": "iOS 26, upgradable", "Battery": "4352mAh, fast charge + MagSafe"},
-  (5, "Gladys M.", "PP-114", "The blue is even prettier in person, and scrolling on 120Hz spoils you forever.")),
+  '120Hz ProMotion • All-day battery • 5G', 2190, 26899, ["256GB", "512GB", "1TB"], ["Blue", "Black", "Gold", "Silver", "Alpine Green"],
+  {"Network": "5G capable", "Display": "6.7-inch Super Retina XDR OLED, 120Hz", "OS": "iOS 26, upgradeable", "Power": "4352mAh, fast charge + MagSafe"},
+  (5, "Gladys M.", "PT-114", "120Hz makes everything feel instant. Battery lasts from morning to midnight.")),
 L("samsung-galaxy-s23-ultra", "Samsung Galaxy S23 Ultra", "Samsung Galaxy S23 Ultra",
   MOP + "files/S23Ultra1_1024x.jpg?v=1718781685",
-  'Night photos that shock • S-Pen • 5G', 2190, 26899, ["256GB", "512GB"], ["Black", "Green", "Cream"],
-  {"Network": "5G ready", "Screen": '6.8" Dynamic AMOLED 2X, 120Hz', "System": "Android 16, upgradable", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "Joseph O.", "PP-115", "Concert photos at night look like daylight. Best phone deal I found in Nairobi.")),
+  'Nightography • S-Pen • 5G flagship', 2190, 26899, ["256GB", "512GB"], ["Black", "Green", "Cream"],
+  {"Network": "5G capable", "Display": "6.8-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 16, upgradeable", "Power": "5000mAh, fast + wireless"},
+  (5, "Joseph O.", "PT-115", "Night shots look like daylight. Zoom range is phenomenal.")),
 L("apple-iphone-14-pro-max", "Apple iPhone 14 Pro Max", "Apple iPhone 14 Pro Max",
   MOP + "files/Screenshot_2025-05-29_at_09.05.01_776x.png?v=1748499274",
-  'Dynamic Island • 48MP • All-day battery', 2560, 31499, ["256GB"], ["Space Black", "Deep Purple", "Gold", "Silver"],
-  {"Network": "5G ready", "Screen": '6.7" LTPO Super Retina XDR OLED', "System": "iOS 26, upgradable", "Battery": "4323mAh, fast charge + MagSafe"},
-  (5, "Rebecca C.", "PP-116", "Deep Purple is elegance itself. Screen is vibrant and everything glides.")),
+  'Dynamic Island • 48MP • All-day power', 2560, 31499, ["256GB"], ["Space Black", "Deep Purple", "Gold", "Silver"],
+  {"Network": "5G capable", "Display": "6.7-inch LTPO Super Retina XDR OLED", "OS": "iOS 26, upgradeable", "Power": "4323mAh, fast charge + MagSafe"},
+  (5, "Rebecca C.", "PT-116", "Deep Purple is sophisticated. Dynamic Island is genuinely useful.")),
 L("samsung-galaxy-s24-ultra", "Samsung Galaxy S24 Ultra", "Samsung Galaxy S24 Ultra",
   MOP + "files/S24_Ultra1_992x.png?v=1735648520",
-  'Galaxy AI flagship • S-Pen • Titan frame', 2700, 33199, ["256GB", "512GB"], ["Black", "Green", "Grey"],
-  {"Network": "5G ready", "Screen": '6.8" Dynamic AMOLED 2X, 120Hz', "System": "Android 16, upgradable", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "Michael K.", "PP-117", "Live translation saves my business meetings weekly. Worth every shilling.")),
+  'Galaxy AI • S-Pen • Titanium build', 2700, 33199, ["256GB", "512GB"], ["Black", "Green", "Grey"],
+  {"Network": "5G capable", "Display": "6.8-inch Dynamic AMOLED 2X, 120Hz", "OS": "Android 16, upgradeable", "Power": "5000mAh, fast + wireless"},
+  (5, "Michael K.", "PT-117", "AI translation in meetings saves hours weekly. Future-proof investment.")),
 L("apple-iphone-15-pro-max", "Apple iPhone 15 Pro Max", "Apple iPhone 15 Pro Max",
   MOP + "files/Screenshot2025-11-04at16.05.25_ad9bcddb-df5e-4e98-9251-113e32673b12_770x.png?v=1762278234",
-  'Titanium light • USB-C • 5x zoom • 5G', 3100, 38099, ["256GB"], ["Space Black", "Natural Titanium", "Blue Titanium", "White Titanium"],
-  {"Network": "5G ready", "Screen": '6.7" LTPO Super Retina XDR OLED', "System": "iOS 26, upgradable", "Battery": "4422mAh, fast charge + MagSafe"},
-  (5, "Stella W.", "PP-118", "Titanium finish is jewellery. My video content stepped into another league.")),
+  'Titanium design • USB-C • 5x optical zoom', 3100, 38099, ["256GB"], ["Space Black", "Natural Titanium", "Blue Titanium", "White Titanium"],
+  {"Network": "5G capable", "Display": "6.7-inch LTPO Super Retina XDR OLED", "OS": "iOS 26, upgradeable", "Power": "4422mAh, fast charge + MagSafe"},
+  (5, "Stella W.", "PT-118", "Titanium feels premium. Video quality is cinema-grade.")),
 L("samsung-galaxy-s25-ultra", "Samsung Galaxy S25 Ultra", "Samsung S25 Ultra",
   MOP + "files/s25_ultra_300x.png?v=1772294113",
-  'The smartest Galaxy • AI everywhere • S-Pen', 3300, 40599, ["256GB"], ["Black", "Titanium Black", "Titanium White", "Silver", "Titanium SilverBlue"],
-  {"Network": "5G ready", "Screen": '6.9" Dynamic LTPO AMOLED 2X, 120Hz', "System": "Android 16, upgradable", "Battery": "5000mAh, fast + wireless charging"},
-  (5, "Dennis M.", "PP-119", "Upgraded from S23 Ultra — the AI speed difference is honestly crazy.")),
+  'AI-powered • S-Pen • Next-gen flagship', 3300, 40599, ["256GB"], ["Black", "Titanium Black", "Titanium White", "Silver", "Titanium SilverBlue"],
+  {"Network": "5G capable", "Display": "6.9-inch Dynamic LTPO AMOLED 2X, 120Hz", "OS": "Android 16, upgradeable", "Power": "5000mAh, fast + wireless"},
+  (5, "Dennis M.", "PT-119", "AI features are genuinely useful, not gimmicky. Noticeable speed boost.")),
 L("apple-iphone-16-pro-max", "Apple iPhone 16 Pro Max", "Apple iPhone 16 Pro Max",
   AM + "51Vs7ZwpSpL.AC_SY300_SY300_QL70_FMwebp.jpg",
-  'Brand new • A18 Pro • 48MP fusion • 5G', 3840, 47199, ["256GB"], ["Desert Titanium", "Natural Titanium", "White Titanium", "Black Titanium"],
-  {"Network": "5G ready", "Screen": '6.9" LTPO Super Retina XDR OLED, 120Hz', "System": "iOS 26, upgradable", "Battery": "4685mAh, fast charge + MagSafe"},
-  (5, "Wanjiru K.", "PP-120", "Unboxing felt like a gift to myself. Fast, gorgeous and future-proof."),
+  'Latest iPhone • A18 Pro • 48MP system', 3840, 47199, ["256GB"], ["Desert Titanium", "Natural Titanium", "White Titanium", "Black Titanium"],
+  {"Network": "5G capable", "Display": "6.9-inch LTPO Super Retina XDR OLED, 120Hz", "OS": "iOS 26, upgradeable", "Power": "4685mAh, fast charge + MagSafe"},
+  (5, "Wanjiru K.", "PT-120", "Latest and greatest. Unboxing felt special, performance is effortless."),
   condition="New"),
 ]
 
 for p in LIPA_PRODUCTS:
     if p["slug"] == "samsung-galaxy-s20-ultra":
-        p.update(weekly=1160, deposit=8999, original_weekly=1230, original_deposit=9499, offer_badge="Offer till 20th")
+        p.update(weekly=1160, deposit=8999, original_weekly=1230, original_deposit=9499, offer_badge="Limited Offer")
     elif p["slug"] == "samsung-galaxy-note-20":
-        p.update(weekly=1040, deposit=7999, original_weekly=1160, original_deposit=8999, offer_badge="Offer till 20th")
+        p.update(weekly=1040, deposit=7999, original_weekly=1160, original_deposit=8999, offer_badge="Limited Offer")
     elif p["slug"] == "samsung-galaxy-s24-ultra":
-        p.update(weekly=2600, deposit=31999, original_weekly=2700, original_deposit=33199, offer_badge="Offer till 20th")
+        p.update(weekly=2600, deposit=31999, original_weekly=2700, original_deposit=33199, offer_badge="Limited Offer")
 
 def price_for(p, s):
     sp = p.get("storage_pricing", {})
@@ -203,7 +200,6 @@ for lp in LIPA_PRODUCTS:
     lp.setdefault("condition", "Ex-UK")
     lp["stock"] = "In Stock"
 
-# ------------------------- CASH STOCK — POSTER PRICES + YOUR PHOTOS -------------------------
 CASH_CATEGORIES = []
 CASH_PRODUCTS = {}
 def add_cat(name, note):
@@ -220,9 +216,9 @@ def C(cat, name, price, spec, img):
 S1 = "Samsung Galaxy S • Fold • Flip • Note"
 S2 = "Samsung Galaxy A Series"
 S3 = "Apple iPhone"
-add_cat(S1, "Flagship power, foldable magic and the legendary S-Pen line — every unit original, tested and ready.")
-add_cat(S2, "Everyday heroes with big batteries and pretty screens, at prices that make you smile.")
-add_cat(S3, "From the beloved 11 Pro to the 16 Pro Max — genuine iPhones, battery-health checked.")
+add_cat(S1, "Premium flagships with cutting-edge technology and pro-grade features.")
+add_cat(S2, "Reliable mid-range devices with excellent value and modern features.")
+add_cat(S3, "Genuine iPhones from 11 Pro to 16 Pro Max, quality verified.")
 
 C(S1,"Samsung Galaxy S25 Ultra 512GB",127000,'6.8" 120Hz AMOLED • Snapdragon 8 Elite • 200MP cam • 5000mAh',AM+"51ybW3eCRhL.AC_SX679.jpg")
 C(S1,"Samsung Galaxy S25 Ultra 256GB",109000,'6.8" 120Hz AMOLED • Snapdragon 8 Elite • 200MP cam • 5000mAh',AM+"51ybW3eCRhL.AC_SX679.jpg")
@@ -302,11 +298,11 @@ for cp in CASH_PRODUCTS.values(): PRODUCTS_BY_SLUG[cp["slug"]] = cp
 SEARCH_INDEX = []
 for p in LIPA_PRODUCTS:
     pr = price_for(p, p["storage"][0])
-    SEARCH_INDEX.append({"name": p["name"], "slug": p["slug"], "text": (p["name"] + " " + " ".join(p["storage"]) + " " + p["tagline"] + " pole pole weekly").lower(),
-                         "line": f"{p['name']} — {money(pr['deposit'])} deposit, {money(pr['weekly'])}/week"})
+    SEARCH_INDEX.append({"name": p["name"], "slug": p["slug"], "text": (p["name"] + " " + " ".join(p["storage"]) + " " + p["tagline"]).lower(),
+                         "line": f"{p['name']} — {money(pr['deposit'])} initial, {money(pr['weekly'])}/week"})
 for p in CASH_PRODUCTS.values():
-    SEARCH_INDEX.append({"name": p["name"], "slug": p["slug"], "text": (p["name"] + " " + p["specs"] + " cash").lower(),
-                         "line": f"{p['name']} — {money(p['price'])} cash"})
+    SEARCH_INDEX.append({"name": p["name"], "slug": p["slug"], "text": (p["name"] + " " + p["specs"]).lower(),
+                         "line": f"{p['name']} — {money(p['price'])}"})
 
 def search_items(q, limit=4):
     terms = [t for t in re.findall(r"[a-z0-9]+", str(q).lower()) if len(t) > 2]
@@ -318,247 +314,206 @@ def search_items(q, limit=4):
     scored.sort(key=lambda x: -x[0])
     return [i for _, i in scored[:limit]]
 
-# ============================ PROTECH DESIGN SYSTEM ============================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,600&family=Manrope:wght@400;500;600;700;800&family=Parisienne&display=swap');
-:root{--ink:#241423;--plum:#4b2440;--plum2:#6d3b5e;--rose:#b95c72;--rose2:#d99aa8;--champ:#d8b98b;--cream:#faf7f2;--paper:#fffdf9;--sand:#efe7dc;--green:#1c7a4f;--line:#e8ddd2;--shadow:0 18px 44px rgba(75,36,64,.10);--serif:'Fraunces',Georgia,serif;--sans:'Manrope',sans-serif;--script:'Parisienne',cursive}
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Work+Sans:wght@400;500;600;700&display=swap');
+:root{--navy:#1a2332;--navy2:#243447;--coral:#e8b4a0;--coral2:#d4917a;--teal:#5ba4a4;--cream:#faf7f2;--sand:#efe7dc;--line:#d8cfc4;--shadow:0 20px 50px rgba(26,35,50,.12);--serif:'DM Serif Display',Georgia,serif;--sans:'Work Sans',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--sans);color:var(--ink);background:var(--cream);line-height:1.65;overflow-x:hidden}
+body{font-family:var(--sans);color:var(--navy);background:var(--cream);line-height:1.6;overflow-x:hidden}
 a{color:inherit;text-decoration:none}img{max-width:100%;display:block}
 button,input,select,textarea{font:inherit}
 .container{width:min(1160px,92%);margin:auto}
-.section{padding:64px 0}
-.muted{color:#8a6f7f}
+.section{padding:70px 0}
+.muted{color:#7a8a9a}
 .hidden{display:none!important}
-/* utility bar */
-.utilbar{background:var(--ink);color:#e9d8e2;font-size:12.5px;letter-spacing:.06em}
-.utilbar .container{display:flex;justify-content:space-between;gap:14px;padding:8px 0;flex-wrap:wrap}
-.utilbar b{color:var(--champ);font-weight:700}
-/* header */
-.header{position:sticky;top:0;z-index:1100;background:var(--paper);border-bottom:1px solid var(--line)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
-.logo{display:flex;flex-direction:column;line-height:1}
-.logo b{font-family:var(--serif);font-weight:900;font-size:24px;color:var(--plum);letter-spacing:-.02em}
-.logo i{font-family:var(--script);font-style:normal;font-size:17px;color:var(--rose);margin-top:2px}
-.nav{display:flex;align-items:center;gap:22px}
-.nav a{font-weight:700;font-size:13.5px;letter-spacing:.08em;text-transform:uppercase;color:#6f5666;position:relative}
-.nav a:after{content:"";position:absolute;left:0;right:100%;bottom:-6px;height:2px;background:var(--rose);transition:.25s}
-.nav a:hover:after,.nav a.active:after{right:0}
-.nav a.active{color:var(--plum)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 24px;border-radius:6px;border:none;font-weight:800;font-size:14px;cursor:pointer;transition:.25s;white-space:nowrap;letter-spacing:.02em}
-.btn-rose{color:#fff;background:var(--rose);box-shadow:0 12px 26px rgba(185,92,114,.28)}
-.btn-rose:hover{background:#a34c62;transform:translateY(-2px)}
-.btn-ink{color:var(--cream);background:var(--ink)}
-.btn-ink:hover{background:var(--plum);transform:translateY(-2px)}
-.btn-line{color:var(--plum);border:1.5px solid var(--plum);background:transparent}
-.btn-line:hover{background:var(--plum);color:var(--cream)}
-.btn-wa{color:#08130c;background:#25d366}
-.btn-wa:hover{filter:brightness(.95)}
-.btn-sm{padding:9px 15px;font-size:12.5px}
-.hamburger{display:none;width:44px;height:44px;border-radius:8px;border:1px solid var(--line);background:#fff;font-size:19px;cursor:pointer}
-/* hero collage */
-.hero{padding:70px 0 40px;background:linear-gradient(180deg,var(--paper),var(--cream));position:relative;overflow:hidden}
-.hero:before{content:"";position:absolute;top:-120px;right:-120px;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(216,185,139,.25),transparent 65%)}
-.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;position:relative}
-.kicker{font-size:12px;font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--rose)}
-.hero h1{font-family:var(--serif);font-weight:900;font-size:clamp(2.4rem,5.4vw,4.3rem);line-height:1.03;letter-spacing:-.03em;color:var(--ink);margin:14px 0 16px}
-.hero h1 em{font-family:var(--script);font-style:normal;font-weight:400;color:var(--rose);font-size:.92em}
-.hero p.lead{max-width:560px;color:#6f5666;font-size:1.05rem}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-.hero-stats{display:flex;gap:26px;margin-top:30px;flex-wrap:wrap}
-.hstat b{display:block;font-family:var(--serif);font-size:26px;font-weight:900;color:var(--plum)}
-.hstat span{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#8a6f7f;font-weight:700}
-.fan{position:relative;height:430px}
-.fimg{position:absolute;width:225px;height:310px;object-fit:contain;background:linear-gradient(180deg,#fff,var(--sand));border:1px solid var(--line);border-radius:120px 120px 18px 18px;box-shadow:var(--shadow);padding:16px}
-.f1{left:2%;top:52px;transform:rotate(-7deg)}
-.f2{left:32%;top:0;z-index:2;border-color:var(--rose2)}
-.f3{left:62%;top:62px;transform:rotate(7deg)}
-.ftag{position:absolute;z-index:3;background:var(--ink);color:var(--champ);font-weight:800;font-size:12px;padding:7px 12px;border-radius:999px;box-shadow:var(--shadow)}
-.ftag.t1{left:12%;top:26px}.ftag.t2{left:58%;top:330px}
-/* trust strip */
-.trust{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--paper)}
-.trust .container{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
-.trust div{padding:18px 14px;text-align:center;border-left:1px solid var(--line);font-size:13px;font-weight:700;color:var(--plum)}
-.trust div:first-child{border-left:none}
-.trust div span{display:block;font-family:var(--script);font-size:19px;color:var(--rose);font-weight:400}
-/* section heads */
-.sec-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:30px}
-.sec-head .kicker{display:block;margin-bottom:6px}
-.sec-head h2{font-family:var(--serif);font-weight:900;font-size:clamp(1.7rem,3.4vw,2.6rem);color:var(--ink);letter-spacing:-.02em}
-.sec-head .rule{flex:1;height:1px;background:var(--line);margin:0 0 12px 22px}
-/* coupons */
-.coupons{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.coupon{display:grid;grid-template-columns:96px 1fr 118px;background:var(--paper);border:1.5px solid var(--rose);border-radius:16px;overflow:hidden;position:relative;box-shadow:var(--shadow)}
-.cp-img{background:linear-gradient(180deg,#fff,var(--sand));padding:12px;display:grid;place-items:center}
-.cp-img img{width:70px;height:86px;object-fit:contain}
-.cp-mid{padding:16px 14px;border-left:1px dashed var(--rose2)}
-.cp-mid h4{font-family:var(--serif);font-weight:700;font-size:15.5px;color:var(--ink)}
-.cp-mid .was{text-decoration:line-through;color:#b39aa8;font-size:12.5px}
-.cp-mid .now{font-family:var(--serif);font-weight:900;font-size:19px;color:var(--rose)}
-.cp-mid .wk{font-size:12.5px;color:#6f5666;font-weight:600}
-.cp-stub{border-left:2px dashed var(--rose);background:linear-gradient(160deg,var(--ink),var(--plum));color:var(--champ);display:grid;place-items:center;text-align:center;padding:10px 8px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;position:relative}
-.cp-stub:before,.cp-stub:after{content:"";position:absolute;left:-9px;width:16px;height:16px;border-radius:50%;background:var(--cream);border:1.5px solid var(--rose)}
-.cp-stub:before{top:-9px}.cp-stub:after{bottom:-9px}
-.cp-stub em{display:block;font-family:var(--script);font-style:normal;font-size:20px;text-transform:none;letter-spacing:0;color:var(--rose2)}
-/* pole pole shelf */
-.shelf{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:6px 4px 22px}
-.shelf::-webkit-scrollbar{height:8px}
-.shelf::-webkit-scrollbar-thumb{background:var(--rose2);border-radius:99px}
-.shelf::-webkit-scrollbar-track{background:var(--sand);border-radius:99px}
-.shelf-card{min-width:248px;max-width:248px;scroll-snap-align:start;background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:.3s;position:relative;display:flex;flex-direction:column}
-.shelf-card:hover{transform:translateY(-6px);border-color:var(--rose2)}
-.arch{border-radius:110px 110px 14px 14px;overflow:hidden;background:linear-gradient(180deg,#fff,var(--sand));border:1px solid var(--line);padding:14px}
-.arch img{width:100%;height:210px;object-fit:contain}
-.shelf-card .sc-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
-.shelf-card h3{font-family:var(--serif);font-weight:700;font-size:15.5px;color:var(--ink);line-height:1.3;min-height:2.6em}
-.sc-plan{display:flex;justify-content:space-between;align-items:baseline;gap:8px;border-top:1px solid var(--line);padding-top:9px;margin-top:auto}
-.sc-plan b{font-family:var(--serif);font-weight:900;font-size:17px;color:var(--rose)}
-.sc-plan span{font-size:12px;color:#6f5666;font-weight:700}
-.strike{text-decoration:line-through;color:#b39aa8;font-size:12px;font-weight:600;margin-right:5px}
-.flag{position:absolute;top:12px;left:12px;z-index:2;background:var(--ink);color:var(--champ);font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:4px}
-.flag.rose{background:var(--rose);color:#fff}
-/* arch grid (pole pole page + cash) */
-.agrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:22px}
-.pcard{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow);transition:.3s;position:relative;display:flex;flex-direction:column}
-.pcard:hover{transform:translateY(-6px);border-color:var(--rose2)}
-.pcard .arch{margin:12px 12px 0}
-.pcard .arch img{height:190px}
-.pcard-body{padding:14px 16px 18px;display:flex;flex-direction:column;gap:7px;flex:1}
-.pcard-body h3{font-family:var(--serif);font-weight:700;font-size:15.5px;color:var(--ink);line-height:1.3;min-height:2.6em}
-.pcard-spec{font-size:12px;color:#8a6f7f;font-weight:600}
-.pcard-foot{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:10px;margin-top:auto}
-.pcard-price{font-family:var(--serif);font-weight:900;font-size:17px;color:var(--plum)}
-.pcard-cta{font-size:12.5px;font-weight:800;color:var(--rose);letter-spacing:.06em;text-transform:uppercase}
-/* editorial why */
-.edit-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:34px}
-.edit-item{border-top:2px solid var(--ink);padding-top:16px}
-.edit-item b.n{font-family:var(--serif);font-weight:900;font-size:40px;color:var(--rose2);display:block;line-height:1}
-.edit-item h3{font-family:var(--serif);font-weight:700;font-size:19px;color:var(--ink);margin:10px 0 8px}
-/* founder quote */
-.founder{background:var(--ink);color:#efe0e8;border-radius:24px;padding:48px 40px;position:relative;overflow:hidden}
-.founder:before{content:"“";position:absolute;top:-30px;left:22px;font-family:var(--serif);font-size:180px;color:rgba(216,185,139,.18)}
-.founder p{font-family:var(--serif);font-style:italic;font-size:clamp(1.05rem,2vw,1.35rem);line-height:1.6;max-width:820px;position:relative}
-.founder .sig{font-family:var(--script);font-size:30px;color:var(--champ);margin-top:18px}
-/* postcards */
-.postcards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
-.postcard{background:var(--paper);border:1px solid var(--line);padding:24px;box-shadow:var(--shadow);position:relative}
-.postcard:nth-child(1){transform:rotate(-1.6deg)}
-.postcard:nth-child(2){transform:rotate(1.2deg) translateY(10px)}
-.postcard:nth-child(3){transform:rotate(-.8deg)}
-.postcard:before{content:"";position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-3deg);width:74px;height:20px;background:rgba(216,185,139,.55);border:1px solid rgba(185,92,114,.3)}
-.postcard .stars{color:var(--champ);letter-spacing:3px}
-.postcard p{margin:10px 0 12px;color:#6f5666;font-size:14.5px}
-.postcard strong{font-family:var(--serif);color:var(--plum)}
-/* cta band */
-.cta-band{background:linear-gradient(140deg,var(--plum),var(--ink));border-radius:24px;padding:46px;text-align:center;color:#efe0e8}
-.cta-band h2{font-family:var(--serif);font-weight:900;font-size:clamp(1.7rem,3.2vw,2.5rem);color:#fff}
-.cta-band .script{font-family:var(--script);font-size:26px;color:var(--champ)}
-/* cash page */
-.cat-block{margin-bottom:44px}
-.cat-head{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
-.cat-head h3{font-family:var(--serif);font-weight:900;font-size:clamp(1.3rem,2.6vw,1.9rem);color:var(--plum)}
-.cat-head .count{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--rose)}
-.cat-head .rule{flex:1;height:1px;background:var(--line)}
-/* product pages */
-.breadcrumbs{font-size:12.5px;color:#a08794;margin-bottom:16px;letter-spacing:.04em}
-.breadcrumbs a:hover{color:var(--rose)}
-.pp-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:36px;align-items:start}
-.pp-visual{position:relative}
-.pp-visual .arch{padding:26px;background:linear-gradient(180deg,#fff,var(--sand))}
-.pp-visual .arch img{height:430px}
-.stamp{position:absolute;top:18px;right:14px;transform:rotate(9deg);background:var(--rose);color:#fff;font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;padding:9px 14px;border-radius:6px;box-shadow:var(--shadow)}
-.pp-panel h1{font-family:var(--serif);font-weight:900;font-size:clamp(1.7rem,3.2vw,2.5rem);color:var(--ink);letter-spacing:-.02em;margin:6px 0 8px}
-.pills{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
-.pill{padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--paper);font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--plum)}
-.pill.rose{border-color:var(--rose2);color:var(--rose);background:#fdf3f5}
-.ticket{margin:18px 0;background:var(--paper);border:1.5px solid var(--plum);border-radius:14px;position:relative;overflow:hidden}
-.ticket .tk-head{background:var(--plum);color:var(--champ);font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;padding:9px 18px}
-.ticket .tk-row{display:flex;justify-content:space-between;gap:12px;padding:11px 18px;border-bottom:1px dashed var(--rose2);font-weight:600;font-size:14.5px}
-.ticket .tk-row:last-child{border-bottom:none}
-.ticket .tk-row b{font-family:var(--serif);font-weight:900;color:var(--plum)}
-.option-row{display:flex;flex-wrap:wrap;gap:9px;margin:8px 0 14px}
-.option-btn{padding:9px 15px;border-radius:999px;border:1px solid var(--line);background:var(--paper);color:#6f5666;cursor:pointer;font-weight:700;font-size:13px;transition:.2s}
-.option-btn.active,.option-btn:hover{border-color:var(--rose);color:var(--rose);background:#fdf3f5}
-.promise-list{display:grid;gap:9px;margin:12px 0 18px}
-.promise-list li{list-style:none;padding-left:26px;position:relative;color:#6f5666;font-weight:600;font-size:14.5px}
-.promise-list li:before{content:"✦";position:absolute;left:0;color:var(--rose)}
-.spec-table{width:100%;border-collapse:collapse;margin:12px 0 18px}
-.spec-table th,.spec-table td{padding:11px 13px;border:1px solid var(--line);text-align:left;font-size:14px}
-.spec-table th{width:120px;background:var(--sand);color:var(--plum);font-weight:800}
-.review{border:1px solid var(--line);border-left:4px solid var(--rose);border-radius:12px;padding:20px;background:var(--paper);box-shadow:var(--shadow)}
-.stars{color:var(--champ);letter-spacing:2px}
-.notice{padding:14px 16px;border-radius:12px;background:#fdf3f5;border:1px solid var(--rose2);color:var(--plum);font-size:14px;margin:14px 0;font-weight:600}
-/* forms / apply */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.field{display:grid;gap:6px;margin-bottom:12px}
-.field label{font-weight:800;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--plum)}
-input,select,textarea{width:100%;padding:13px 15px;border-radius:8px;border:1px solid var(--line);background:var(--paper);outline:none;font-weight:600}
-input:focus,select:focus,textarea:focus{border-color:var(--rose);box-shadow:0 0 0 4px rgba(185,92,114,.12)}
-.file-label{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1.5px dashed var(--rose2);background:#fdf3f5;padding:13px 15px;border-radius:10px;cursor:pointer}
+.topbar{background:var(--navy);color:var(--coral);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.topbar .container{display:flex;justify-content:space-between;padding:9px 0;flex-wrap:wrap;gap:10px}
+.header{position:sticky;top:0;z-index:1100;background:rgba(250,247,242,.96);backdrop-filter:blur(10px);border-bottom:2px solid var(--coral)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:18px 0;gap:18px}
+.logo{font-family:var(--serif);font-size:28px;color:var(--navy);letter-spacing:-.02em}
+.logo span{color:var(--coral2)}
+.nav{display:flex;align-items:center;gap:24px}
+.nav a{font-weight:600;font-size:14px;color:var(--navy2);position:relative}
+.nav a:after{content:"";position:absolute;bottom:-4px;left:0;width:0;height:2px;background:var(--coral);transition:.3s}
+.nav a:hover:after,.nav a.active:after{width:100%}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 26px;border-radius:8px;border:none;font-weight:700;font-size:14px;cursor:pointer;transition:.25s;white-space:nowrap}
+.btn-coral{color:#fff;background:var(--coral2);box-shadow:0 12px 28px rgba(212,145,122,.3)}
+.btn-coral:hover{background:var(--coral);transform:translateY(-2px)}
+.btn-navy{color:var(--coral);background:var(--navy);box-shadow:0 10px 24px rgba(26,35,50,.2)}
+.btn-navy:hover{background:var(--navy2);transform:translateY(-2px)}
+.btn-outline{color:var(--navy);border:2px solid var(--navy);background:transparent}
+.btn-outline:hover{background:var(--navy);color:#fff}
+.btn-wa{color:#fff;background:#25d366;box-shadow:0 10px 24px rgba(37,211,102,.25)}
+.btn-sm{padding:9px 16px;font-size:12.5px}
+.hamburger{display:none;width:44px;height:44px;border-radius:8px;border:2px solid var(--navy);background:transparent;font-size:20px;cursor:pointer;color:var(--navy)}
+.hero{padding:80px 0 50px;background:linear-gradient(135deg,var(--cream) 0%,var(--sand) 100%);position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;top:-100px;right:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(232,180,160,.15),transparent 70%);border-radius:50%}
+.hero-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:50px;align-items:center;position:relative}
+.hero-tag{display:inline-block;padding:8px 16px;background:var(--navy);color:var(--coral);font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;border-radius:4px;margin-bottom:16px}
+.hero h1{font-family:var(--serif);font-size:clamp(2.6rem,5.8vw,4.6rem);line-height:1.05;letter-spacing:-.03em;color:var(--navy);margin-bottom:18px}
+.hero h1 em{font-style:normal;color:var(--coral2)}
+.hero p.lead{max-width:580px;color:#5a6b7a;font-size:1.08rem;line-height:1.7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:14px;margin-top:28px}
+.hero-stats{display:flex;gap:32px;margin-top:36px;flex-wrap:wrap}
+.hstat{border-left:3px solid var(--coral);padding-left:16px}
+.hstat b{display:block;font-family:var(--serif);font-size:32px;color:var(--navy);font-weight:400}
+.hstat span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#7a8a9a;font-weight:600}
+.hero-visual{position:relative;height:480px;display:flex;align-items:center;justify-content:center}
+.hero-phone{position:absolute;width:280px;height:auto;filter:drop-shadow(0 30px 60px rgba(26,35,50,.25));transition:.4s}
+.hero-phone:nth-child(1){transform:rotate(-8deg) translateX(-40px);z-index:1}
+.hero-phone:nth-child(2){transform:rotate(0deg);z-index:3}
+.hero-phone:nth-child(3){transform:rotate(8deg) translateX(40px);z-index:2}
+.trust-strip{background:var(--navy);color:#fff;padding:20px 0;margin-top:0}
+.trust-strip .container{display:grid;grid-template-columns:repeat(4,1fr);gap:0;text-align:center}
+.trust-item{padding:0 20px;border-right:1px solid rgba(255,255,255,.1)}
+.trust-item:last-child{border-right:none}
+.trust-item strong{display:block;font-family:var(--serif);font-size:22px;color:var(--coral);margin-bottom:4px}
+.trust-item span{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#b8c5d1}
+.sec-head{margin-bottom:36px}
+.sec-head .tag{display:inline-block;padding:6px 14px;background:var(--coral);color:#fff;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;border-radius:4px;margin-bottom:12px}
+.sec-head h2{font-family:var(--serif);font-size:clamp(1.8rem,3.6vw,2.8rem);color:var(--navy);letter-spacing:-.02em}
+.sec-head p{color:#7a8a9a;margin-top:8px;max-width:640px}
+.feature-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:24px}
+.feature-card{background:#fff;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);transition:.35s;position:relative;display:flex;flex-direction:column}
+.feature-card:hover{transform:translateY(-8px);box-shadow:0 28px 60px rgba(26,35,50,.18)}
+.feature-card .img-wrap{background:linear-gradient(180deg,#fff,var(--sand));padding:24px;display:grid;place-items:center;height:240px;position:relative}
+.feature-card .img-wrap img{max-height:190px;width:auto;object-fit:contain}
+.feature-card .badge{position:absolute;top:16px;right:16px;background:var(--navy);color:var(--coral);font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:4px}
+.feature-card .badge.offer{background:var(--coral2);color:#fff}
+.feature-card .card-body{padding:20px;display:flex;flex-direction:column;gap:10px;flex:1}
+.feature-card h3{font-family:var(--serif);font-size:18px;color:var(--navy);line-height:1.35}
+.feature-card .pricing{display:flex;flex-direction:column;gap:6px;margin-top:auto;padding-top:12px;border-top:1px solid var(--line)}
+.feature-card .pricing .price{font-family:var(--serif);font-size:22px;color:var(--coral2);font-weight:400}
+.feature-card .pricing .sub{font-size:12px;color:#7a8a9a;font-weight:600}
+.feature-card .strike{text-decoration:line-through;color:#b8c5d1;font-size:13px;margin-right:6px}
+.feature-card .cta{display:flex;justify-content:space-between;align-items:center;margin-top:8px}
+.feature-card .cta a{font-size:13px;font-weight:700;color:var(--coral2);text-transform:uppercase;letter-spacing:.06em}
+.showcase{display:grid;grid-template-columns:repeat(3,1fr);gap:28px}
+.showcase-item{background:#fff;border-radius:16px;padding:28px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.showcase-item:before{content:"";position:absolute;top:0;left:0;width:100%;height:4px;background:linear-gradient(90deg,var(--coral),var(--teal))}
+.showcase-item h3{font-family:var(--serif);font-size:20px;color:var(--navy);margin-bottom:10px}
+.showcase-item p{color:#5a6b7a;font-size:14.5px;line-height:1.7}
+.showcase-item .num{position:absolute;top:20px;right:20px;font-family:var(--serif);font-size:48px;color:rgba(232,180,160,.15);font-weight:400;line-height:1}
+.testimonial-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.testimonial{background:#fff;border-radius:16px;padding:26px;box-shadow:var(--shadow);position:relative}
+.testimonial .stars{color:var(--coral2);font-size:18px;letter-spacing:2px;margin-bottom:12px}
+.testimonial p{color:#5a6b7a;font-size:14.5px;line-height:1.7;margin-bottom:14px}
+.testimonial strong{display:block;color:var(--navy);font-size:14px;font-weight:700}
+.testimonial .ref{font-size:11px;color:#7a8a9a;letter-spacing:.06em}
+.cta-band{background:linear-gradient(135deg,var(--navy),var(--navy2));border-radius:20px;padding:50px;text-align:center;color:#fff;box-shadow:0 28px 60px rgba(26,35,50,.3)}
+.cta-band h2{font-family:var(--serif);font-size:clamp(1.8rem,3.4vw,2.6rem);margin-bottom:10px}
+.cta-band p{color:#b8c5d1;margin-bottom:24px}
+.cat-section{margin-bottom:50px}
+.cat-head{display:flex;align-items:baseline;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--line)}
+.cat-head h3{font-family:var(--serif);font-size:clamp(1.4rem,2.8vw,2rem);color:var(--navy)}
+.cat-head .count{font-size:12px;font-weight:700;color:var(--coral2);letter-spacing:.08em;text-transform:uppercase}
+.cash-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px}
+.cash-card{background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow);transition:.3s;display:flex;flex-direction:column}
+.cash-card:hover{transform:translateY(-6px)}
+.cash-card .img-wrap{background:var(--sand);padding:20px;height:220px;display:grid;place-items:center}
+.cash-card .img-wrap img{max-height:180px;width:auto;object-fit:contain}
+.cash-card .card-body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.cash-card h4{font-family:var(--serif);font-size:16px;color:var(--navy);line-height:1.35}
+.cash-card .spec{font-size:12px;color:#7a8a9a;line-height:1.5}
+.cash-card .price{font-family:var(--serif);font-size:20px;color:var(--coral2);margin-top:auto;padding-top:10px;border-top:1px solid var(--line)}
+.cash-card .cta-row{display:flex;gap:8px;margin-top:10px}
+.cash-card .cta-row a{flex:1;text-align:center;padding:10px;border-radius:8px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.product-detail{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.product-img{background:linear-gradient(180deg,#fff,var(--sand));border-radius:20px;padding:40px;display:grid;place-items:center;min-height:500px}
+.product-img img{max-width:100%;max-height:420px;width:auto;object-fit:contain}
+.product-info h1{font-family:var(--serif);font-size:clamp(1.8rem,3.2vw,2.6rem);color:var(--navy);margin-bottom:12px}
+.product-info .tagline{color:#7a8a9a;font-size:15px;margin-bottom:20px}
+.plan-detail{background:var(--navy);color:#fff;border-radius:16px;padding:24px;margin:20px 0}
+.plan-detail h3{font-family:var(--serif);font-size:18px;color:var(--coral);margin-bottom:16px}
+.plan-row{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.plan-row:last-child{border-bottom:none}
+.plan-row strong{color:var(--coral);font-family:var(--serif);font-size:18px}
+.plan-row .strike{text-decoration:line-through;color:rgba(255,255,255,.4);font-size:14px;margin-right:8px}
+.option-group{margin:20px 0}
+.option-group label{display:block;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy);margin-bottom:10px}
+.option-row{display:flex;flex-wrap:wrap;gap:10px}
+.opt-btn{padding:10px 18px;border-radius:8px;border:2px solid var(--line);background:#fff;color:var(--navy2);cursor:pointer;font-weight:600;font-size:13px;transition:.2s}
+.opt-btn.active,.opt-btn:hover{border-color:var(--coral);color:var(--coral2);background:rgba(232,180,160,.08)}
+.promise{display:grid;gap:12px;margin:20px 0}
+.promise li{list-style:none;padding-left:28px;position:relative;color:#5a6b7a;font-size:14.5px}
+.promise li:before{content:"→";position:absolute;left:0;color:var(--coral2);font-weight:700}
+.spec-table{width:100%;border-collapse:collapse;margin:20px 0}
+.spec-table th,.spec-table td{padding:12px 14px;border:1px solid var(--line);text-align:left;font-size:14px}
+.spec-table th{width:140px;background:var(--sand);color:var(--navy);font-weight:700}
+.review-box{border-left:4px solid var(--coral);background:#fff;border-radius:12px;padding:24px;box-shadow:var(--shadow)}
+.review-box .stars{color:var(--coral2);font-size:20px;letter-spacing:2px;margin-bottom:10px}
+.review-box strong{display:block;color:var(--navy);margin-bottom:6px}
+.review-box .ref{font-size:11px;color:#7a8a9a;margin-bottom:10px;letter-spacing:.06em}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:6px;margin-bottom:14px}
+.field label{font-weight:700;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--navy)}
+input,select,textarea{width:100%;padding:13px 16px;border-radius:10px;border:2px solid var(--line);background:#fff;outline:none;font-weight:600;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:var(--coral);box-shadow:0 0 0 4px rgba(232,180,160,.12)}
+.file-label{display:flex;align-items:center;justify-content:space-between;gap:12px;border:2px dashed var(--coral);background:rgba(232,180,160,.05);padding:14px 18px;border-radius:10px;cursor:pointer}
 .file-label input{display:none}
-.file-label span{color:#8a6f7f;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
-.doc-progress{height:8px;border-radius:999px;background:var(--sand);overflow:hidden;margin:12px 0}
-.doc-progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--rose),var(--champ));transition:width .45s ease}
-.done-badge{width:92px;height:92px;margin:6px auto 12px;border-radius:50%;display:grid;place-items:center;background:var(--green);color:#fff;font-size:42px;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+.file-label span{color:#7a8a9a;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:240px}
+.progress{height:8px;border-radius:99px;background:var(--line);overflow:hidden;margin:14px 0}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--coral),var(--teal));transition:width .4s}
+.done-check{width:90px;height:90px;margin:8px auto 14px;border-radius:50%;background:var(--teal);color:#fff;display:grid;place-items:center;font-size:42px;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
 @keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.done-list{display:grid;gap:8px;margin:12px auto;max-width:400px;text-align:left}
-.done-list div{padding:10px 14px;border-radius:10px;background:#eaf5ee;border:1px solid rgba(28,122,79,.3);color:var(--green);font-weight:700;font-size:14px}
-.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(36,20,35,.55);backdrop-filter:blur(8px);padding:18px}
+.done-list{display:grid;gap:10px;margin:16px auto;max-width:420px}
+.done-list div{padding:12px 16px;border-radius:10px;background:rgba(91,164,164,.1);border:2px solid var(--teal);color:var(--navy);font-weight:700;font-size:14px}
+.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(26,35,50,.6);backdrop-filter:blur(10px);padding:20px}
 .modal.open{display:grid}
-.modal-box{width:min(760px,100%);max-height:88vh;overflow:auto;background:var(--paper);border-radius:20px;padding:28px;position:relative;box-shadow:0 30px 80px rgba(36,20,35,.4)}
-.modal-close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:var(--sand);border:1px solid var(--line);cursor:pointer}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 18px;border-radius:10px;display:none;z-index:3000;box-shadow:var(--shadow)}
+.modal-box{width:min(780px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:20px;padding:32px;position:relative;box-shadow:0 30px 80px rgba(26,35,50,.4)}
+.modal-close{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:var(--sand);border:none;cursor:pointer;font-size:20px;color:var(--navy)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--navy);color:#fff;padding:14px 20px;border-radius:10px;display:none;z-index:3000;box-shadow:var(--shadow)}
 .toast.show{display:block}
-/* steps / faq */
-.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.step{border-top:2px solid var(--rose);padding-top:14px}
-.step b.n{font-family:var(--serif);font-weight:900;font-size:34px;color:var(--plum);display:block}
-.step h3{font-family:var(--serif);font-size:17px;color:var(--ink);margin:8px 0 6px}
-.faq-item{border:1px solid var(--line);border-radius:12px;background:var(--paper);padding:18px 20px;margin-bottom:12px;box-shadow:var(--shadow)}
-.faq-item summary{cursor:pointer;font-weight:800;color:var(--plum)}
-.faq-item p{margin-top:10px;color:#6f5666}
-/* footer */
-.footer{background:var(--ink);color:#d9c2cf;padding:50px 0 22px;margin-top:40px}
-.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:26px;margin-bottom:24px}
-.footer h4{font-family:var(--serif);color:#fff;margin-bottom:10px}
-.footer a,.footer p{color:#c4a7b6;font-size:14px}
-.footer a:hover{color:var(--champ)}
-.copyright{border-top:1px solid rgba(216,185,139,.25);padding-top:16px;text-align:center;font-size:13px;color:#a98ba0}
-/* floats */
-.wa-float{position:fixed;right:20px;bottom:20px;z-index:1500;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 12px 30px rgba(37,211,102,.4)}
-.nia-dot{position:fixed;left:20px;bottom:20px;z-index:1600;padding:11px 18px;border-radius:999px;background:var(--ink);border:none;color:var(--champ);font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow)}
-.nia-panel{position:fixed;left:20px;bottom:76px;z-index:1700;width:min(370px,calc(100vw - 40px));height:520px;background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 30px 80px rgba(36,20,35,.35);display:none;flex-direction:column;overflow:hidden}
-.nia-panel.open{display:flex}
-.nia-head{padding:14px 16px;background:var(--plum);color:#fff;display:flex;align-items:center;gap:10px}
-.nia-head .av{width:40px;height:40px;border-radius:50%;background:var(--rose);display:grid;place-items:center;font-family:var(--script);font-size:22px;color:#fff}
-.nia-body{flex:1;overflow:auto;padding:14px;background:var(--cream)}
-.msg{max-width:88%;margin-bottom:10px;padding:11px 13px;border-radius:12px;font-size:14px}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.step{text-align:center}
+.step .num{width:50px;height:50px;border-radius:50%;background:var(--coral);color:#fff;font-family:var(--serif);font-size:24px;display:grid;place-items:center;margin:0 auto 14px}
+.step h3{font-family:var(--serif);font-size:17px;color:var(--navy);margin-bottom:8px}
+.step p{color:#7a8a9a;font-size:13.5px}
+.faq-item{border:2px solid var(--line);border-radius:12px;background:#fff;padding:20px 24px;margin-bottom:14px;transition:.2s}
+.faq-item:hover{border-color:var(--coral)}
+.faq-item summary{cursor:pointer;font-weight:700;color:var(--navy);list-style:none;display:flex;justify-content:space-between;align-items:center}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:after{content:"+";font-size:24px;color:var(--coral2);font-weight:400}
+.faq-item[open] summary:after{content:"−"}
+.faq-item p{margin-top:14px;color:#5a6b7a;padding-top:14px;border-top:1px solid var(--line)}
+.footer{background:var(--navy);color:#b8c5d1;padding:56px 0 24px;margin-top:50px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:32px;margin-bottom:28px}
+.footer h4{font-family:var(--serif);color:#fff;margin-bottom:12px}
+.footer a,.footer p{color:#8a9aaa;font-size:14px}
+.footer a:hover{color:var(--coral)}
+.copyright{border-top:1px solid rgba(255,255,255,.1);padding-top:18px;text-align:center;font-size:13px;color:#6a7a8a}
+.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:58px;height:58px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 12px 30px rgba(37,211,102,.4)}
+.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:13px 22px;border-radius:99px;background:var(--navy);border:none;color:var(--coral);font-weight:700;font-size:13px;cursor:pointer;box-shadow:var(--shadow)}
+.chat-panel{position:fixed;left:22px;bottom:78px;z-index:1700;width:min(380px,calc(100vw - 44px));height:540px;background:#fff;border-radius:20px;box-shadow:0 30px 80px rgba(26,35,50,.35);display:none;flex-direction:column;overflow:hidden}
+.chat-panel.open{display:flex}
+.chat-head{padding:16px 18px;background:var(--navy);color:#fff;display:flex;align-items:center;gap:12px}
+.chat-head .av{width:42px;height:42px;border-radius:50%;background:var(--coral);display:grid;place-items:center;font-family:var(--serif);font-size:20px;color:#fff}
+.chat-body{flex:1;overflow:auto;padding:16px;background:var(--cream)}
+.msg{max-width:85%;margin-bottom:12px;padding:12px 14px;border-radius:14px;font-size:14px;line-height:1.6}
 .msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px}
-.msg.user{margin-left:auto;background:var(--plum);color:#fff;border-bottom-right-radius:4px}
-.msg a.chip-link{display:inline-block;margin:6px 6px 0 0;padding:7px 11px;border-radius:999px;background:#fdf3f5;border:1px solid var(--rose2);color:var(--rose);font-weight:700;font-size:12.5px}
-.nia-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
-.nia-input input{flex:1;border-radius:999px}
+.msg.user{margin-left:auto;background:var(--navy);color:#fff;border-bottom-right-radius:4px}
+.msg a.chip{display:inline-block;margin:8px 6px 0 0;padding:8px 12px;border-radius:99px;background:rgba(232,180,160,.12);border:1px solid var(--coral);color:var(--coral2);font-weight:700;font-size:12.5px}
+.chat-input{display:flex;gap:10px;padding:14px;border-top:1px solid var(--line);background:#fff}
+.chat-input input{flex:1;border-radius:99px;padding:12px 16px}
 .reveal{transition:opacity .7s ease,transform .7s ease}
-.reveal-init{opacity:0;transform:translateY(24px)}
+.reveal-init{opacity:0;transform:translateY(26px)}
 .reveal.visible{opacity:1;transform:none}
-@media(max-width:1000px){.hero-grid,.pp-grid{grid-template-columns:1fr}.fan{height:360px}.coupons,.edit-grid,.postcards{grid-template-columns:1fr}.trust .container{grid-template-columns:1fr 1fr}.trust div{border-left:none;border-top:1px solid var(--line)}.steps-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}}
-@media(max-width:820px){.nav{position:fixed;top:96px;left:4%;right:4%;z-index:1200;flex-direction:column;align-items:stretch;background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:18px;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.form-grid{grid-template-columns:1fr}}
-@media(max-width:560px){.agrid{grid-template-columns:1fr 1fr}.fan .f1,.fan .f3{display:none}.fan .f2{left:12%}.steps-grid{grid-template-columns:1fr}.coupon{grid-template-columns:80px 1fr}.cp-stub{display:none}}
-@media(max-width:430px){.agrid{grid-template-columns:1fr}}
+@media(max-width:1000px){.hero-grid,.product-detail{grid-template-columns:1fr}.hero-visual{height:380px}.showcase,.testimonial-grid{grid-template-columns:1fr}.trust-strip .container{grid-template-columns:1fr 1fr;gap:16px}.steps{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.nav{position:fixed;top:100px;left:4%;right:4%;z-index:1200;flex-direction:column;background:#fff;border:2px solid var(--navy);border-radius:14px;padding:20px;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.form-grid{grid-template-columns:1fr}}
+@media(max-width:560px){.feature-grid,.cash-grid{grid-template-columns:1fr}.hero-phone:nth-child(1),.hero-phone:nth-child(3){display:none}.steps{grid-template-columns:1fr}}
 """
 
 JS = r"""
 function fmtKES(n){return 'KES '+Number(n).toLocaleString();}
 document.addEventListener('DOMContentLoaded',function(){
- [initMenu,initReveal,initStorage,initColors,initCashSearch,initFileLabels,initModalClose,initApply,initNia].forEach(function(fn){try{fn();}catch(e){}});
+ [initMenu,initReveal,initStorage,initColors,initCashSearch,initFileLabels,initModalClose,initApply,initChat].forEach(function(fn){try{fn();}catch(e){}});
 });
 function initMenu(){var b=document.getElementById('menuBtn'),n=document.getElementById('mainNav');if(b&&n){b.addEventListener('click',function(){n.classList.toggle('open');});}}
 function initReveal(){if(!('IntersectionObserver' in window))return;var o=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');o.unobserve(en.target);}});},{threshold:.08});document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('reveal-init');o.observe(el);});}
 function initStorage(){
- document.querySelectorAll('.storage-btn').forEach(function(btn){
+ document.querySelectorAll('.opt-storage').forEach(function(btn){
   btn.addEventListener('click',function(){
-   document.querySelectorAll('.storage-btn').forEach(function(b){b.classList.remove('active');});
+   document.querySelectorAll('.opt-storage').forEach(function(b){b.classList.remove('active');});
    btn.classList.add('active');
    var a=document.getElementById('applyCta');
    if(a&&btn.dataset.product&&btn.dataset.storage){a.href='/apply-now?phone='+encodeURIComponent(btn.dataset.product+' ('+btn.dataset.storage+')');}
@@ -574,18 +529,18 @@ function initStorage(){
   });
  });
 }
-function initColors(){document.querySelectorAll('.color-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.color-btn').forEach(function(x){x.classList.remove('active');});b.classList.add('active');});});}
-function initCashSearch(){var s=document.getElementById('cashSearch');if(!s)return;s.addEventListener('input',function(){var t=s.value.toLowerCase();document.querySelectorAll('.pcard').forEach(function(c){c.style.display=c.innerText.toLowerCase().indexOf(t)>-1?'':'none';});});}
+function initColors(){document.querySelectorAll('.opt-color').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.opt-color').forEach(function(x){x.classList.remove('active');});b.classList.add('active');});});}
+function initCashSearch(){var s=document.getElementById('cashSearch');if(!s)return;s.addEventListener('input',function(){var t=s.value.toLowerCase();document.querySelectorAll('.cash-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().indexOf(t)>-1?'':'none';});});}
 function initFileLabels(){document.querySelectorAll('.file-label input').forEach(function(i){i.addEventListener('change',function(){var l=i.closest('.file-label');var t=l?l.querySelector('span'):null;if(t){t.textContent=i.files&&i.files.length?i.files[0].name:'Upload file';}});});}
 function initModalClose(){document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){closeModal(b.getAttribute('data-close'));});});}
 function openModal(id){var m=document.getElementById(id);if(m){m.classList.add('open');document.body.style.overflow='hidden';}}
 function closeModal(id){var m=document.getElementById(id);if(m){m.classList.remove('open');document.body.style.overflow='';}}
 function showToast(m){var t=document.getElementById('toast');if(!t)return;t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},5000);}
 function val(id){var f=document.getElementById(id);return f?f.value:'';}
-function setStep(p){var b=document.getElementById('docProgressBar');if(b){b.style.width=p+'%';}}
+function setStep(p){var b=document.getElementById('docProgress');if(b){b.style.width=p+'%';}}
 function jMsg(t){var m=document.getElementById('journeyMsg');if(m){m.textContent=t;}}
-var PH_SUB=null,PH_STEP=2,PH_DONE=false;
-function jGo(step){PH_STEP=step;if(step===5){PH_DONE=true;}
+var PT_SUB=null,PT_STEP=2,PT_DONE=false;
+function jGo(step){PT_STEP=step;if(step===5){PT_DONE=true;}
  var panels={2:'stepMpesa',3:'stepIdentity',4:'stepKin',5:'stepDone'};
  for(var k in panels){var el=document.getElementById(panels[k]);if(el){el.classList.add('hidden');}}
  var t=document.getElementById(panels[step]);if(t){t.classList.remove('hidden');}
@@ -595,15 +550,15 @@ function postJSON(url,payload){return fetch(url,{method:'POST',headers:{'Content
 function readFileAsDataURL(f){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result);};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(f);});}
 function compressImage(file,maxDim,q){return new Promise(function(res){if(!file.type||file.type.indexOf('image/')!==0){res(null);return;}var img=new Image();var url=URL.createObjectURL(file);img.onload=function(){try{var w=img.width,h=img.height,s=Math.min(1,maxDim/Math.max(w,h));var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cw,ch);x.drawImage(img,0,0,cw,ch);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q));}catch(e){URL.revokeObjectURL(url);res(null);}};img.onerror=function(){URL.revokeObjectURL(url);res(null);};img.src=url;});}
 async function fileToDataUrl(file,key){var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');if(isPhoto){var c=await compressImage(file,1000,0.6);if(c){return c;}}return await readFileAsDataURL(file);}
-function setDoc(p){var map={docFullName:p.name||'',docPhoneNumber:p.phone||'',docIdNumber:p.id_number||'',docRegion:p.region||'',docPhoneModel:p.phone_model||'',docSubmissionId:p.submission_id||PH_SUB||''};Object.keys(map).forEach(function(id){var f=document.getElementById(id);if(f){f.value=map[id];}});}
+function setDoc(p){var map={docFullName:p.name||'',docPhoneNumber:p.phone||'',docIdNumber:p.id_number||'',docRegion:p.region||'',docPhoneModel:p.phone_model||'',docSubmissionId:p.submission_id||PT_SUB||''};Object.keys(map).forEach(function(id){var f=document.getElementById(id);if(f){f.value=map[id];}});}
 function updateSummary(){
  var sel=document.getElementById('phoneModel');if(!sel)return;
- var meta=(window.PH_META||{})[sel.value];
+ var meta=(window.PT_META||{})[sel.value];
  var im=document.getElementById('summaryImg'),nm=document.getElementById('summaryName'),me=document.getElementById('summaryMeta');
  if(meta&&im){im.src=meta.img;im.style.display='block';im.onerror=function(){im.style.display='none';};}
  if(nm){nm.textContent=sel.value||'No phone chosen yet';}
- if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Pay deposit on delivery';}
- var r=(window.PH_PRICING||{})[sel.value]||[0,0];
+ if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Initial payment on delivery';}
+ var r=(window.PT_PRICING||{})[sel.value]||[0,0];
  var d=document.getElementById('depositValue'),w=document.getElementById('weeklyValue');
  if(meta&&meta.orig_dep){
    if(d){d.innerHTML='<span class="strike">'+fmtKES(meta.orig_dep)+'</span> '+fmtKES(r[0]);}
@@ -618,69 +573,69 @@ function initApply(){
  if(sel){sel.addEventListener('change',updateSummary);updateSummary();}
  if(form){form.addEventListener('submit',async function(ev){
    ev.preventDefault();
-   var sb=form.querySelector('button[type=submit]');if(sb){sb.disabled=true;sb.textContent='Sending with love...';}
+   var sb=form.querySelector('button[type=submit]');if(sb){sb.disabled=true;sb.textContent='Processing...';}
    var fd=new FormData(form),p={};fd.forEach(function(v,k){p[k]=v;});
    var subId=genSubId();
-   var payload={submission_id:subId,stage:'details',name:p.full_name||'',phone:p.phone_number||'',id_number:p.id_number||'',region:p.region||'',phone_model:p.phone_model||'',payment_plan:'ProTech Pole Pole'};
+   var payload={submission_id:subId,stage:'details',name:p.full_name||'',phone:p.phone_number||'',id_number:p.id_number||'',region:p.region||'',phone_model:p.phone_model||'',payment_plan:'ProTech Installment'};
    var res=await postJSON('/api/apply',payload);
-   if(res.ok){PH_SUB=subId;setDoc(payload);openModal('applicationModal');jGo(2);jMsg('Lovely start! Add your M-Pesa statement — 30 seconds only.');}
-   else{showToast('We could not reach the shop server. Please check your connection and try again.');}
-   if(sb){sb.disabled=false;sb.textContent='Send My Application';}
+   if(res.ok){PT_SUB=subId;setDoc(payload);openModal('applicationModal');jGo(2);jMsg('Great start! Upload your M-Pesa statement next.');}
+   else{showToast('Could not reach the server. Please check your connection.');}
+   if(sb){sb.disabled=false;sb.textContent='Submit Application';}
  });}
  var cm=document.getElementById('contMpesa');
  if(cm){cm.addEventListener('click',async function(){
    var f=document.getElementById('fMpesa'),pw=document.getElementById('fMpesaPw');
    if(!f||!f.files||!f.files[0]){showToast('Please attach your M-Pesa PDF first.');return;}
    if(!pw||!pw.value){showToast('Please enter the statement password.');return;}
-   cm.disabled=true;cm.textContent='Saving securely...';
-   var subId=val('docSubmissionId')||PH_SUB||genSubId();
+   cm.disabled=true;cm.textContent='Uploading...';
+   var subId=val('docSubmissionId')||PT_SUB||genSubId();
    var du=await fileToDataUrl(f.files[0],'mpesa_statement');
    var res=await postJSON('/api/apply',{submission_id:subId,stage:'file',file_key:'mpesa_statement',filename:f.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du});
-   cm.disabled=false;cm.textContent='Save & Continue';
+   cm.disabled=false;cm.textContent='Continue';
    if(!res.ok){showToast('Could not save your statement. Please try again.');return;}
-   jGo(3);jMsg('Almost there — a quick ID check to keep your account safe.');
+   jGo(3);jMsg('Now we need your ID and a selfie for verification.');
  });}
  var ci=document.getElementById('contIdentity');
  if(ci){ci.addEventListener('click',async function(){
    var items=[['fIdF','id_front','ID front'],['fIdB','id_back','ID back'],['fSelfie','liveness_photo','selfie']];
    for(var i=0;i<items.length;i++){var el=document.getElementById(items[i][0]);if(!el||!el.files||!el.files[0]){showToast('Please add your '+items[i][2]+' photo.');return;}}
-   ci.disabled=true;var subId=val('docSubmissionId')||PH_SUB||genSubId();
+   ci.disabled=true;var subId=val('docSubmissionId')||PT_SUB||genSubId();
    for(var k=0;k<items.length;k++){
-     ci.textContent='Securing '+(k+1)+' of 3 — '+items[k][2]+'...';
+     ci.textContent='Uploading '+(k+1)+' of 3...';
      var el2=document.getElementById(items[k][0]);
      var du=await fileToDataUrl(el2.files[0],items[k][1]);
      var r=await postJSON('/api/apply',{submission_id:subId,stage:'file',file_key:items[k][1],filename:el2.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du});
-     if(!r.ok){ci.disabled=false;ci.textContent='Save & Continue';showToast('Upload problem on '+items[k][2]+'. Please try again.');return;}
+     if(!r.ok){ci.disabled=false;ci.textContent='Continue';showToast('Upload problem. Please try again.');return;}
    }
-   ci.disabled=false;ci.textContent='Save & Continue';
-   jGo(4);jMsg('Last touch — who can we reach if we miss you?');
+   ci.disabled=false;ci.textContent='Continue';
+   jGo(4);jMsg('Last step: add your next of kin details.');
  });}
  var fb=document.getElementById('finBtn');
  if(fb){fb.addEventListener('click',async function(){
    var kn=val('kName'),kp=val('kPhone'),ki=val('kId'),kr=val('kRel');
    if(!kn||!kp||!ki||!kr){showToast('Please complete all next-of-kin fields.');return;}
    fb.disabled=true;fb.textContent='Submitting...';
-   var subId=val('docSubmissionId')||PH_SUB||genSubId();
+   var subId=val('docSubmissionId')||PT_SUB||genSubId();
    var pwEl=document.getElementById('fMpesaPw');
    var r=await postJSON('/api/apply',{submission_id:subId,stage:'final',mpesa_password:pwEl?pwEl.value:'',kin_name:kn,kin_phone:kp,kin_id:ki,kin_relationship:kr});
    fb.disabled=false;fb.textContent='Submit Final Details';
    if(!r.ok){showToast('Could not finish. Please try again.');return;}
-   jGo(5);jMsg('Application complete! Our review desk has been notified.');
+   jGo(5);jMsg('Application complete! We will review and contact you shortly.');
    var wa=document.getElementById('doneWa');
-   if(wa){wa.href='https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech Phone Hub! I just completed my application ('+subId+'). My name is '+(val('docFullName')||kn)+'. Kindly track my review.');}
+   if(wa){wa.href='https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech Phone Hub! I just completed my application ('+subId+'). My name is '+(val('docFullName')||kn)+'. Please review.');}
  });}
 }
-function initNia(){
- var dot=document.getElementById('niaDot'),panel=document.getElementById('niaPanel');
- if(!dot||!panel)return;
- var body=document.getElementById('niaBody'),input=document.getElementById('niaInput'),sendB=document.getElementById('niaSend'),closeB=document.getElementById('niaClose');
+function initChat(){
+ var btn=document.getElementById('chatBtn'),panel=document.getElementById('chatPanel');
+ if(!btn||!panel)return;
+ var body=document.getElementById('chatBody'),input=document.getElementById('chatInput'),sendB=document.getElementById('chatSend'),closeB=document.getElementById('chatClose');
  var opened=false;
  function addMsg(role,text,links){
    var d=document.createElement('div');d.className='msg '+role;d.textContent=text;
-   if(links&&links.length){links.forEach(function(l){var a=document.createElement('a');a.className='chip-link';a.textContent=l.cta||'View';a.href=l.url||'/';if(String(l.url||'').indexOf('http')===0){a.target='_blank';a.rel='noopener';}d.appendChild(a);});}
+   if(links&&links.length){links.forEach(function(l){var a=document.createElement('a');a.className='chip';a.textContent=l.cta||'View';a.href=l.url||'/';if(String(l.url||'').indexOf('http')===0){a.target='_blank';a.rel='noopener';}d.appendChild(a);});}
    body.appendChild(d);body.scrollTop=body.scrollHeight;
  }
- dot.addEventListener('click',function(){panel.classList.add('open');if(!opened){addMsg('bot','Karibu! I am Nia, your Pro Tech shopping sister. Ask me about any phone, price or plan.',[]);opened=true;}});
+ btn.addEventListener('click',function(){panel.classList.add('open');if(!opened){addMsg('bot','Hi! I can help you find the right phone or answer questions about our plans.',[]);opened=true;}});
  if(closeB){closeB.addEventListener('click',function(){panel.classList.remove('open');});}
  function send(preset){
    var text=(preset||input.value||'').trim();if(!text)return;
@@ -688,34 +643,33 @@ function initNia(){
    addMsg('user',text,[]);
    fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})})
    .then(function(r){return r.json();}).then(function(j){
-     addMsg('bot',(j&&j.content)?j.content:'Let me connect you to the shop on WhatsApp.',(j&&j.links)?j.links:[]);
-   }).catch(function(){addMsg('bot','Please WhatsApp us on 0720 890 018 — we reply fast.',[{cta:'WhatsApp us',url:'https://wa.me/254720890018'}]);});
+     addMsg('bot',(j&&j.content)?j.content:'Let me connect you to our team on WhatsApp.',(j&&j.links)?j.links:[]);
+   }).catch(function(){addMsg('bot','Please WhatsApp us on 0720 890 018 for immediate assistance.',[{cta:'WhatsApp us',url:'https://wa.me/254720890018'}]);});
  }
  if(sendB){sendB.addEventListener('click',function(){send();});}
  if(input){input.addEventListener('keydown',function(ev){if(ev.key==='Enter'){send();}});}
- document.querySelectorAll('.nia-quick button').forEach(function(b){b.addEventListener('click',function(){send(b.getAttribute('data-q'));});});
+ document.querySelectorAll('.chat-quick button').forEach(function(b){b.addEventListener('click',function(){send(b.getAttribute('data-q'));});});
 }
 """
 
-# ============================ BUILDERS ============================
-def render_utilbar():
-    return f"""<div class="utilbar"><div class="container">
-<span>Call / WhatsApp <b>{e(PHONE_DISPLAY)}</b> • {e(SHOP_EMAIL)}</span>
-<span>Mon–Sat 8am–7pm • Free delivery in Nairobi &amp; surrounds</span>
+def render_topbar():
+    return f"""<div class="topbar"><div class="container">
+<span>{e(PHONE_DISPLAY)} • {e(SHOP_EMAIL)}</span>
+<span>Mon–Sat 8am–7pm • Free Nairobi delivery</span>
 </div></div>"""
 
 def render_nav(active):
-    links = [("/", "Home", "home"), ("/pole-pole", "Pole Pole", "pole"), ("/cash-prices", "Cash Prices", "cash"), ("/how-it-works", "How It Works", "how"), ("/faq", "FAQ", "faq")]
+    links = [("/", "Home", "home"), ("/installments", "Installment Plans", "install"), ("/cash-prices", "Cash Prices", "cash"), ("/how-it-works", "How It Works", "how"), ("/faq", "FAQ", "faq")]
     items = ""
     for h, l, k in links:
         cls = "active" if k == active else ""
         items += f'<a class="{cls}" href="{h}">{e(l)}</a>'
     return f"""
 <header class="header"><div class="container header-inner">
-<a class="logo" href="/"><b>PRO TECH</b><i>phone hub</i></a>
+<a class="logo" href="/">Pro Tech <span>Phone Hub</span></a>
 <nav class="nav" id="mainNav">{items}
-<a class="btn btn-rose btn-sm" href="/apply-now">Apply Now</a>
-<a class="btn btn-wa btn-sm" href="{whatsapp_link('Hi Pro Tech Phone Hub! I am interested in a phone.')}" target="_blank" rel="noopener">WhatsApp</a>
+<a class="btn btn-coral btn-sm" href="/apply-now">Apply Now</a>
+<a class="btn btn-wa btn-sm" href="{whatsapp_link('Hi Pro Tech Phone Hub!')}" target="_blank" rel="noopener">WhatsApp</a>
 </nav>
 <button class="hamburger" id="menuBtn" aria-label="Menu">☰</button>
 </div></header>"""
@@ -724,202 +678,189 @@ def render_footer():
     return f"""
 <footer class="footer"><div class="container"><div class="footer-grid">
 <div>
-<a class="logo" href="/"><b style="color:#fff">PRO TECH</b><i style="color:var(--champ)">phone hub</i></a>
-<p style="margin-top:12px;max-width:420px">Your trusted phone dealer. Original Samsung &amp; iPhone devices, honest poster prices, and pole pole plans that respect your pocket — run with a woman's eye for detail and a businessperson's word.</p>
+<a class="logo" style="color:#fff" href="/">Pro Tech <span>Phone Hub</span></a>
+<p style="margin-top:12px;max-width:440px">Your trusted phone dealer in Nairobi. Original devices, transparent pricing, flexible payment options, and customer service that puts you first.</p>
 </div>
 <div>
-<h4>Explore</h4>
-<p><a href="/pole-pole">Pole Pole Plan</a></p>
+<h4>Quick Links</h4>
+<p><a href="/installments">Installment Plans</a></p>
 <p><a href="/cash-prices">Cash Price List</a></p>
 <p><a href="/how-it-works">How It Works</a></p>
 <p><a href="/faq">FAQ</a></p>
 <p><a href="/apply-now">Apply Now</a></p>
 </div>
 <div>
-<h4>Talk To Us</h4>
+<h4>Contact</h4>
 <p><a href="tel:{PHONE_TEL}">{e(PHONE_DISPLAY)}</a></p>
 <p><a href="mailto:{SHOP_EMAIL}">{e(SHOP_EMAIL)}</a></p>
-<p><a href="{whatsapp_link('Hello Pro Tech Phone Hub!')}" target="_blank" rel="noopener">WhatsApp the shop</a></p>
-<p>Mon–Sat: 8am – 7pm • Sun: by appointment</p>
+<p><a href="{whatsapp_link('Hello!')}" target="_blank" rel="noopener">WhatsApp</a></p>
+<p>Hours: Mon–Sat 8am–7pm</p>
 </div>
-</div><div class="copyright">© 2026 {e(SHOP_NAME)} — Latest Phones. Best Prices. Always.</div></div></footer>"""
+</div><div class="copyright">© 2026 {e(SHOP_NAME)}. All rights reserved.</div></div></footer>"""
 
 def base_page(title, content, active=""):
     wa = whatsapp_link("Hello Pro Tech Phone Hub, I need help.")
     return f"""<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(title)} | {e(SHOP_NAME)}</title>
-<meta name="description" content="Pro Tech Phone Hub — original Samsung & iPhone devices at poster prices, flexible pole pole plans, free delivery in Nairobi & surrounding areas.">
+<meta name="description" content="Pro Tech Phone Hub — original Samsung & iPhone devices with flexible installment plans and cash purchase options. Free delivery in Nairobi.">
 <style>{CSS}</style></head><body>
-{render_utilbar()}{render_nav(active)}<main>{content}</main>{render_footer()}
+{render_topbar()}{render_nav(active)}<main>{content}</main>{render_footer()}
 <a class="wa-float" href="{wa}" target="_blank" rel="noopener" aria-label="WhatsApp">
 <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.8-.1 1.5Z"/></svg></a>
-<button class="nia-dot" id="niaDot" type="button">✦ Ask Nia</button>
-<div class="nia-panel" id="niaPanel">
-<div class="nia-head"><div class="av">N</div><div><strong>Nia</strong><div style="font-size:12px;color:#e8cdd7">Your Pro Tech shopping sister • online</div></div>
-<button class="modal-close" id="niaClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.15);border:none;color:#fff" aria-label="Close">×</button></div>
-<div class="nia-body" id="niaBody"></div>
-<div class="nia-quick" style="display:flex;gap:7px;flex-wrap:wrap;padding:0 12px 10px;background:var(--cream)">
-<button type="button" data-q="Best phone under 50k?" style="padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:#6f5666;cursor:pointer">Under 50k</button>
-<button type="button" data-q="How does pole pole work?" style="padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:#6f5666;cursor:pointer">Pole pole?</button>
-<button type="button" data-q="I want to talk to a human" style="padding:7px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:#6f5666;cursor:pointer">Human help</button>
+<button class="chat-btn" id="chatBtn" type="button">💬 Chat with us</button>
+<div class="chat-panel" id="chatPanel">
+<div class="chat-head"><div class="av">P</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:#b8c5d1">Online now</div></div>
+<button class="modal-close" id="chatClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.15);border:none;color:#fff" aria-label="Close">×</button></div>
+<div class="chat-body" id="chatBody"></div>
+<div class="chat-quick" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:var(--cream)">
+<button type="button" data-q="Best phones under 50k?" style="padding:8px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:#5a6b7a;cursor:pointer">Under 50k</button>
+<button type="button" data-q="How do installment plans work?" style="padding:8px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:#5a6b7a;cursor:pointer">Installments?</button>
+<button type="button" data-q="I want to talk to someone" style="padding:8px 12px;border-radius:99px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:#5a6b7a;cursor:pointer">Human help</button>
 </div>
-<div class="nia-input"><input id="niaInput" type="text" placeholder="Ask Nia anything..."><button class="btn btn-rose btn-sm" id="niaSend" type="button">Send</button></div>
+<div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-coral btn-sm" id="chatSend" type="button">Send</button></div>
 </div>
 <div id="toast" class="toast"></div><script>{JS}</script></body></html>"""
 
-def shelf_card(p):
+def feature_card(p):
     fb = placeholder_image(p["name"])
     t = f"{p['name']} • {p['storage'][0]}"
     if p.get("offer_badge"):
-        flag = f'<span class="flag rose">{e(p["offer_badge"])}</span>'
-        plan = f'<div class="sc-plan"><span><span class="strike">{money(p["original_weekly"])}</span><b>{money(p["weekly"])}/wk</b></span><span>dep {money(p["deposit"])}</span></div>'
+        badge = f'<span class="badge offer">{e(p["offer_badge"])}</span>'
+        price = f'<div class="pricing"><div class="price"><span class="strike">{money(p["original_weekly"])}</span>{money(p["weekly"])}/week</div><div class="sub">Initial: {money(p["deposit"])} <span class="strike">{money(p["original_deposit"])}</span></div></div>'
     else:
-        flag = '<span class="flag">Pole Pole</span>'
-        plan = f'<div class="sc-plan"><b>{money(p["weekly"])}/wk</b><span>dep {money(p["deposit"])}</span></div>'
+        badge = '<span class="badge">Installment</span>'
+        price = f'<div class="pricing"><div class="price">{money(p["weekly"])}/week</div><div class="sub">Initial: {money(p["deposit"])}</div></div>'
     return f"""
-<a class="shelf-card" href="/device/{e(p['slug'])}">{flag}
-<div class="arch" style="margin:12px 12px 0"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="sc-body"><h3>{e(t)}</h3>{plan}</div></a>"""
+<a class="feature-card reveal" href="/device/{e(p['slug'])}">{badge}
+<div class="img-wrap"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="card-body"><h3>{e(t)}</h3>{price}
+<div class="cta"><span>View Details</span><span>→</span></div></div></a>"""
 
 def arch_card_lipa(p):
     fb = placeholder_image(p["name"])
     t = f"{p['name']} • {p['storage'][0]}"
     if p.get("offer_badge"):
-        flag = f'<span class="flag rose">{e(p["offer_badge"])}</span>'
-        price = f'<div class="pcard-foot"><span class="pcard-price"><span class="strike">{money(p["original_weekly"])}</span>{money(p["weekly"])}/wk</span><span class="pcard-cta">View →</span></div><div class="pcard-spec">deposit {money(p["deposit"])} <span class="strike">was {money(p["original_deposit"])}</span></div>'
+        badge = f'<span class="badge offer">{e(p["offer_badge"])}</span>'
+        price = f'<div class="pricing"><div class="price"><span class="strike">{money(p["original_weekly"])}</span>{money(p["weekly"])}/week</div><div class="sub">Initial: {money(p["deposit"])} <span class="strike">{money(p["original_deposit"])}</span></div></div>'
     else:
-        flag = '<span class="flag">Pole Pole</span>'
-        price = f'<div class="pcard-foot"><span class="pcard-price">{money(p["weekly"])}/week</span><span class="pcard-cta">View →</span></div><div class="pcard-spec">deposit {money(p["deposit"])}</div>'
+        badge = '<span class="badge">Installment</span>'
+        price = f'<div class="pricing"><div class="price">{money(p["weekly"])}/week</div><div class="sub">Initial: {money(p["deposit"])}</div></div>'
     return f"""
-<a class="pcard reveal" href="/device/{e(p['slug'])}">{flag}
-<div class="arch"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="pcard-body"><h3>{e(t)}</h3>{price}</div></a>"""
+<a class="feature-card reveal" href="/device/{e(p['slug'])}">{badge}
+<div class="img-wrap"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="card-body"><h3>{e(t)}</h3>{price}
+<div class="cta"><span>View Details</span><span>→</span></div></div></a>"""
 
 def arch_card_cash(p):
     fb = placeholder_image(p["model"])
     return f"""
-<a class="pcard reveal" href="/device/{e(p['slug'])}"><span class="flag">Cash • Original</span>
-<div class="arch"><img src="{e(p['image'])}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="pcard-body"><h3>{e(p['model'])}</h3>
-<div class="pcard-spec">{e(truncate(p['specs'], 78))}</div>
-<div class="pcard-foot"><span class="pcard-price">{money(p['price'])}</span><span class="pcard-cta">Details →</span></div>
+<a class="cash-card reveal" href="/device/{e(p['slug'])}">
+<div class="img-wrap"><img src="{e(p['image'])}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="card-body"><h4>{e(p['model'])}</h4>
+<div class="spec">{e(truncate(p['specs'], 90))}</div>
+<div class="price">{money(p['price'])}</div>
+<div class="cta-row"><a class="btn btn-outline btn-sm" href="/device/{e(p['slug'])}">Details</a><a class="btn btn-wa btn-sm" href="{whatsapp_link('I want to buy '+p['name']+' at '+money(p['price']))}" target="_blank" rel="noopener">Order</a></div>
 </div></a>"""
 
-# ============================ ROUTES ============================
 @app.route("/")
 def home():
-    shelf = "".join(shelf_card(p) for p in LIPA_PRODUCTS)
-    coupons = ""
-    for p in LIPA_PRODUCTS:
-        if p.get("offer_badge"):
-            fb = placeholder_image(p["name"])
-            coupons += f"""
-<a class="coupon reveal" href="/device/{e(p['slug'])}">
-<div class="cp-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="cp-mid"><h4>{e(p['name'])}</h4>
-<div class="was">was {money(p['original_deposit'])} deposit</div>
-<div class="now">{money(p['deposit'])} deposit</div>
-<div class="wk"><span class="strike">{money(p['original_weekly'])}/wk</span> now {money(p['weekly'])}/week</div></div>
-<div class="cp-stub"><span><em>20th</em>offer deadline</span></div>
-</a>"""
+    cards = "".join(feature_card(p) for p in LIPA_PRODUCTS[:9])
     f1 = LIPA_PRODUCTS[-1]["image"]; f2 = LIPA_PRODUCTS[-5]["image"]; f3 = LIPA_PRODUCTS[1]["image"]
     content = f"""
 <section class="hero"><div class="container hero-grid">
 <div>
-<span class="kicker">Pro Tech Phone Hub • Nairobi</span>
-<h1>Latest phones. Best prices. <em>always.</em></h1>
-<p class="lead">Original Samsung &amp; iPhone devices at the exact prices on our poster — pay cash today, or take them home on a gentle pole pole plan. Tested by hand, delivered free in Nairobi &amp; surrounds, sold with a businessperson's word.</p>
+<span class="hero-tag">Nairobi's trusted phone dealer</span>
+<h1>Premium phones, <em>honest prices</em>, flexible payments.</h1>
+<p class="lead">Original Samsung and iPhone devices at transparent prices. Choose installment plans with manageable weekly payments, or pay cash and own it today. Free delivery in Nairobi and surrounding areas.</p>
 <div class="hero-actions">
-<a class="btn btn-rose" href="/cash-prices">See Cash Price List</a>
-<a class="btn btn-line" href="/pole-pole">Browse Pole Pole Shelf</a>
+<a class="btn btn-coral" href="/installments">Browse Installment Plans</a>
+<a class="btn btn-outline" href="/cash-prices">View Cash Prices</a>
 </div>
 <div class="hero-stats">
 <div class="hstat"><b>70+</b><span>devices in stock</span></div>
-<div class="hstat"><b>~30 min</b><span>plan approval</span></div>
+<div class="hstat"><b>~30 min</b><span>approval time</span></div>
 <div class="hstat"><b>0</b><span>hidden fees</span></div>
 </div>
 </div>
-<div class="fan">
-<img class="fimg f1" src="{e(f3)}" alt="Featured phone" loading="lazy">
-<img class="fimg f2" src="{e(f2)}" alt="Featured phone" loading="lazy">
-<img class="fimg f3" src="{e(f1)}" alt="Featured phone" loading="lazy">
-<span class="ftag t1">Original phones only</span>
-<span class="ftag t2">Poster prices honoured</span>
+<div class="hero-visual">
+<img class="hero-phone" src="{e(f3)}" alt="Featured phone" loading="lazy">
+<img class="hero-phone" src="{e(f2)}" alt="Featured phone" loading="lazy">
+<img class="hero-phone" src="{e(f1)}" alt="Featured phone" loading="lazy">
 </div>
 </div></section>
-<div class="trust"><div class="container">
-<div><span>genuine</span>Original &amp; quality phones</div>
-<div><span>free</span>Delivery in Nairobi &amp; surrounds</div>
-<div><span>flexible</span>Pole pole payment options</div>
-<div><span>friendly</span>Customer support that listens</div>
+<div class="trust-strip"><div class="container">
+<div class="trust-item"><strong>Original</strong><span>Quality verified</span></div>
+<div class="trust-item"><strong>Free Delivery</strong><span>Nairobi & environs</span></div>
+<div class="trust-item"><strong>Flexible</strong><span>Payment options</span></div>
+<div class="trust-item"><strong>Support</strong><span>We're here to help</span></div>
 </div></div>
 <section class="container section">
-<div class="sec-head reveal"><div><span class="kicker">this month only</span><h2>Sweet offers till the 20th</h2></div><div class="rule"></div>
-<a class="btn btn-line btn-sm" href="/pole-pole">All pole pole phones</a></div>
-<div class="coupons">{coupons}</div>
-</section>
-<section class="container section" style="padding-top:10px">
-<div class="sec-head reveal"><div><span class="kicker">pay small small</span><h2>The pole pole shelf</h2></div><div class="rule"></div>
-<span class="muted" style="font-size:13px;font-weight:700">scroll sideways →</span></div>
-<div class="shelf">{shelf}</div>
-</section>
-<section class="container section" style="padding-top:6px">
-<div class="sec-head reveal"><div><span class="kicker">why shoppers stay</span><h2>The ProTech standard</h2></div><div class="rule"></div></div>
-<div class="edit-grid">
-<div class="edit-item reveal"><b class="n">01</b><h3>Inspected by hand</h3><p class="muted">Every device passes a physical check — screen, battery, cameras, network — before it is allowed on the shelf or the poster.</p></div>
-<div class="edit-item reveal"><b class="n">02</b><h3>Poster price is final</h3><p class="muted">What you see on our price list is what you pay. No surprise additions at the counter, ever.</p></div>
-<div class="edit-item reveal"><b class="n">03</b><h3>Plans that breathe</h3><p class="muted">Deposit on delivery, first weekly payment after 7 days, then small M-Pesa steps until the phone is fully yours.</p></div>
+<div class="sec-head reveal"><span class="tag">This month</span><h2>Limited-time offers</h2><p>Special pricing on select models until the 20th.</p></div>
+<div class="showcase">
+{"".join(f'''
+<a class="showcase-item reveal" href="/device/{e(p['slug'])}">
+<span class="num">0{LIPA_PRODUCTS.index(p)+1}</span>
+<h3>{e(p['name'])}</h3>
+<p><span class="strike">{money(p['original_deposit'])}</span> <strong style="color:var(--coral2)">{money(p['deposit'])}</strong> initial payment<br>
+<span class="strike">{money(p['original_weekly'])}/week</span> <strong style="color:var(--coral2)">{money(p['weekly'])}/week</strong></p>
+</a>''' for p in LIPA_PRODUCTS if p.get('offer_badge'))}
 </div>
 </section>
-<section class="container section" style="padding-top:0">
-<div class="founder reveal">
-<p>I started Pro Tech Phone Hub because buying a phone should feel like being helped by a friend who knows phones — not pushed by a salesman. Every device here is one I would hand to my own sister. Ask your questions, take your time; we will find the phone that loves you back.</p>
-<div class="sig">— Founder, Pro Tech Phone Hub</div>
+<section class="container section">
+<div class="sec-head reveal"><span class="tag">Installment plans</span><h2>Popular devices on flexible payment</h2><p>Pay an initial amount on delivery, then manageable weekly installments via M-Pesa.</p></div>
+<div class="feature-grid">{cards}</div>
+<div style="text-align:center;margin-top:32px"><a class="btn btn-outline" href="/installments">View all installment options →</a></div>
+</section>
+<section class="container section">
+<div class="sec-head reveal"><span class="tag">Why choose us</span><h2>What sets Pro Tech apart</h2></div>
+<div class="showcase">
+<div class="showcase-item reveal"><span class="num">01</span><h3>Hand-inspected devices</h3><p>Every phone undergoes thorough testing before listing. Screen, battery, cameras, connectivity — all verified.</p></div>
+<div class="showcase-item reveal"><span class="num">02</span><h3>Transparent pricing</h3><p>What you see is what you pay. No surprise charges, no hidden fees. Our posted prices are final.</p></div>
+<div class="showcase-item reveal"><span class="num">03</span><h3>Customer-first approach</h3><p>We take time to understand your needs, answer questions thoroughly, and find the right device for you.</p></div>
 </div>
 </section>
-<section class="container section" style="padding-top:0">
-<div class="sec-head reveal"><div><span class="kicker">shopper love</span><h2>Words from our customers</h2></div><div class="rule"></div></div>
-<div class="postcards">
-<div class="postcard reveal"><div class="stars">★★★★★</div><p>"She explained everything patiently and delivered to my office the same day. Deposit on delivery — no stories."</p><strong>— Naliaka S.</strong></div>
-<div class="postcard reveal"><div class="stars">★★★★★</div><p>"My pole pole plan fits my salary perfectly. I finished paying and the phone is fully mine. Asante sana!"</p><strong>— Otieno J.</strong></div>
-<div class="postcard reveal"><div class="stars">★★★★★</div><p>"The price on the poster was the price I paid. Original, clean, battery healthy. Rare honesty these days."</p><strong>— Auma R.</strong></div>
+<section class="container section">
+<div class="sec-head reveal"><span class="tag">Customer stories</span><h2>What our clients say</h2></div>
+<div class="testimonial-grid">
+<div class="testimonial reveal"><div class="stars">★★★★★</div><p>"Explained everything clearly, delivered same day to my office. Initial payment on delivery, no complications."</p><strong>— Naliaka S.</strong><span class="ref">PT-101</span></div>
+<div class="testimonial reveal"><div class="stars">★★★★★</div><p>"Installment plan fits my budget perfectly. Finished payments and the phone is fully mine now."</p><strong>— Otieno J.</strong><span class="ref">PT-102</span></div>
+<div class="testimonial reveal"><div class="stars">★★★★★</div><p>"Price matched exactly what was advertised. Original device, clean condition, battery health excellent."</p><strong>— Auma R.</strong><span class="ref">PT-103</span></div>
 </div>
 </section>
-<section class="container" style="padding-bottom:70px">
+<section class="container">
 <div class="cta-band reveal">
-<div class="script">get the phone you want</div>
-<h2>At the best price — today.</h2>
-<div class="hero-actions" style="justify-content:center;margin-top:20px">
-<a class="btn btn-rose" href="/apply-now">Start My Application</a>
-<a class="btn btn-wa" href="{whatsapp_link('Hello Pro Tech Phone Hub! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<h2>Ready for your next phone?</h2>
+<p>Start your application today or WhatsApp us for personalized recommendations.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:24px">
+<a class="btn btn-coral" href="/apply-now">Start Application</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
 </section>"""
     return base_page("Home", content, "home")
 
-@app.route("/pole-pole")
-def pole_pole():
+@app.route("/installments")
+def installments():
     cards = "".join(arch_card_lipa(p) for p in LIPA_PRODUCTS)
     content = f"""
-<section class="hero" style="padding:52px 0 14px"><div class="container">
-<span class="kicker">pay small small, own it fully</span>
-<h1 style="font-family:var(--serif);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);color:var(--ink);margin-top:10px">The pole pole <em style="font-family:var(--script);font-style:normal;color:var(--rose)">shelf</em></h1>
-<p class="lead" style="max-width:700px;color:#6f5666">Choose your phone, pay a friendly deposit on delivery, then small weekly M-Pesa payments — first one after 7 days — until it is 100% yours.</p>
+<section class="hero" style="padding:60px 0 20px"><div class="container">
+<span class="hero-tag">Flexible payment options</span>
+<h1 style="font-family:var(--serif);font-size:clamp(2rem,4.6vw,3.4rem);color:var(--navy);margin-top:12px">Installment <em style="color:var(--coral2)">plans</em></h1>
+<p class="lead" style="max-width:720px">Choose your phone, pay an initial amount on delivery, then manageable weekly M-Pesa payments. Your first installment is due after a grace period.</p>
 </div></section>
-<section class="container section" style="padding-top:26px"><div class="agrid">{cards}</div></section>
-<section class="container" style="padding-bottom:70px">
+<section class="container section" style="padding-top:32px"><div class="feature-grid">{cards}</div></section>
+<section class="container">
 <div class="cta-band reveal">
-<div class="script">not sure what fits?</div>
-<h2>WhatsApp us your weekly budget.</h2>
-<p style="color:#d9c2cf;margin-top:8px">We will shortlist three phones that love you back — no pressure.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:20px">
-<a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — which phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn btn-rose" href="/apply-now">Apply Now</a>
+<h2>Not sure what fits your budget?</h2>
+<p>WhatsApp us your weekly budget and we'll suggest three options.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:24px">
+<a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-coral" href="/apply-now">Apply Now</a>
 </div>
 </div>
 </section>"""
-    return base_page("Pole Pole Shelf", content, "pole")
+    return base_page("Installment Plans", content, "install")
 
 @app.route("/cash-prices")
 def cash_prices():
@@ -927,23 +868,23 @@ def cash_prices():
     for c in CASH_CATEGORIES:
         cards = "".join(arch_card_cash(p) for p in c["products"])
         blocks += f"""
-<section class="container cat-block"><div class="cat-head reveal">
-<h3>{e(c['name'])}</h3><span class="count">{len(c['products'])} devices</span><div class="rule"></div></div>
-<p class="muted reveal" style="margin:-6px 0 18px;max-width:820px">{e(c['note'])}</p>
-<div class="agrid">{cards}</div></section>"""
+<section class="container cat-section"><div class="cat-head reveal">
+<h3>{e(c['name'])}</h3><span class="count">{len(c['products'])} devices</span></div>
+<p class="muted reveal" style="margin-bottom:22px">{e(c['note'])}</p>
+<div class="cash-grid">{cards}</div></section>"""
     content = f"""
-<section class="hero" style="padding:52px 0 14px"><div class="container">
-<span class="kicker">the full poster, live</span>
-<h1 style="font-family:var(--serif);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);color:var(--ink);margin-top:10px">Cash prices — <em style="font-family:var(--script);font-style:normal;color:var(--rose)">pay in full, own today</em></h1>
-<p class="lead" style="max-width:760px;color:#6f5666">Every price below is the final price from our shop poster. Tap any phone for photos, specs and its own page — or WhatsApp us to reserve it.</p>
-<div style="max-width:520px;margin-top:18px"><input id="cashSearch" type="search" placeholder="Search model, storage or series..."></div>
+<section class="hero" style="padding:60px 0 20px"><div class="container">
+<span class="hero-tag">Immediate ownership</span>
+<h1 style="font-family:var(--serif);font-size:clamp(2rem,4.6vw,3.4rem);color:var(--navy);margin-top:12px">Cash <em style="color:var(--coral2)">prices</em></h1>
+<p class="lead" style="max-width:760px">Every price below is final. Tap any phone for full details, photos, and specifications — or WhatsApp us to reserve it.</p>
+<div style="max-width:520px;margin-top:22px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..."></div>
 </div></section>
-<section class="container section" style="padding-top:30px;padding-bottom:10px">{blocks}</section>
-<section class="container" style="padding-bottom:70px">
+<section class="container section" style="padding-top:36px">{blocks}</section>
+<section class="container">
 <div class="cta-band reveal">
-<div class="script">seen your price?</div>
-<h2>We'll hold it for you.</h2>
-<div class="hero-actions" style="justify-content:center;margin-top:20px">
+<h2>Found what you want?</h2>
+<p>WhatsApp us to reserve it or arrange delivery.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:24px">
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I want to reserve a phone from your cash price list.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
@@ -960,84 +901,88 @@ def device_page(slug):
         specs = "".join(f"<li>{e(x.strip())}</li>" for x in p["specs"].split("•") if x.strip())
         content = f"""
 <section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
-<div class="pp-grid">
-<div class="pp-visual"><div class="arch"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<span class="stamp">Original • Tested</span></div>
-<div class="pp-panel">
-<div class="pills"><span class="pill">{e(p['category_name'])}</span><span class="pill rose">Cash price</span><span class="pill">Free Nairobi delivery</span></div>
+<div class="product-detail">
+<div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="product-info">
+<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+<span style="padding:6px 12px;border-radius:6px;background:var(--sand);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)">{e(p['category_name'])}</span>
+<span style="padding:6px 12px;border-radius:6px;background:var(--coral);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff">Cash purchase</span>
+<span style="padding:6px 12px;border-radius:6px;background:var(--sand);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)">Free delivery</span>
+</div>
 <h1>{e(p['name'])}</h1>
-<p class="muted">{e(p['specs'])}</p>
-<div class="ticket"><div class="tk-head">Cash purchase</div>
-<div class="tk-row"><span>Pay in full</span><b>{money(p['price'])}</b></div>
-<div class="tk-row"><span>Ownership</span><b>Immediately yours</b></div>
-<div class="tk-row"><span>Delivery</span><b>Free in Nairobi &amp; surrounds</b></div></div>
+<p class="tagline">{e(p['specs'])}</p>
+<div class="plan-detail"><h3>Purchase details</h3>
+<div class="plan-row"><span>Full payment</span><strong>{money(p['price'])}</strong></div>
+<div class="plan-row"><span>Ownership</span><strong>Immediate</strong></div>
+<div class="plan-row"><span>Delivery</span><strong>Free in Nairobi & environs</strong></div></div>
 <div class="hero-actions">
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
-<a class="btn btn-line" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-<div class="notice">Prefer pole pole? Many cash phones can also go home on a weekly plan — ask us on WhatsApp.</div>
-<h3 style="font-family:var(--serif);color:var(--ink)">Quick specifications</h3>
-<ul class="promise-list">{specs}</ul>
+<div style="margin-top:20px;padding:16px;background:rgba(91,164,164,.08);border-left:4px solid var(--teal);border-radius:8px"><strong>Prefer installments?</strong><br>Many cash phones can also be taken on a weekly payment plan — ask us on WhatsApp.</div>
+<h3 style="font-family:var(--serif);color:var(--navy);margin-top:24px">Specifications</h3>
+<ul class="promise">{specs}</ul>
 </div></div></section>"""
         return base_page(p["name"], content, "cash")
     first = f"{p['apply_name']} ({p['storage'][0]})"
     apply_href = "/apply-now?phone=" + urllib.parse.quote(first)
-    wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want the {p['name']} on pole pole. Preferred storage: {p['storage'][0]}.")
+    wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want the {p['name']} on installment. Preferred storage: {p['storage'][0]}.")
     sb = ""
     for i, s in enumerate(p["storage"]):
         pr = price_for(p, s)
         act = " active" if i == 0 else ""
         ow = money(p["original_weekly"]) + " / week" if p.get("original_weekly") else ""
         od = money(p["original_deposit"]) if p.get("original_deposit") else ""
-        sb += f'<button type="button" class="option-btn storage-btn{act}" data-product="{e(p["apply_name"])}" data-storage="{e(s)}" data-weekly="{money(pr["weekly"])} / week" data-deposit="{money(pr["deposit"])}" data-orig-weekly="{ow}" data-orig-deposit="{od}">{e(s)}</button>'
-    cb = "".join(f'<button type="button" class="option-btn color-btn{" active" if i == 0 else ""}">{e(c)}</button>' for i, c in enumerate(p["colors"]))
+        sb += f'<button type="button" class="opt-btn opt-storage{act}" data-product="{e(p["apply_name"])}" data-storage="{e(s)}" data-weekly="{money(pr["weekly"])} / week" data-deposit="{money(pr["deposit"])}" data-orig-weekly="{ow}" data-orig-deposit="{od}">{e(s)}</button>'
+    cb = "".join(f'<button type="button" class="opt-btn opt-color{" active" if i == 0 else ""}">{e(c)}</button>' for i, c in enumerate(p["colors"]))
     rows = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in p["specs"].items())
     r, n, ref, rev_txt = p["review"]
     fp = price_for(p, p["storage"][0])
     if p.get("original_weekly"):
-        wk = f'<b id="planWeekly" style="color:var(--rose)">{money(fp["weekly"])} / week</b> <span class="strike">{money(p["original_weekly"])}</span>'
-        dp = f'<b id="planDeposit" style="color:var(--rose)">{money(fp["deposit"])}</b> <span class="strike">{money(p["original_deposit"])}</span>'
-        stamp = f'<span class="stamp">{e(p["offer_badge"])}</span>'
-        offer_row = f'<div class="tk-row"><span>Promotion</span><b style="color:var(--rose)">{e(OFFER_NOTE)}</b></div>'
+        wk = f'<strong id="planWeekly" style="color:var(--coral)">{money(fp["weekly"])} / week</strong> <span class="strike">{money(p["original_weekly"])}</span>'
+        dp = f'<strong id="planDeposit" style="color:var(--coral)">{money(fp["deposit"])}</strong> <span class="strike">{money(p["original_deposit"])}</span>'
+        offer_row = f'<div class="plan-row"><span>Special pricing</span><strong style="color:var(--coral)">Limited offer</strong></div>'
     else:
-        wk = f'<b id="planWeekly">{money(fp["weekly"])} / week</b>'
-        dp = f'<b id="planDeposit">{money(fp["deposit"])}</b>'
-        stamp = '<span class="stamp">Pole Pole</span>'
+        wk = f'<strong id="planWeekly">{money(fp["weekly"])} / week</strong>'
+        dp = f'<strong id="planDeposit">{money(fp["deposit"])}</strong>'
         offer_row = ""
     content = f"""
-<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/pole-pole">Pole Pole</a> / <span>{e(p['name'])}</span></div>
-<div class="pp-grid">
-<div class="pp-visual"><div class="arch"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>{stamp}</div>
-<div class="pp-panel">
-<div class="pills"><span class="pill">{e(p.get('condition','Ex-UK'))}</span><span class="pill">{e(p['stock'])}</span><span class="pill rose">Deposit on delivery</span></div>
+<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
+<div class="product-detail">
+<div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="product-info">
+<div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap">
+<span style="padding:6px 12px;border-radius:6px;background:var(--sand);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)">{e(p.get('condition','Ex-UK'))}</span>
+<span style="padding:6px 12px;border-radius:6px;background:var(--sand);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--navy)">{e(p['stock'])}</span>
+<span style="padding:6px 12px;border-radius:6px;background:var(--coral);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#fff">Initial on delivery</span>
+</div>
 <h1>{e(p['name'])}</h1>
-<p class="muted">{e(p['tagline'])}</p>
-<div class="ticket"><div class="tk-head">Pole pole plan</div>
-<div class="tk-row"><span>Weekly payment</span>{wk}</div>
-<div class="tk-row"><span>Goodwill deposit</span>{dp}</div>
-<div class="tk-row"><span>First weekly payment</span><b>After 7 days</b></div>{offer_row}</div>
-<div class="field"><label>Storage</label><div class="option-row">{sb}</div></div>
-<div class="field"><label>Colour</label><div class="option-row">{cb}</div></div>
+<p class="tagline">{e(p['tagline'])}</p>
+<div class="plan-detail"><h3>Installment plan</h3>
+<div class="plan-row"><span>Weekly payment</span>{wk}</div>
+<div class="plan-row"><span>Initial payment</span>{dp}</div>
+<div class="plan-row"><span>First installment</span><strong>After grace period</strong></div>{offer_row}</div>
+<div class="option-group"><label>Storage</label><div class="option-row">{sb}</div></div>
+<div class="option-group"><label>Color</label><div class="option-row">{cb}</div></div>
 <div class="hero-actions">
-<a class="btn btn-rose" id="applyCta" href="{apply_href}">Take It On Pole Pole</a>
+<a class="btn btn-coral" id="applyCta" href="{apply_href}">Take on Installment</a>
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
 </div>
-<h3 style="font-family:var(--serif);color:var(--ink);margin-top:16px">The ProTech promise</h3>
-<ul class="promise-list">
-<li>Original, fully tested — or your money back</li>
-<li>Deposit paid only when the phone is in your hands</li>
-<li>Free delivery within Nairobi &amp; surrounding areas</li>
-<li>7-day exchange guarantee on any factory fault</li>
+<h3 style="font-family:var(--serif);color:var(--navy);margin-top:20px">Our guarantee</h3>
+<ul class="promise">
+<li>Original, thoroughly tested device</li>
+<li>Initial payment only when you receive the phone</li>
+<li>Free delivery within Nairobi & surrounding areas</li>
+<li>7-day exchange on any factory defect</li>
 </ul>
-<h3 style="font-family:var(--serif);color:var(--ink)">Specification</h3>
+<h3 style="font-family:var(--serif);color:var(--navy)">Specifications</h3>
 <table class="spec-table">{rows}</table>
 </div></div></section>
 <section class="container section" style="padding-top:0">
-<div class="sec-head reveal"><div><span class="kicker">shopper love</span><h2>Verified review</h2></div><div class="rule"></div></div>
-<div class="review reveal"><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap"><strong style="font-family:var(--serif);color:var(--plum)">{e(n)}</strong><span class="stars">{"★"*r}{"☆"*(5-r)}</span></div>
-<div class="muted" style="font-size:13px;margin:6px 0">Verified purchase • Ref {e(ref)}</div><p style="color:#6f5666">{e(rev_txt)}</p></div>
+<div class="sec-head reveal"><span class="tag">Customer review</span><h2>Verified feedback</h2></div>
+<div class="review-box reveal"><div class="stars">{"★"*r}{"☆"*(5-r)}</div><strong>{e(n)}</strong><span class="ref">Verified purchase • Ref {e(ref)}</span><p style="color:#5a6b7a">{e(rev_txt)}</p></div>
 </section>"""
-    return base_page(p["name"], content, "pole")
+    return base_page(p["name"], content, "install")
 
 @app.route("/apply-now")
 def apply_now():
@@ -1052,17 +997,17 @@ def apply_now():
                            "orig_dep": p.get("original_deposit"), "orig_wk": p.get("original_weekly")}
             sel = " selected" if label == selected else ""
             options += f'<option value="{e(label)}"{sel}>{e(label)}</option>'
-    ps = "<script>window.PH_PRICING = " + json.dumps(pricing) + ";window.PH_META = " + json.dumps(meta) + ";</script>"
+    ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
     content = f"""
-<section class="hero" style="padding:46px 0 10px"><div class="container" style="max-width:840px">
-<span class="kicker">join the protech family</span>
-<h1 style="font-family:var(--serif);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);color:var(--ink);margin-top:10px">Apply in <em style="font-family:var(--script);font-style:normal;color:var(--rose)">under 2 minutes</em></h1>
-<p class="lead" style="color:#6f5666">A decision usually takes about 30 minutes. You pay your deposit only when the phone is delivered to you.</p>
+<section class="hero" style="padding:54px 0 14px;text-align:center"><div class="container" style="max-width:860px">
+<span class="hero-tag">Join Pro Tech Phone Hub</span>
+<h1 style="font-family:var(--serif);font-size:clamp(2rem,4.6vw,3.4rem);color:var(--navy);margin-top:12px">Apply in <em style="color:var(--coral2)">under 2 minutes</em></h1>
+<p class="lead" style="color:#5a6b7a">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
 </div></section>
-<section class="container section" style="padding-top:22px"><div class="pp-grid">
-<div class="ticket reveal" style="margin:0">
-<div class="tk-head">Your details — private &amp; safe</div>
-<div style="padding:20px">
+<section class="container section" style="padding-top:28px"><div class="product-detail">
+<div style="background:#fff;border-radius:16px;padding:28px;box-shadow:var(--shadow)">
+<h2 style="font-family:var(--serif);color:var(--navy);margin-bottom:6px">Your information</h2>
+<p class="muted" style="margin-bottom:18px">Private and secure — used only to process your application.</p>
 <form id="applicationForm">
 <div class="field"><label>Preferred phone</label><select id="phoneModel" name="phone_model" required><option value="">Choose your phone...</option>{options}</select></div>
 <div class="form-grid">
@@ -1073,52 +1018,51 @@ def apply_now():
 <div class="field"><label>National ID number</label><input id="id_number" name="id_number" required placeholder="ID number"></div>
 <div class="field"><label>Region / location</label><select id="region" name="region" required><option value="">Choose...</option><option>Nairobi</option><option>Kiambu</option><option>Nakuru</option><option>Mombasa</option><option>Other</option></select></div>
 </div>
-<button class="btn btn-rose" type="submit" style="width:100%">Send My Application ✦</button>
-<p class="muted" style="font-size:12.5px;margin-top:10px;text-align:center">You'll then be guided through a short, secure verification.</p>
+<button class="btn btn-coral" type="submit" style="width:100%">Submit Application</button>
+<p class="muted" style="font-size:12.5px;margin-top:12px;text-align:center">You'll then be guided through a brief verification process.</p>
 </form>
-</div></div>
-<div class="ticket reveal" style="margin:0;position:sticky;top:96px">
-<div class="tk-head">Your summary</div>
-<div style="padding:20px">
-<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:12px;background:var(--cream);margin-bottom:14px">
-<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:10px">
-<div><strong id="summaryName" style="font-family:var(--serif);color:var(--plum)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px">Pick a model to see its plan.</div></div>
 </div>
-<div class="tk-row"><span>Deposit</span><b id="depositValue">KES 0</b></div>
-<div class="tk-row"><span>Weekly</span><b id="weeklyValue">KES 0</b></div>
-<div class="tk-row"><span>First payment</span><b>After 7 days</b></div>
-<ul class="promise-list" style="margin-top:14px">
+<div style="background:#fff;border-radius:16px;padding:28px;box-shadow:var(--shadow);position:sticky;top:100px">
+<h2 style="font-family:var(--serif);color:var(--navy);margin-bottom:14px">Your summary</h2>
+<div style="display:flex;align-items:center;gap:14px;padding:14px;border:2px solid var(--line);border-radius:12px;background:var(--cream);margin-bottom:18px">
+<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:72px;height:72px;object-fit:contain;background:#fff;border-radius:10px">
+<div><strong id="summaryName" style="font-family:var(--serif);color:var(--navy)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px">Pick a model to see its plan.</div></div>
+</div>
+<div class="plan-detail" style="margin:0"><div class="plan-row"><span>Initial payment</span><strong id="depositValue" style="color:var(--coral)">KES 0</strong></div>
+<div class="plan-row"><span>Weekly</span><strong id="weeklyValue" style="color:var(--coral)">KES 0</strong></div>
+<div class="plan-row"><span>First installment</span><strong>After grace period</strong></div></div>
+<ul class="promise" style="margin-top:18px">
 <li>Decision in about 30 minutes</li>
-<li>Deposit paid on delivery</li>
-<li>Free delivery in Nairobi &amp; environs</li>
-<li>7-day exchange guarantee on factory faults</li>
+<li>Initial payment on delivery</li>
+<li>Free delivery in Nairobi & environs</li>
+<li>7-day exchange on factory defects</li>
 </ul>
 <div class="hero-actions">
-<a class="btn btn-wa btn-sm" href="{whatsapp_link('Kindly help me with my Pro Tech application.')}" target="_blank" rel="noopener">WhatsApp help</a>
-<a class="btn btn-line btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-wa btn-sm" href="{whatsapp_link('Help me with my application.')}" target="_blank" rel="noopener">WhatsApp help</a>
+<a class="btn btn-outline btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-</div></div>
+</div>
 </div></section>
 <div class="modal" id="applicationModal"><div class="modal-box">
 <button class="modal-close" data-close="applicationModal" aria-label="Close">×</button>
 <input type="hidden" id="docFullName"><input type="hidden" id="docPhoneNumber"><input type="hidden" id="docIdNumber">
 <input type="hidden" id="docRegion"><input type="hidden" id="docPhoneModel"><input type="hidden" id="docSubmissionId">
-<div class="doc-progress"><span id="docProgressBar" style="width:33%"></span></div>
-<p class="notice" id="journeyMsg" style="margin:0 0 14px">Lovely start! Add your M-Pesa statement — 30 seconds only.</p>
-<div id="stepMpesa"><div class="ticket" style="margin:0"><div class="tk-head">M-Pesa statement (6 months)</div><div style="padding:20px">
-<div class="notice"><strong>Why we ask:</strong> this is simply your affordability check, so your weekly plan stays comfortable. It stays private.</div>
-<ul class="promise-list"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email &amp; SMS</li></ul>
-<div class="field"><label>Upload the M-Pesa PDF</label><label class="file-label"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>✦</strong></label></div>
+<div class="progress"><span id="docProgress" style="width:33%"></span></div>
+<p style="padding:12px 16px;border-radius:10px;background:rgba(232,180,160,.1);border:1px solid var(--coral);color:var(--navy);font-size:14px;margin:0 0 16px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
+<div id="stepMpesa"><div style="background:var(--cream);border-radius:12px;padding:24px"><h3 style="font-family:var(--serif);color:var(--navy)">M-Pesa statement (6 months)</h3>
+<div style="margin:12px 0 16px;padding:12px;background:#fff;border-radius:8px;border-left:4px solid var(--teal)"><strong>Why we need this:</strong> This helps us assess affordability so your weekly payments stay comfortable. It stays private.</div>
+<ul class="promise"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
+<div class="field"><label>Upload the M-Pesa PDF</label><label class="file-label"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
 <div class="field"><label>Statement password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
-<button class="btn btn-rose" type="button" id="contMpesa" style="width:100%">Save &amp; Continue</button></div></div></div>
-<div id="stepIdentity" class="hidden"><div class="ticket" style="margin:0"><div class="tk-head">Identity check</div><div style="padding:20px">
-<div class="notice"><strong>Why we ask:</strong> we're trusting you with a phone — this confirms it's really you, and protects your ID from misuse.</div>
-<div class="field"><label>Front of National ID</label><label class="file-label"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>✦</strong></label></div>
-<div class="field"><label>Back of National ID</label><label class="file-label"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>✦</strong></label></div>
-<div class="field"><label>Official selfie</label><label class="file-label"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>✦</strong></label></div>
-<button class="btn btn-rose" type="button" id="contIdentity" style="width:100%">Save &amp; Continue</button></div></div></div>
-<div id="stepKin" class="hidden"><div class="ticket" style="margin:0"><div class="tk-head">Next of kin</div><div style="padding:20px">
-<div class="notice"><strong>Why we ask:</strong> if we ever miss you, we need someone close we can reach. Standard for any financing plan.</div>
+<button class="btn btn-coral" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
+<div id="stepIdentity" class="hidden"><div style="background:var(--cream);border-radius:12px;padding:24px"><h3 style="font-family:var(--serif);color:var(--navy)">Identity verification</h3>
+<div style="margin:12px 0 16px;padding:12px;background:#fff;border-radius:8px;border-left:4px solid var(--teal)"><strong>Why we need this:</strong> This confirms your identity and protects against fraud.</div>
+<div class="field"><label>Front of National ID</label><label class="file-label"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>↑</strong></label></div>
+<div class="field"><label>Back of National ID</label><label class="file-label"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>↑</strong></label></div>
+<div class="field"><label>Official selfie</label><label class="file-label"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>↑</strong></label></div>
+<button class="btn btn-coral" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
+<div id="stepKin" class="hidden"><div style="background:var(--cream);border-radius:12px;padding:24px"><h3 style="font-family:var(--serif);color:var(--navy)">Next of kin</h3>
+<div style="margin:12px 0 16px;padding:12px;background:#fff;border-radius:8px;border-left:4px solid var(--teal)"><strong>Why we need this:</strong> If we ever can't reach you, we need someone close we can contact.</div>
 <div class="form-grid">
 <div class="field"><label>Full name</label><input id="kName" placeholder="Next of kin name"></div>
 <div class="field"><label>Phone number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
@@ -1127,16 +1071,16 @@ def apply_now():
 <div class="field"><label>Kin ID number</label><input id="kId" placeholder="Kin ID number"></div>
 <div class="field"><label>Relationship</label><select id="kRel"><option value="">Choose...</option><option>Parent</option><option>Sibling</option><option>Spouse</option><option>Child</option><option>Aunt/Uncle</option><option>Cousin</option><option>Friend</option></select></div>
 </div>
-<button class="btn btn-rose" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div></div>
+<button class="btn btn-coral" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
 <div id="stepDone" class="hidden" style="text-align:center">
-<div class="done-badge">✓</div>
-<h2 style="font-family:var(--serif);color:var(--ink)">Application complete!</h2>
-<p class="muted">You're now in our review queue — we'll be in touch shortly.</p>
-<div class="done-list"><div>Contact details saved</div><div>M-Pesa statement received</div><div>Identity verified</div><div>Next of kin added</div></div>
-<div class="ticket" style="max-width:420px;margin:14px auto"><div class="tk-row"><span>Estimated review</span><b>&lt; 30 minutes</b></div><div class="tk-row"><span>Status</span><b style="color:var(--green)">In queue ✦</b></div></div>
+<div class="done-check">✓</div>
+<h2 style="font-family:var(--serif);color:var(--navy)">Application complete!</h2>
+<p class="muted">You're now in our review queue — we'll contact you shortly.</p>
+<div class="done-list"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
+<div class="plan-detail" style="max-width:420px;margin:18px auto"><div class="plan-row"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="plan-row"><span>Status</span><strong style="color:var(--teal)">In queue</strong></div></div>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
-<a class="btn btn-line" href="/">Back home</a>
+<a class="btn btn-outline" href="/">Back home</a>
 </div></div>
 </div></div>"""
     return base_page("Apply Now", content, "")
@@ -1144,23 +1088,23 @@ def apply_now():
 @app.route("/how-it-works")
 def how_it_works():
     content = f"""
-<section class="hero" style="padding:52px 0 14px"><div class="container">
-<span class="kicker">simple, gentle, clear</span>
-<h1 style="font-family:var(--serif);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);color:var(--ink);margin-top:10px">How <em style="font-family:var(--script);font-style:normal;color:var(--rose)">ProTech</em> works</h1>
+<section class="hero" style="padding:60px 0 20px"><div class="container">
+<span class="hero-tag">Simple process</span>
+<h1 style="font-family:var(--serif);font-size:clamp(2rem,4.6vw,3.4rem);color:var(--navy);margin-top:12px">How it <em style="color:var(--coral2)">works</em></h1>
 </div></section>
-<section class="container section" style="padding-top:26px"><div class="steps-grid">
-<div class="step reveal"><b class="n">1</b><h3>Choose your favourite</h3><p class="muted">Browse the pole pole shelf or the cash price list. Every phone is original and fully tested.</p></div>
-<div class="step reveal"><b class="n">2</b><h3>Pick how to pay</h3><p class="muted">Cash in full and own it today — or pole pole with a friendly deposit and small weekly payments.</p></div>
-<div class="step reveal"><b class="n">3</b><h3>We deliver, you inspect</h3><p class="muted">Free delivery in Nairobi &amp; surrounds. Check the phone, love the phone, then pay your deposit.</p></div>
-<div class="step reveal"><b class="n">4</b><h3>Pay small small</h3><p class="muted">Weekly M-Pesa payments, first one after 7 days. When the plan completes, the phone is 100% yours.</p></div>
+<section class="container section" style="padding-top:32px"><div class="steps">
+<div class="step reveal"><div class="num">1</div><h3>Choose your phone</h3><p>Browse installment plans or cash prices. Every device is original and thoroughly tested.</p></div>
+<div class="step reveal"><div class="num">2</div><h3>Select payment method</h3><p>Cash in full and own it today — or choose installment with initial payment and weekly installments.</p></div>
+<div class="step reveal"><div class="num">3</div><h3>We deliver, you inspect</h3><p>Free delivery in Nairobi & surrounds. Check the phone, confirm you're happy, then pay initial amount.</p></div>
+<div class="step reveal"><div class="num">4</div><h3>Make weekly payments</h3><p>M-Pesa installments, first one after grace period. When the plan completes, the phone is fully yours.</p></div>
 </div></section>
-<section class="container" style="padding-bottom:70px">
+<section class="container">
 <div class="cta-band reveal">
-<div class="script">your phone is waiting</div>
-<h2>Start today — it takes two minutes.</h2>
-<div class="hero-actions" style="justify-content:center;margin-top:20px">
-<a class="btn btn-rose" href="/apply-now">Apply Now</a>
-<a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question before applying.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+<h2>Your phone is waiting</h2>
+<p>Start today — it takes two minutes.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:24px">
+<a class="btn btn-coral" href="/apply-now">Apply Now</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
 </div>
 </div>
 </section>"""
@@ -1169,26 +1113,27 @@ def how_it_works():
 @app.route("/faq")
 def faq():
     faqs = [
-     ("Are your phones original?", "Yes — 100% original. Every device is hand-inspected and fully tested before it is listed. If anything is ever not as described, our 7-day exchange guarantee covers you."),
-     ("How does the pole pole plan work?", "You pay a goodwill deposit when we deliver, then small weekly M-Pesa payments — first one after 7 days. When the plan ends, the phone is fully yours."),
+     ("Are your phones original?", "Yes — 100% original. Every device is hand-inspected and thoroughly tested before listing. If anything isn't as described, our 7-day exchange guarantee covers you."),
+     ("How does the installment plan work?", "You pay an initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment is due after a grace period. When the plan completes, the phone is fully yours."),
      ("How fast is approval?", "Usually about 30 minutes after your application and documents are complete."),
      ("Do you deliver?", "Free within Nairobi & surrounding areas. Upcountry we arrange safe, tracked courier delivery at a small fare."),
      ("What do I need to apply?", "Your National ID, a 6-month M-Pesa statement, a clear selfie, and next-of-kin details. That's all."),
-     ("Can I pay cash in full?", "Absolutely — the cash price list shows final poster prices. Pay in full and the phone is immediately yours."),
-     ("What if the phone develops a fault?", "Factory faults within 7 days are exchanged free. Beyond that, we walk with you to the nearest authorised service centre and follow up until it's resolved."),
+     ("Can I pay cash in full?", "Absolutely — the cash price list shows final prices. Pay in full and the phone is immediately yours."),
+     ("What if the phone develops a fault?", "Factory faults within 7 days are exchanged free. Beyond that, we help you get it serviced at an authorized center."),
     ]
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
-<section class="hero" style="padding:52px 0 14px"><div class="container">
-<span class="kicker">we love questions</span>
-<h1 style="font-family:var(--serif);font-weight:900;font-size:clamp(2rem,4.6vw,3.4rem);color:var(--ink);margin-top:10px">Frequently asked <em style="font-family:var(--script);font-style:normal;color:var(--rose)">questions</em></h1>
+<section class="hero" style="padding:60px 0 20px"><div class="container">
+<span class="hero-tag">Answers</span>
+<h1 style="font-family:var(--serif);font-size:clamp(2rem,4.6vw,3.4rem);color:var(--navy);margin-top:12px">Frequently asked <em style="color:var(--coral2)">questions</em></h1>
 </div></section>
-<section class="container section" style="padding-top:26px;max-width:860px">{items}
-<div class="cta-band reveal" style="margin-top:26px">
-<div class="script">still curious?</div><h2>Ask us anything — no pressure.</h2>
-<div class="hero-actions" style="justify-content:center;margin-top:18px">
+<section class="container section" style="padding-top:32px;max-width:860px">{items}
+<div class="cta-band reveal" style="margin-top:32px">
+<h2>Still have questions?</h2>
+<p>Ask us anything — no pressure.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:20px">
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn btn-rose" href="/apply-now">Apply Now</a>
+<a class="btn btn-coral" href="/apply-now">Apply Now</a>
 </div></div>
 </section>"""
     return base_page("FAQ", content, "faq")
@@ -1206,7 +1151,7 @@ def api_apply():
     forwarded = post_to_google_sheet(data)
     saved = save_application_local(data) if not forwarded else True
     if forwarded or saved:
-        return jsonify({"ok": True, "message": "Received with love."})
+        return jsonify({"ok": True, "message": "Received."})
     return jsonify({"ok": False, "error": "Could not save application."}), 500
 
 @app.route("/api/chat", methods=["POST"])
@@ -1214,11 +1159,11 @@ def api_chat():
     data = request.get_json(silent=True) or {}
     msg = str(data.get("message", "")).strip().lower()
     if any(w in msg for w in ["human", "agent", "owner", "talk", "call", "whatsapp", "msaada"]):
-        return jsonify({"ok": True, "content": "Of course! The shop line is open — tap below and we'll reply personally.",
-                        "links": [{"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub! I need human help.")}, {"cta": f"Call {PHONE_DISPLAY}", "url": "tel:" + PHONE_TEL}]})
-    if any(w in msg for w in ["pole pole", "plan", "deposit", "weekly", "installment", "how does"]):
-        return jsonify({"ok": True, "content": "Pole pole is simple: pay a friendly deposit when we deliver, then small weekly M-Pesa payments — first one after 7 days. When the plan ends, the phone is fully yours.",
-                        "links": [{"cta": "See pole pole phones", "url": "/pole-pole"}, {"cta": "Apply now", "url": "/apply-now"}]})
+        return jsonify({"ok": True, "content": "Of course! Our team is available — tap below and we'll respond personally.",
+                        "links": [{"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub! I need help.")}, {"cta": f"Call {PHONE_DISPLAY}", "url": "tel:" + PHONE_TEL}]})
+    if any(w in msg for w in ["installment", "plan", "initial", "weekly", "payment", "how does"]):
+        return jsonify({"ok": True, "content": "Installment plans are straightforward: pay an initial amount on delivery, then manageable weekly M-Pesa payments. First installment is due after a grace period. When the plan ends, the phone is fully yours.",
+                        "links": [{"cta": "See installment options", "url": "/installments"}, {"cta": "Apply now", "url": "/apply-now"}]})
     if any(w in msg for w in ["deliver", "delivery", "shipping"]):
         return jsonify({"ok": True, "content": "Delivery is free within Nairobi & surrounding areas. Upcountry we arrange safe tracked courier at a small fare.", "links": []})
     if any(w in msg for w in ["under", "budget", "cheap", "afford", "50k", "30k", "20k"]):
@@ -1226,7 +1171,7 @@ def api_chat():
         cap = int(m.group(1)) * 1000 if m else 50000
         picks = [p for p in CASH_PRODUCTS.values() if p["price"] <= cap][:3]
         if picks:
-            return jsonify({"ok": True, "content": f"Lovely budget! Here are originals under {money(cap)}:",
+            return jsonify({"ok": True, "content": f"Great budget! Here are originals under {money(cap)}:",
                             "links": [{"cta": p["name"], "url": "/device/" + p["slug"]} for p in picks]})
     items = search_items(msg, 3)
     if items:
@@ -1234,28 +1179,28 @@ def api_chat():
         return jsonify({"ok": True, "content": "I found these for you: " + lines + ".",
                         "links": [{"cta": i["name"], "url": "/device/" + i["slug"]} for i in items]})
     return jsonify({"ok": True, "content": "I can help with prices, plans, delivery or applications — or tap below to see today's collection.",
-                    "links": [{"cta": "Pole pole shelf", "url": "/pole-pole"}, {"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub!")}]})
+                    "links": [{"cta": "Installment plans", "url": "/installments"}, {"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub!")}]})
 
 @app.errorhandler(404)
 def not_found(err):
     content = """
 <section class="container section" style="text-align:center;padding:90px 0">
-<span class="kicker">oops</span><h1 style="font-family:var(--serif);font-weight:900;color:var(--ink);margin-top:8px">This page wandered off</h1>
-<p class="muted">Let's get you back to the phones.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:18px">
-<a class="btn btn-rose" href="/">Back home</a><a class="btn btn-line" href="/cash-prices">Cash prices</a>
+<span class="hero-tag">Page not found</span><h1 style="font-family:var(--serif);color:var(--navy);margin-top:12px">This page doesn't exist</h1>
+<p class="muted">Let's get you back to browsing phones.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:22px">
+<a class="btn btn-coral" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
 </div></section>"""
     return base_page("Not found", content, ""), 404
 
 @app.errorhandler(500)
 def server_error(err):
-    return base_page("Oops", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--serif)\">A small bump — please try again.</h1></section>", ""), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--serif)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
     if isinstance(err, HTTPException):
-        return base_page("Oops", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--serif)\">Page error.</h1></section>", ""), err.code or 500
-    return base_page("Oops", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--serif)\">A small bump — please try again.</h1></section>", ""), 500
+        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--serif)\">Page error.</h1></section>", ""), err.code or 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--serif)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 handler = app
 if __name__ == "__main__":
