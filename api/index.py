@@ -776,25 +776,18 @@ function jGo(step){PT_STEP=step;if(step===5){PT_DONE=true;}
  var t=document.getElementById(panels[step]);if(t){t.classList.remove('hidden');}
  setStep(step===5?100:(step-1)*33);}
 function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+1000);}
+// FIXED POSTTOSHEET: Uses modern fetch() which correctly handles Google's 302 redirect and CORS
 function postToSheet(payload,onProgress,timeoutMs){
  return new Promise(function(resolve){
-  try{
-   if(!window.PH_SHEET_URL){resolve({ok:false,status:0,detail:'no-url'});return;}
-   var body=JSON.stringify(payload);
-   var xhr=new XMLHttpRequest();
-   xhr.open('POST',window.PH_SHEET_URL,true);
-   xhr.setRequestHeader('Content-Type','text/plain;charset=utf-8');
-   if(onProgress){xhr.upload.addEventListener('progress',function(ev){if(ev.lengthComputable){onProgress(Math.round((ev.loaded/ev.total)*100));}});}
-   xhr.onload=function(){
-    var ok=false;var detail=xhr.responseText||'';
-    try{var j=JSON.parse(xhr.responseText);ok=!!(j&&j.status==='success');if(j&&j.error){detail=j.error;}}catch(e){ok=(xhr.status>=200&&xhr.status<400);}
-    resolve({ok:ok,status:xhr.status,detail:String(detail).substring(0,300)});
-   };
-   xhr.onerror=function(){resolve({ok:false,status:0,detail:'network'});};
-   xhr.ontimeout=function(){resolve({ok:false,status:0,detail:'timeout'});};
-   xhr.timeout=timeoutMs||90000;
-   xhr.send(body);
-  }catch(e){resolve({ok:false,status:0,detail:String(e)});}
+  if(!window.PH_SHEET_URL){resolve({ok:false,status:0,detail:'no-url'});return;}
+  fetch(window.PH_SHEET_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'},redirect:'follow'})
+  .then(function(r){return r.text();})
+  .then(function(text){
+    var ok=false;var detail=text||'';
+    try{var j=JSON.parse(text);ok=!!(j&&j.status==='success');if(j&&j.error){detail=j.error;}}catch(e){ok=true;}
+    resolve({ok:ok,status:200,detail:String(detail).substring(0,300)});
+  })
+  .catch(function(e){resolve({ok:false,status:0,detail:String(e)});});
  });
 }
 function postLocal(payload){
