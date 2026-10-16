@@ -48,38 +48,31 @@ class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl): return None
 
 def post_to_google_sheet(payload):
-    if not GOOGLE_SHEET_WEBHOOK_URL: return False
+    if not GOOGLE_SHEET_WEBHOOK_URL: return False, "No URL"
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(GOOGLE_SHEET_WEBHOOK_URL, data=body, method="POST",
         headers={"Content-Type": "text/plain;charset=utf-8", "User-Agent": "Mozilla/5.0"})
+    
     opener = urllib.request.build_opener(NoRedirectHandler)
-    status, raw, location = None, "", None
     try:
-        with opener.open(req, timeout=60) as r:
-            raw = r.read().decode("utf-8", "ignore")
-            status = getattr(r, "status", 200)
+        response = opener.open(req, timeout=60)
+        raw = response.read().decode("utf-8", "ignore")
+        return True, "Direct 200 OK"
     except urllib.error.HTTPError as h:
-        status = h.code
-        location = h.headers.get("Location") if h.headers else None
-        try: raw = h.read().decode("utf-8", "ignore")
-        except Exception: raw = ""
-    except Exception: return False
-
-    if status in (301, 302, 303, 307, 308) and location:
-        try:
-            req2 = urllib.request.Request(location, method="GET", headers={"User-Agent": "Mozilla/5.0"})
-            with urllib.request.urlopen(req2, timeout=60) as r2:
-                raw = r2.read().decode("utf-8", "ignore")
-                status = getattr(r2, "status", 200)
-        except Exception: return True
-
-    try:
-        j = json.loads(raw)
-        if isinstance(j, dict):
-            if j.get("status") == "success": return True
-            if j.get("status") == "error": return False
-    except Exception: pass
-    return status == 200
+        if h.code in (301, 302, 303, 307, 308):
+            location = h.headers.get("Location")
+            if location:
+                req2 = urllib.request.Request(location, method="GET", headers={"User-Agent": "Mozilla/5.0"})
+                try:
+                    r2 = urllib.request.urlopen(req2, timeout=60)
+                    raw = r2.read().decode("utf-8", "ignore")
+                    j = json.loads(raw)
+                    if j.get("status") == "success": return True, "Success after redirect"
+                    else: return False, f"GAS Error: {j}"
+                except Exception as e2: return True, "Redirect fired (Script ran, echo unreadable)"
+        return False, f"HTTP Error: {h.code} - {h.read().decode('utf-8', 'ignore')[:200]}"
+    except Exception as e:
+        return False, f"Network Error: {str(e)}"
 
 def save_application_local(payload):
     try:
@@ -127,7 +120,6 @@ LIPA_PRODUCTS = [
 def price_for(p, s):
     sp = p.get("storage_pricing", {})
     return sp[s] if s in sp else {"weekly": p["weekly"], "deposit": p["deposit"]}
-
 def min_weekly(p):
     vals = [p.get("weekly", 0)]
     for v in p.get("storage_pricing", {}).values(): vals.append(v.get("weekly", p.get("weekly", 0)))
@@ -197,7 +189,6 @@ CASH_CATEGORIES = []
 CASH_PRODUCTS = {}
 
 def add_cat(name, note): CASH_CATEGORIES.append({"name": name, "note": note, "products": []})
-
 def C(cat, name, price, spec, img):
     slug = slugify("pt-" + name)
     prod = {"slug": slug, "type": "cash", "model": name, "name": name, "price": int(price),
@@ -310,7 +301,6 @@ def build_search_index():
     return index
 
 SEARCH_INDEX = build_search_index()
-
 def search_items(query, limit=6):
     terms = [t for t in re.findall(r"[a-z0-9]+", str(query).lower()) if len(t) > 1]
     if not terms: return []
@@ -558,7 +548,6 @@ function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+10
 function postToSheet(payload,onProgress,timeoutMs){
  return new Promise(function(resolve){
   if(!window.PH_SHEET_URL){resolve({ok:false,status:0,detail:'no-url'});return;}
-  // THE MAGIC FIX: mode: 'no-cors' bypasses Google's CORS blocking and guarantees the data hits the sheet
   fetch(window.PH_SHEET_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'},mode:'no-cors'})
   .then(function(){resolve({ok:true,status:200,detail:'Sent successfully'});})
   .catch(function(e){resolve({ok:false,status:0,detail:String(e)});});
@@ -1127,8 +1116,8 @@ def test_sheet():
                "stage": "details", "name": "ProTech Test", "phone": "0700000000",
                "id_number": "TEST", "region": "Nairobi County",
                "phone_model": "Connection Test", "payment_plan": "ProTech Installment"}
-    ok = post_to_google_sheet(payload)
-    return jsonify({"ok": ok, "google_sheet": ok})
+    ok, msg = post_to_google_sheet(payload)
+    return jsonify({"ok": ok, "message": msg})
 
 @app.route("/api/apply", methods=["POST"])
 def api_apply():
@@ -1147,7 +1136,8 @@ def api_apply():
     if "file_key" in data: payload["file_key"] = data.get("file_key", "")
     if "filename" in data: payload["filename"] = data.get("filename", "")
     if "data" in data: payload["data"] = data.get("data", "")
-    if post_to_google_sheet(payload): return jsonify({"ok": True, "message": "Application sent to Google Sheet."})
+    ok, msg = post_to_google_sheet(payload)
+    if ok: return jsonify({"ok": True, "message": "Application sent to Google Sheet."})
     if save_application_local(payload): return jsonify({"ok": True, "message": "Application saved (offline backup)."})
     return jsonify({"ok": False, "error": "Application could not be saved."}), 500
 
