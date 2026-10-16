@@ -187,7 +187,6 @@ SP_I11P = 'Display: 5.8" Super Retina XDR OLED â€¢ Processor: Apple A13 Bionic â
 
 CASH_CATEGORIES = []
 CASH_PRODUCTS = {}
-
 def add_cat(name, note): CASH_CATEGORIES.append({"name": name, "note": note, "products": []})
 def C(cat, name, price, spec, img):
     slug = slugify("pt-" + name)
@@ -545,25 +544,16 @@ function jGo(step){PT_STEP=step;if(step===5){PT_DONE=true;}
  var t=document.getElementById(panels[step]);if(t){t.classList.remove('hidden');}
  setStep(step===5?100:(step-1)*33);}
 function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+1000);}
-function postToSheet(payload,onProgress,timeoutMs){
- return new Promise(function(resolve){
-  if(!window.PH_SHEET_URL){resolve({ok:false,status:0,detail:'no-url'});return;}
-  fetch(window.PH_SHEET_URL,{method:'POST',body:JSON.stringify(payload),headers:{'Content-Type':'text/plain;charset=utf-8'},mode:'no-cors'})
-  .then(function(){resolve({ok:true,status:200,detail:'Sent successfully'});})
-  .catch(function(e){resolve({ok:false,status:0,detail:String(e)});});
- });
-}
+
+// BULLETPROOF ROUTING: Send everything to our own server to bypass Google CORS browser blocks
 function postLocal(payload){
  return fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
    .then(function(r){return r.json();}).then(function(j){return {ok:!!(j&&j.ok)};}).catch(function(){return {ok:false};});
 }
 async function submitStage(payload,timeoutMs){
- if(window.PH_SHEET_URL){
-   var r=await postToSheet(payload,null,timeoutMs);
-   if(r.ok){return {ok:true};}
- }
  return await postLocal(payload);
 }
+
 function readFileAsDataURL(f){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result);};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(f);});}
 function compressImage(file,maxDim,q){return new Promise(function(res){if(!file.type||file.type.indexOf('image/')!==0){res(null);return;}var img=new Image();var url=URL.createObjectURL(file);img.onload=function(){try{var w=img.width,h=img.height,s=Math.min(1,maxDim/Math.max(w,h));var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cw,ch);x.drawImage(img,0,0,cw,ch);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q));}catch(e){URL.revokeObjectURL(url);res(null);}};img.onerror=function(){URL.revokeObjectURL(url);res(null);};img.src=url;});}
 async function fileToDataUrl(file,key){var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');if(isPhoto){var c=await compressImage(file,1200,0.72);if(c){return c;}}return await readFileAsDataURL(file);}
