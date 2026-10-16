@@ -11,7 +11,7 @@ WA_NUMBER = "254720890018"
 SHOP_EMAIL = "protechphonehub@gmail.com"
 OPEN_HOURS = "Open daily 8:00 AM – 9:00 PM"
 FREE_DELIVERY_ZONES = "Nairobi County, Kiambu County, Nakuru Town & Mombasa Town"
-GOOGLE_SHEET_WEBHOOK_URL = os.environ.get("PROTECH_SHEET_WEBHOOK", "")
+GOOGLE_SHEET_WEBHOOK_URL = os.environ.get("https://script.google.com/macros/s/AKfycbybHSnDImhCoK8vx-gE26wZuKPxIyHJDJIO7tQxRy2SoNaRSiIqqwo9N2NbVXVoDfhg/exec", "")
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 120 * 1024 * 1024
