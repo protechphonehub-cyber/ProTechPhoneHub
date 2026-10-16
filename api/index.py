@@ -11,7 +11,14 @@ WA_NUMBER = "254720890018"
 SHOP_EMAIL = "protechphonehub@gmail.com"
 OPEN_HOURS = "Open daily 8:00 AM – 9:00 PM"
 FREE_DELIVERY_ZONES = "Nairobi County, Kiambu County, Nakuru Town & Mombasa Town"
-GOOGLE_SHEET_WEBHOOK_URL = os.environ.get("https://script.google.com/macros/s/AKfycbybHSnDImhCoK8vx-gE26wZuKPxIyHJDJIO7tQxRy2SoNaRSiIqqwo9N2NbVXVoDfhg/exec", "")
+
+# ============================================================
+# FIX 1: Webhook URL hardcoded directly (NOT inside os.environ.get)
+# ============================================================
+GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbybHSnDImhCoK8vx-gE26wZuKPxIyHJDJIO7tQxRy2SoNaRSiIqqwo9N2NbVXVoDfhg/exec"
+
+# Local fallback file so no application is ever lost
+APP_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "protech_applications.jsonl")
 
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 120 * 1024 * 1024
@@ -53,24 +60,60 @@ def placeholder_image(text):
 def whatsapp_link(m):
     return "https://wa.me/" + WA_NUMBER + "?text=" + urllib.parse.quote(m)
 
+# ============================================================
+# FIX 2: Stop Python from turning Google's 302 redirect into a GET
+# ============================================================
+class NoRedirectHandler(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+# ============================================================
+# FIX 3: text/plain content type + proper redirect follow + fallback
+# ============================================================
 def post_to_google_sheet(payload):
     if not GOOGLE_SHEET_WEBHOOK_URL:
         return False
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
-    req = urllib.request.Request(GOOGLE_SHEET_WEBHOOK_URL, data=body, method="POST",
-                                 headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0 (ProTechPhoneHub)"})
+    req = urllib.request.Request(
+        GOOGLE_SHEET_WEBHOOK_URL,
+        data=body,
+        method="POST",
+        headers={
+            "Content-Type": "text/plain;charset=utf-8",
+            "User-Agent": "Mozilla/5.0 (ProTechPhoneHub)"
+        }
+    )
+    opener = urllib.request.build_opener(NoRedirectHandler)
+    status = None
+    raw = ""
+    location = None
     try:
-        with urllib.request.urlopen(req, timeout=45) as r:
+        with opener.open(req, timeout=60) as r:
             raw = r.read().decode("utf-8", "ignore")
             status = getattr(r, "status", 200)
     except urllib.error.HTTPError as h:
+        status = h.code
+        location = h.headers.get("Location") if h.headers else None
         try:
             raw = h.read().decode("utf-8", "ignore")
         except Exception:
             raw = ""
-        status = h.code
     except Exception:
         return False
+
+    # Google returns a 302 redirect after running the script.
+    # Follow it with a GET to read the real JSON response.
+    if status in (301, 302, 303, 307, 308) and location:
+        try:
+            req2 = urllib.request.Request(location, method="GET",
+                                          headers={"User-Agent": "Mozilla/5.0 (ProTechPhoneHub)"})
+            with urllib.request.urlopen(req2, timeout=60) as r2:
+                raw = r2.read().decode("utf-8", "ignore")
+                status = getattr(r2, "status", 200)
+        except Exception:
+            # Redirect fired (script ran) but we could not read the echo.
+            return True
+
     try:
         j = json.loads(raw)
         if isinstance(j, dict):
@@ -80,7 +123,19 @@ def post_to_google_sheet(payload):
                 return False
     except Exception:
         pass
-    return status in (200, 302, 303)
+    return status == 200
+
+def save_application_local(payload):
+    try:
+        trim = {k: v for k, v in payload.items() if k != "data"}
+        if "data" in payload:
+            trim["file_received"] = True
+        trim["saved_at"] = datetime.now(timezone(timedelta(hours=3))).isoformat()
+        with open(APP_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(trim, ensure_ascii=False) + "\n")
+        return True
+    except Exception:
+        return False
 
 def L(slug, name, apply_name, image, tagline, weekly, deposit, storage, colors, specs, reviews, storage_pricing=None, condition=None):
     d = {"slug": slug, "name": name, "apply_name": apply_name, "image": image, "tagline": tagline,
@@ -103,7 +158,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, TurboPower fast charging", "OS & Updates": "Android 13 out of the box, upgradable",
        "Build & Extras": "Side fingerprint reader, water-repellent coating, 3.5mm jack, microSD slot"},
       [(5, "Wanjiku M.", "PT-101", "Battery lasts two full days on a single charge. Never worry about finding an outlet.")]),
-    
+
     L("motorola-g-stylus", "Motorola G Stylus", "Motorola G Stylus 2024",
       AM + "412KEd+cz3L.AC_US1000.jpg?v=1771506465",
       'Ex-UK 5G | 5000mAh | 6.7" Display', 910, 6999, ["128GB", "256GB"], ["Caramel Latte", "Scarlet Wave"],
@@ -113,7 +168,7 @@ LIPA_PRODUCTS = [
        "Build & Extras": "Built-in stylus pen, stereo speakers, in-display fingerprint, NFC"},
       [(5, "Achieng O.", "PT-102", "The stylus transforms how I take notes. Colors are vivid, screen is buttery smooth.")],
       storage_pricing={"128GB": {"weekly": 910, "deposit": 6999}, "256GB": {"weekly": 1040, "deposit": 7999}}),
-    
+
     L("samsung-galaxy-s21-fe", "Samsung Galaxy S21 FE 5G", "Samsung Galaxy S21 FE 5G",
       AM + "61PPEjwAkYL._Ac_SY300_SX300_QL70_FMwebp_.jpg",
       'Ex-UK 5G | 4500mAh | 6.4" Display', 970, 7499, ["128GB"], ["Graphite", "White", "Lavender", "Olive"],
@@ -122,7 +177,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4500mAh, 25W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable",
        "Build & Extras": "IP68 water/dust resistance, in-display fingerprint, stereo speakers, NFC"},
       [(5, "Peter K.", "PT-103", "Premium feel without the premium price. Screen is gorgeous, performance is snappy.")]),
-    
+
     L("samsung-galaxy-note-20", "Samsung Galaxy Note 20", "Samsung Note 20 5G",
       MOP + "files/0c5ffb9f-1e94-480c-bdb1-71566919cc1d-1_46397bdd-1274-44a3-b4e9-52df8ac4fdbc_600x.jpg?v=1703753426",
       'Ex-UK 5G | 4300mAh | 6.7" Display', 1160, 8999, ["128GB"], ["Black", "Green", "Rose-Gold"],
@@ -131,7 +186,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4300mAh, 25W wired, 15W wireless", "OS & Updates": "Android 10 out of the box, fully upgradable",
        "Build & Extras": "S-Pen stylus included, IP68, stereo speakers tuned by AKG, NFC, Samsung DeX"},
       [(5, "Daniel E.", "PT-104", "S-Pen is indispensable for work. Sign docs, sketch ideas, annotate everything.")]),
-    
+
     L("samsung-galaxy-s21-plus", "Samsung Galaxy S21+", "Samsung Galaxy S21 Plus 5G",
       MOP + "products/BLACK_d72adc1a-b989-4cf6-a641-b2919ad0a2de_500x.jpg?v=1676990538",
       'Ex-UK 5G | 4800mAh | 6.7" Display', 1110, 8499, ["128GB", "256GB"], ["Black", "Silver", "Purple"],
@@ -141,7 +196,7 @@ LIPA_PRODUCTS = [
        "Build & Extras": "IP68, in-display fingerprint, stereo speakers, NFC, Samsung DeX"},
       [(5, "Samuel O.", "PT-105", "Gets me through 12-hour shifts without breaking a sweat. Reliable workhorse.")],
       storage_pricing={"128GB": {"weekly": 1110, "deposit": 8499}, "256GB": {"weekly": 1420, "deposit": 10999}}),
-    
+
     L("samsung-galaxy-s22-plus", "Samsung Galaxy S22+", "Samsung Galaxy S22 Plus 5G",
       AM + "714oVGJtWeL.AC_SY300_SY300_QL70_FMwebp.jpg",
       'Ex-UK 5G | 4500mAh | 6.6" Display', 1230, 9499, ["128GB"], ["Phantom Black", "Lavender", "Green"],
@@ -150,7 +205,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4500mAh, 45W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable",
        "Build & Extras": "IP68, Armor Aluminum frame, in-display fingerprint, stereo speakers, NFC"},
       [(5, "Grace W.", "PT-106", "Perfect size, amazing low-light photos. Fits my lifestyle perfectly.")]),
-    
+
     L("samsung-galaxy-s20-ultra", "Samsung Galaxy S20 Ultra", "Samsung Galaxy S20 Ultra",
       MOP + "files/S20Ultra1_455x.jpg?v=1718780519",
       'Ex-UK 5G | 5000mAh | 6.9" Display', 1230, 9499, ["128GB"], ["Black", "Grey"],
@@ -159,7 +214,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, 45W wired, 15W wireless", "OS & Updates": "Android 10 out of the box, fully upgradable",
        "Build & Extras": "IP68, microSD slot, stereo speakers, NFC, Samsung DeX"},
       [(5, "Brian M.", "PT-107", "That zoom is unreal. Streaming on this screen feels like a private cinema.")]),
-    
+
     L("samsung-galaxy-s21-ultra", "Samsung Galaxy S21 Ultra", "Samsung Galaxy S21 Ultra",
       MOP + "files/8322653a-f2b7-44cf-a74c-6336bcec9f43-1_cadd4530-09b4-449e-aa1d-3894bad6e808_1024x.jpg?v=1700145645",
       'Ex-UK 5G | 5000mAh | 6.8" Display', 1490, 11499, ["128GB"], ["Black", "Silver"],
@@ -168,7 +223,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, 25W wired, 15W wireless", "OS & Updates": "Android 11 out of the box, fully upgradable",
        "Build & Extras": "S-Pen support (pen sold separately), IP68, stereo speakers, NFC, Samsung DeX"},
       [(5, "David K.", "PT-108", "Photography game-changer. Zoom capability still impresses years later.")]),
-    
+
     L("apple-iphone-12-mini", "Apple iPhone 12 Mini", "Apple iPhone 12 Mini",
       AM + "61bbqGftbUL.AC_SY879.jpg",
       'Ex-UK 5G | 2227mAh | 5.4" Display', 1290, 9999, ["128GB"], ["Black", "Purple", "Blue", "Green", "Red", "White"],
@@ -177,7 +232,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "2227mAh, 20W wired, 15W MagSafe wireless", "OS & Updates": "iOS 14 out of the box, fully upgradable",
        "Build & Extras": "IP68, Ceramic Shield front, aluminum frame, MagSafe accessories"},
       [(5, "Simon A.", "PT-109", "Compact without compromise. Fast, fits anywhere, premium build.")]),
-    
+
     L("apple-iphone-12", "Apple iPhone 12", "Apple iPhone 12",
       MOP + "products/12black_640x.jpg?v=1674896241",
       'Ex-UK 5G | 2815mAh | 6.1" Display', 1540, 11899, ["128GB", "256GB"], ["Black", "Purple", "Blue", "Green", "Red", "White"],
@@ -187,7 +242,7 @@ LIPA_PRODUCTS = [
        "Build & Extras": "IP68, Ceramic Shield front, aluminum frame, MagSafe accessories"},
       [(5, "Faith W.", "PT-110", "Stunning colors, blazing speed. Camera quality exceeded expectations.")],
       storage_pricing={"128GB": {"weekly": 1540, "deposit": 11899}, "256GB": {"weekly": 1480, "deposit": 18199}}),
-    
+
     L("samsung-galaxy-note-20-ultra", "Samsung Galaxy Note 20 Ultra", "Samsung Note 20 Ultra",
       MOP + "files/NOte20Black_23da7f6b-cc29-41a0-9eac-63d0385cc238_500x.jpg?v=1718362656",
       'Ex-UK 5G | 4500mAh | 6.9" Display', 1550, 11999, ["128GB"], ["Black", "White", "Rose-Gold"],
@@ -196,7 +251,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4500mAh, 25W wired, 15W wireless", "OS & Updates": "Android 10 out of the box, fully upgradable",
        "Build & Extras": "S-Pen built-in, IP68, microSD slot, stereo speakers, NFC, Samsung DeX"},
       [(5, "Cynthia W.", "PT-111", "Smooth 120Hz scrolling, gorgeous display. The S-Pen is pure luxury.")]),
-    
+
     L("samsung-galaxy-s22-ultra", "Samsung Galaxy S22 Ultra", "Samsung Galaxy S22 Ultra",
       MOP + "files/Screenshot_2025-03-20_at_15.05.15_1010x.png?v=1742472440",
       'Ex-UK 5G | 5000mAh | 6.8" Display', 1900, 23399, ["256GB", "512GB"], ["Black", "Purple", "Green"],
@@ -205,7 +260,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, 45W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable",
        "Build & Extras": "S-Pen built-in, IP68, Armor Aluminum, stereo speakers, NFC, Samsung DeX"},
       [(5, "Benard O.", "PT-112", "Sketch architectural plans directly on screen. Productivity redefined.")]),
-    
+
     L("apple-iphone-12-pro-max", "Apple iPhone 12 Pro Max", "Apple iPhone 12 Pro Max",
       AM + "41SLL9Zws6L.AC_SY300_SY300_QL70_FMwebp.jpg",
       'Ex-UK 5G | 3687mAh | 6.7" Display', 1960, 24099, ["256GB"], ["Pacific Blue", "Graphite", "Gold", "Silver"],
@@ -214,7 +269,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "3687mAh, 20W wired, 15W MagSafe wireless", "OS & Updates": "iOS 14 out of the box, fully upgradable",
        "Build & Extras": "IP68, Ceramic Shield, stainless-steel frame, MagSafe"},
       [(5, "Kevin O.", "PT-113", "Big screen, big battery. Handles business calls and creative work flawlessly.")]),
-    
+
     L("apple-iphone-13-pro-max", "Apple iPhone 13 Pro Max", "Apple iPhone 13 Pro Max",
       MOP + "products/apple_iphone_13_pro_max_gold_image_0_1024x.jpg?v=1674389404",
       'Ex-UK 5G | 4352mAh | 6.7" Display', 2190, 26899, ["256GB", "512GB", "1TB"], ["Blue", "Black", "Gold", "Silver", "Alpine Green"],
@@ -223,7 +278,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4352mAh, 27W wired, 15W MagSafe wireless", "OS & Updates": "iOS 15 out of the box, fully upgradable",
        "Build & Extras": "IP68, Ceramic Shield, stainless-steel frame, MagSafe"},
       [(5, "Gladys M.", "PT-114", "120Hz makes everything feel instant. Battery lasts from morning to midnight.")]),
-    
+
     L("samsung-galaxy-s23-ultra", "Samsung Galaxy S23 Ultra", "Samsung Galaxy S23 Ultra",
       MOP + "files/S23Ultra1_1024x.jpg?v=1718781685",
       'Ex-UK 5G | 5000mAh | 6.8" Display', 2190, 26899, ["256GB", "512GB"], ["Black", "Green", "Cream"],
@@ -232,7 +287,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, 45W wired, 15W wireless", "OS & Updates": "Android 13 out of the box, 4 OS upgrades",
        "Build & Extras": "S-Pen built-in, IP68, Armor Aluminum, stereo speakers, NFC, Samsung DeX"},
       [(5, "Joseph O.", "PT-115", "Night shots look like daylight. Zoom range is phenomenal.")]),
-    
+
     L("apple-iphone-14-pro-max", "Apple iPhone 14 Pro Max", "Apple iPhone 14 Pro Max",
       MOP + "files/Screenshot_2025-05-29_at_09.05.01_776x.png?v=1748499274",
       'Ex-UK 5G | 4323mAh | 6.7" Display', 2560, 31499, ["256GB"], ["Space Black", "Deep Purple", "Gold", "Silver"],
@@ -241,7 +296,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4323mAh, 27W wired, 15W MagSafe wireless", "OS & Updates": "iOS 16 out of the box, fully upgradable",
        "Build & Extras": "Dynamic Island, IP68, Ceramic Shield, stainless steel, MagSafe, Crash Detection"},
       [(5, "Rebecca C.", "PT-116", "Deep Purple is sophisticated. Dynamic Island is genuinely useful.")]),
-    
+
     L("samsung-galaxy-s24-ultra", "Samsung Galaxy S24 Ultra", "Samsung Galaxy S24 Ultra",
       MOP + "files/S24_Ultra1_992x.png?v=1735648520",
       'Ex-UK 5G | 5000mAh | 6.8" Display', 2700, 33199, ["256GB", "512GB"], ["Black", "Green", "Grey"],
@@ -250,7 +305,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, 45W wired, 15W wireless", "OS & Updates": "Android 14 out of the box, 7 years of updates",
        "Build & Extras": "Titanium frame, S-Pen built-in, IP68, Galaxy AI suite, stereo speakers, NFC"},
       [(5, "Michael K.", "PT-117", "AI translation in meetings saves hours weekly. Future-proof investment.")]),
-    
+
     L("apple-iphone-15-pro-max", "Apple iPhone 15 Pro Max", "Apple iPhone 15 Pro Max",
       MOP + "files/Screenshot2025-11-04at16.05.25_ad9bcddb-df5e-4e98-9251-113e32673b12_770x.png?v=1762278234",
       'Ex-UK 5G | 4422mAh | 6.7" Display', 3100, 38099, ["256GB"], ["Space Black", "Natural Titanium", "Blue Titanium", "White Titanium"],
@@ -259,7 +314,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "4422mAh, 27W wired, 15W MagSafe, USB-C 3.0", "OS & Updates": "iOS 17 out of the box, fully upgradable",
        "Build & Extras": "Titanium frame, Action Button, IP68, Ceramic Shield, MagSafe"},
       [(5, "Stella W.", "PT-118", "Titanium feels premium. Video quality is cinema-grade.")]),
-    
+
     L("samsung-galaxy-s25-ultra", "Samsung Galaxy S25 Ultra", "Samsung S25 Ultra",
       MOP + "files/s25_ultra_300x.png?v=1772294113",
       'Ex-UK 5G | 5000mAh | 6.9" Display', 3300, 40599, ["256GB"], ["Black", "Titanium Black", "Titanium White", "Silver", "Titanium SilverBlue"],
@@ -268,7 +323,7 @@ LIPA_PRODUCTS = [
        "Battery & Charging": "5000mAh, 45W wired, 15W wireless", "OS & Updates": "Android 15 out of the box, 7 years of updates",
        "Build & Extras": "Titanium frame, S-Pen built-in, IP68, Galaxy AI, stereo speakers, NFC"},
       [(5, "Dennis M.", "PT-119", "AI features are genuinely useful, not gimmicky. Noticeable speed boost.")]),
-    
+
     L("apple-iphone-16-pro-max", "Apple iPhone 16 Pro Max", "Apple iPhone 16 Pro Max",
       AM + "51Vs7ZwpSpL.AC_SY300_SY300_QL70_FMwebp.jpg",
       'New | 5G | 4685mAh | 6.9" Display', 3840, 47199, ["256GB"], ["Desert Titanium", "Natural Titanium", "White Titanium", "Black Titanium"],
@@ -301,7 +356,7 @@ for lp in LIPA_PRODUCTS:
     lp["stock"] = "In Stock"
     PRODUCTS_BY_SLUG[lp["slug"]] = lp
 
-# CASH PRODUCTS - All 70+ devices from the poster
+# CASH PRODUCTS
 SP_S26U = 'Display: 6.9" Dynamic AMOLED 2X, 144Hz, 3000 nits • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 200MP main + 50MP periscope (5x) + 50MP telephoto (3x) + 50MP ultrawide • Front: 12MP • Battery: 5000mAh, 60W wired • OS: Android 16, 7 years updates • Build: Titanium frame, IP68, S-Pen'
 SP_S26P = 'Display: 6.7" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4900mAh, 45W wired • OS: Android 16 • Build: Armor Aluminum, IP68'
 SP_S26 = 'Display: 6.36" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4300mAh, 45W wired • OS: Android 16 • Build: IP68, Gorilla Glass Victus 2'
@@ -462,12 +517,14 @@ def build_search_index():
         context = (f"{p['name']} | Installment Plan | {p.get('condition','Ex-UK')} | Stock: {p.get('stock','In Stock')} | "
                    f"Storage: {', '.join(p['storage'])} | Colors: {', '.join(p['colors'])} | "
                    f"Plans: {'; '.join(plan_lines)} | Specs: {specs_text} | Page: /device/{p['slug']}")
-        index.append({"type": "lipa", "product": p, "text": searchable, "context": context, "name": p["name"]})
+        index.append({"type": "lipa", "product": p, "text": searchable, "context": context, "name": p["name"],
+                      "line": f"{p['name']} — {money(price_for(p, p['storage'][0])['deposit'])} initial, {money(price_for(p, p['storage'][0])['weekly'])}/week"})
     for p in CASH_PRODUCTS.values():
         searchable = " ".join([p["name"], p["category_name"], p["specs"], "cash full payment negotiable"]).lower()
         context = (f"{p['name']} | Cash Collection | {p['category_name']} | "
                    f"Price {money(p['price'])} (Negotiable) | Specs: {p['specs']} | Page: /device/{p['slug']}")
-        index.append({"type": "cash", "product": p, "text": searchable, "context": context, "name": p["name"]})
+        index.append({"type": "cash", "product": p, "text": searchable, "context": context, "name": p["name"],
+                      "line": f"{p['name']} — {money(p['price'])} (negotiable)"})
     return index
 
 SEARCH_INDEX = build_search_index()
@@ -566,7 +623,7 @@ button,input,select,textarea{font:inherit}
 .deal-card .row b{color:var(--pine2);font-weight:800}
 .testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
 .testi{background:#fff;border:1px solid var(--line);border-radius:14px;padding:26px;position:relative;box-shadow:0 6px 20px rgba(13,59,51,.06)}
-.testi:before{content:"";font-family:var(--display);font-size:64px;color:var(--honey);position:absolute;top:6px;left:18px;line-height:1}
+.testi:before{content:"“";font-family:var(--display);font-size:64px;color:var(--honey);position:absolute;top:6px;left:18px;line-height:1}
 .testi p{color:var(--muted);font-size:14.5px;margin:26px 0 14px}
 .testi strong{color:var(--pine);font-size:14px}
 .testi .ref{display:block;font-size:11px;color:#b3aca0;letter-spacing:.08em}
@@ -697,14 +754,8 @@ function initStorage(){
    var a=document.getElementById('applyCta');
    if(a&&btn.dataset.product&&btn.dataset.storage){a.href='/apply-now?phone='+encodeURIComponent(btn.dataset.product+' ('+btn.dataset.storage+')');}
    var w=document.getElementById('planWeekly'),d=document.getElementById('planDeposit');
-   if(w&&btn.dataset.weekly){
-     var ow=btn.getAttribute('data-orig-weekly');
-     w.innerHTML=ow? btn.dataset.weekly+' <span class="strike">'+ow+'</span>' : btn.dataset.weekly;
-   }
-   if(d&&btn.dataset.deposit){
-     var od=btn.getAttribute('data-orig-deposit');
-     d.innerHTML=od? btn.dataset.deposit+' <span class="strike">'+od+'</span>' : btn.dataset.deposit;
-   }
+   if(w&&btn.dataset.weekly){w.innerHTML=btn.dataset.weekly;}
+   if(d&&btn.dataset.deposit){d.innerHTML=btn.dataset.deposit;}
   });
  });
 }
@@ -728,6 +779,7 @@ function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+10
 function postToSheet(payload,onProgress,timeoutMs){
  return new Promise(function(resolve){
   try{
+   if(!window.PH_SHEET_URL){resolve({ok:false,status:0,detail:'no-url'});return;}
    var body=JSON.stringify(payload);
    var xhr=new XMLHttpRequest();
    xhr.open('POST',window.PH_SHEET_URL,true);
@@ -758,7 +810,7 @@ async function submitStage(payload,timeoutMs){
 }
 function readFileAsDataURL(f){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result);};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(f);});}
 function compressImage(file,maxDim,q){return new Promise(function(res){if(!file.type||file.type.indexOf('image/')!==0){res(null);return;}var img=new Image();var url=URL.createObjectURL(file);img.onload=function(){try{var w=img.width,h=img.height,s=Math.min(1,maxDim/Math.max(w,h));var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cw,ch);x.drawImage(img,0,0,cw,ch);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q));}catch(e){URL.revokeObjectURL(url);res(null);}};img.onerror=function(){URL.revokeObjectURL(url);res(null);};img.src=url;});}
-async function fileToDataUrl(file,key){var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');if(isPhoto){var c=await compressImage(file,1000,0.6);if(c){return c;}}return await readFileAsDataURL(file);}
+async function fileToDataUrl(file,key){var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');if(isPhoto){var c=await compressImage(file,1200,0.72);if(c){return c;}}return await readFileAsDataURL(file);}
 function setDoc(p){var map={docFullName:p.name||'',docPhoneNumber:p.phone||'',docIdNumber:p.id_number||'',docRegion:p.region||'',docPhoneModel:p.phone_model||'',docSubmissionId:p.submission_id||PT_SUB||''};Object.keys(map).forEach(function(id){var f=document.getElementById(id);if(f){f.value=map[id];}});}
 function updateSummary(){
  var sel=document.getElementById('phoneModel');if(!sel)return;
@@ -769,13 +821,8 @@ function updateSummary(){
  if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Initial payment on delivery';}
  var r=(window.PT_PRICING||{})[sel.value]||[0,0];
  var d=document.getElementById('depositValue'),w=document.getElementById('weeklyValue');
- if(meta&&meta.orig_dep){
-   if(d){d.innerHTML='<span class="strike">'+fmtKES(meta.orig_dep)+'</span> '+fmtKES(r[0]);}
-   if(w){w.innerHTML='<span class="strike">'+fmtKES(meta.orig_wk)+'</span> '+fmtKES(r[1]);}
- }else{
-   if(d){d.textContent=fmtKES(r[0]);}
-   if(w){w.textContent=fmtKES(r[1]);}
- }
+ if(d){d.textContent=fmtKES(r[0]);}
+ if(w){w.textContent=fmtKES(r[1]);}
 }
 function initApply(){
  var form=document.getElementById('applicationForm'),sel=document.getElementById('phoneModel');
@@ -978,7 +1025,7 @@ def home():
 </div></section>
 <div class="trust-strip"><div class="container">
 <div class="trust-item">Original Devices<span>tested & verified</span></div>
-<div class="trust-item">Free Delivery<span>Nairobi & Kiambu Counties, Nakuru & Mombasa Towns</span></div>
+<div class="trust-item">Free Delivery<span>Nairobi & Kiambu, Nakuru & Mombasa</span></div>
 <div class="trust-item">Negotiable Cash<span>call for your best price</span></div>
 <div class="trust-item">Flexible Plans<span>weekly M-Pesa installments</span></div>
 </div></div>
@@ -1155,8 +1202,7 @@ def apply_now():
             label = f"{p['apply_name']} ({s})"
             pr = price_for(p, s)
             pricing[label] = [pr["deposit"], pr["weekly"]]
-            meta[label] = {"img": p["image"], "cond": p.get("condition", "Ex-UK"), "store": s,
-                           "orig_dep": p.get("original_deposit"), "orig_wk": p.get("original_weekly")}
+            meta[label] = {"img": p["image"], "cond": p.get("condition", "Ex-UK"), "store": s}
             sel = " selected" if label == selected else ""
             options += f'<option value="{e(label)}"{sel}>{e(label)}</option>'
     ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
@@ -1309,7 +1355,7 @@ def favicon(): return "", 204
 @app.route("/api/test-sheet")
 def test_sheet():
     if not GOOGLE_SHEET_WEBHOOK_URL:
-        return jsonify({"ok": False, "error": "No sheet webhook configured. Paste your /exec URL."})
+        return jsonify({"ok": False, "error": "No sheet webhook configured."})
     payload = {"submission_id": "PT-TEST-" + str(int(datetime.now(timezone.utc).timestamp())),
                "stage": "details", "name": "ProTech Test", "phone": "0700000000",
                "id_number": "TEST", "region": "Nairobi County",
@@ -1344,9 +1390,13 @@ def api_apply():
     if "file_key" in data: payload["file_key"] = data.get("file_key", "")
     if "filename" in data: payload["filename"] = data.get("filename", "")
     if "data" in data: payload["data"] = data.get("data", "")
+    # Try the Google Sheet first
     if post_to_google_sheet(payload):
         return jsonify({"ok": True, "message": "Application sent to Google Sheet."})
-    return jsonify({"ok": False, "error": "Application could not be sent to Google Sheet."}), 500
+    # Safety net: save locally so nothing is ever lost
+    if save_application_local(payload):
+        return jsonify({"ok": True, "message": "Application saved (offline backup)."})
+    return jsonify({"ok": False, "error": "Application could not be saved."}), 500
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
@@ -1358,7 +1408,7 @@ def api_chat():
     if any(w in msg for w in ["hour", "open", "time", "close"]):
         return jsonify({"ok": True, "content": "We are open every day from 8:00 AM to 9:00 PM, including weekends.", "links": []})
     if any(w in msg for w in ["deliver", "delivery", "shipping", "fee"]):
-        return jsonify({"ok": True, "content": f"Delivery is free within {FREE_DELIVERY_ZONES}. Any other location is arranged at a fee quoted per place, and self-pickup at our shop is free. Cash-order delivery is charged per location.", "links": []})
+        return jsonify({"ok": True, "content": f"Delivery is free within {FREE_DELIVERY_ZONES}. Any other location is arranged at a fee quoted per place, and self-pickup at our shop is free.", "links": []})
     if any(w in msg for w in ["negotia", "offer", "discount", "best price"]):
         return jsonify({"ok": True, "content": "All our cash prices are negotiable — WhatsApp or call with your offer and we'll agree a fair price together.",
                         "links": [{"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello! I'd like to negotiate a price.")}]})
