@@ -776,7 +776,7 @@ function jGo(step){PT_STEP=step;if(step===5){PT_DONE=true;}
  var t=document.getElementById(panels[step]);if(t){t.classList.remove('hidden');}
  setStep(step===5?100:(step-1)*33);}
 function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+1000);}
-// FIXED POSTTOSHEET: Uses modern fetch() which correctly handles Google's 302 redirect and CORS
+// FIXED POSTTOSHEET: Now correctly identifies when Google blocks the request
 function postToSheet(payload,onProgress,timeoutMs){
  return new Promise(function(resolve){
   if(!window.PH_SHEET_URL){resolve({ok:false,status:0,detail:'no-url'});return;}
@@ -784,8 +784,16 @@ function postToSheet(payload,onProgress,timeoutMs){
   .then(function(r){return r.text();})
   .then(function(text){
     var ok=false;var detail=text||'';
-    try{var j=JSON.parse(text);ok=!!(j&&j.status==='success');if(j&&j.error){detail=j.error;}}catch(e){ok=true;}
-    resolve({ok:ok,status:200,detail:String(detail).substring(0,300)});
+    try{
+      var j=JSON.parse(text);
+      if(j && j.status==='success'){ ok=true; }
+      else if(j && j.error){ detail=j.error; }
+      else { detail="Unexpected response: " + text.substring(0, 100); }
+    }catch(e){
+      ok = false;
+      detail = "Blocked or HTML Error (Check Deployment Settings). Response: " + text.substring(0, 100);
+    }
+    resolve({ok:ok,status:200,detail:detail});
   })
   .catch(function(e){resolve({ok:false,status:0,detail:String(e)});});
  });
