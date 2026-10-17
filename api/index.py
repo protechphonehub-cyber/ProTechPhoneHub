@@ -899,12 +899,11 @@ def home():
     cards = "".join(feature_card(p) for p in products[:9])
     cash_cards = "".join(cash_card(p) for p in list(CASH_PRODUCTS.values())[:4])
     content = f"""
-<section class="home-hero"><div class="container hero-shell">
+<section class="home-hero" style="padding-bottom:56px"><div class="container hero-shell">
 <div class="hero-copy">
 <span class="hero-eyebrow">Pro Tech Phone Hub</span>
 <h1>Exceptional phones. <span>Considered ownership.</span></h1>
-<p class="lead">Curated Samsung and iPhone devices, available on structured weekly plans or outright cash terms, with clear pricing, genuine stock, and personal assistance.</p>
-<div class="hero-actions">
+<div class="hero-actions" style="margin-top:20px">
 <a class="btn btn-gold" href="/installments">Explore Installments</a>
 <a class="btn btn-ghost" href="/cash-prices">View Cash Prices</a>
 </div>
@@ -930,13 +929,7 @@ def home():
 </div>
 </aside>
 </div></section>
-<div class="assurances"><div class="container">
-<div class="assurance"><span class="num">01</span><b>Genuine inventory</b><span>inspected individually</span></div>
-<div class="assurance"><span class="num">02</span><b>Structured plans</b><span>weekly payment clarity</span></div>
-<div class="assurance"><span class="num">03</span><b>Cash discretion</b><span>prices open to discussion</span></div>
-<div class="assurance"><span class="num">04</span><b>Direct assistance</b><span>call or WhatsApp easily</span></div>
-</div></div>
-<section class="container section">
+<section class="container section" style="padding-top:40px">
 <div class="sec-head reveal"><span class="over">Installment picks</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
