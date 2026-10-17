@@ -1,4 +1,4 @@
-import os, re, json, urllib.parse, urllib.request, urllib.error, hashlib
+import os, re, json, time, urllib.parse, urllib.request, urllib.error, hashlib
 from html import escape
 from datetime import datetime, timezone, timedelta
 from flask import Flask, request, jsonify, abort
@@ -9,7 +9,7 @@ PHONE_DISPLAY = "0720 890 018"
 PHONE_TEL = "+254720890018"
 WA_NUMBER = "254720890018"
 SHOP_EMAIL = "protechphonehub@gmail.com"
-OPEN_HOURS = "Open daily 8:00 AM – 9:00 PM"
+OPEN_HOURS = "Open daily 8:00 AM to 9:00 PM"
 FREE_DELIVERY_ZONES = "Nairobi County, Kiambu County, Nakuru Town & Mombasa Town"
 
 GOOGLE_SHEET_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbzKF4BsWu8_X3UN31QG_OjFwQ9MPLiIgNh42RgRd15dsE_6_Q8RfVGUY7HTnOJ4aJodjw/exec"
@@ -18,16 +18,71 @@ APP_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "protech_app
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 120 * 1024 * 1024
 
+# ==========================================
+# BASIC SECURITY / HARDENING
+# ==========================================
+RATE_STORE = {}
+ALLOWED_STAGES = {"details", "file", "final"}
+ALLOWED_FILE_KEYS = {"mpesa_statement", "id_front", "id_back", "liveness_photo"}
+
+def nairobi_now():
+    return datetime.now(timezone(timedelta(hours=3)))
+
+def clean_api_text(v, max_len):
+    s = str(v if v is not None else "")
+    s = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", "", s)
+    return s.strip()[:max_len]
+
+def check_rate(key, limit, window_seconds):
+    now = time.time()
+    items = RATE_STORE.get(key, [])
+    items = [t for t in items if now - t < window_seconds]
+    if len(items) >= limit:
+        RATE_STORE[key] = items
+        return False
+    items.append(now)
+    RATE_STORE[key] = items
+    return True
+
+@app.after_request
+def security_headers(response):
+    response.headers["X-Content-Type-Options"] = "nosniff"
+    response.headers["X-Frame-Options"] = "SAMEORIGIN"
+    response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=()"
+    content_type = response.content_type or ""
+    if "text/html" in content_type:
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'self'; "
+            "script-src 'self' 'unsafe-inline'; "
+            "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
+            "font-src https://fonts.gstatic.com; "
+            "img-src 'self' data: https:; "
+            "connect-src 'self'; "
+            "form-action 'self'; "
+            "frame-ancestors 'self'; "
+            "object-src 'none'; "
+            "base-uri 'self'"
+        )
+    return response
+
+# ==========================================
+# HELPERS
+# ==========================================
 def e(v): return escape(str(v), quote=True)
+
 def slugify(v):
     v = re.sub(r"[^a-z0-9]+", "-", str(v).lower().strip())
     return re.sub(r"-+", "-", v).strip("-")
+
 def money(a):
     try: return f"KES {int(a):,}"
     except Exception: return f"KES {a}"
+
 def truncate(t, l):
     t = str(t)
     return t if len(t) <= l else t[:l].strip() + "…"
+
 def clean_text(v): return re.sub(r"\s+", " ", str(v)).strip()
 def clean_url(v): return re.sub(r"\s+", "", str(v)).strip()
 
@@ -55,7 +110,7 @@ def post_to_google_sheet(payload):
     opener = urllib.request.build_opener(NoRedirectHandler)
     try:
         response = opener.open(req, timeout=60)
-        raw = response.read().decode("utf-8", "ignore")
+        response.read().decode("utf-8", "ignore")
         return True, "Direct 200 OK"
     except urllib.error.HTTPError as h:
         if h.code in (301, 302, 303, 307, 308):
@@ -68,7 +123,8 @@ def post_to_google_sheet(payload):
                     j = json.loads(raw)
                     if j.get("status") == "success": return True, "Success after redirect"
                     else: return False, f"GAS Error: {j}"
-                except Exception as e2: return True, "Redirect fired (Script ran, echo unreadable)"
+                except Exception:
+                    return True, "Redirect fired (Script ran, echo unreadable)"
         return False, f"HTTP Error: {h.code} - {h.read().decode('utf-8', 'ignore')[:200]}"
     except Exception as ex:
         return False, f"Network Error: {str(ex)}"
@@ -77,11 +133,12 @@ def save_application_local(payload):
     try:
         trim = {k: v for k, v in payload.items() if k != "data"}
         if "data" in payload: trim["file_received"] = True
-        trim["saved_at"] = datetime.now(timezone(timedelta(hours=3))).isoformat()
+        trim["saved_at"] = nairobi_now().isoformat()
         with open(APP_FILE, "a", encoding="utf-8") as f:
             f.write(json.dumps(trim, ensure_ascii=False) + "\n")
         return True
-    except Exception: return False
+    except Exception:
+        return False
 
 # ==========================================
 # PRODUCT DATA
@@ -97,7 +154,7 @@ AM = "https://m.media-amazon.com/images/I/"
 MOP = "https://mophones.co/cdn/shop/"
 
 LIPA_PRODUCTS = [
-    L("motorola-g-power", "Motorola G Power", "Motorola G Power 2023", MOP + "files/motorola-moto-g-power-5g-1_673x.jpg?v=1770894988", 'Ex-UK 5G | 5000mAh | 6.5" Display', 560, 4299, ["128GB"], ["Mineral Black", "Bright White"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.5" HD+ (720×1600) IPS LCD, 120Hz refresh', "Processor": "Octa-core 5G platform, 4GB RAM", "Rear Camera": "50MP main (f/1.8) + 2MP macro, LED flash, 1080p video", "Front Camera": "8MP selfie (f/2.2)", "Battery & Charging": "5000mAh, TurboPower fast charging", "OS & Updates": "Android 13 out of the box, upgradable", "Build & Extras": "Side fingerprint reader, water-repellent coating, 3.5mm jack, microSD slot"}, [(5, "Wanjiku M.", "PT-101", "Battery lasts two full days on a single charge. Never worry about finding an outlet.")]),
+    L("motorola-g-power", "Motorola G Power", "Motorola G Power 2023", MOP + "files/motorola-moto-g-power-5g-1_673x.jpg?v=1770894988", 'Ex-UK 5G | 5000mAh | 6.5" Display', 600, 4599, ["128GB", "256GB"], ["Mineral Black", "Bright White"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.5" HD+ (720×1600) IPS LCD, 120Hz refresh', "Processor": "Octa-core 5G platform, 4GB RAM", "Rear Camera": "50MP main (f/1.8) + 2MP macro, LED flash, 1080p video", "Front Camera": "8MP selfie (f/2.2)", "Battery & Charging": "5000mAh, TurboPower fast charging", "OS & Updates": "Android 13 out of the box, upgradable", "Build & Extras": "Side fingerprint reader, water-repellent coating, 3.5mm jack, microSD slot"}, [(5, "Wanjiku M.", "PT-101", "Battery lasts two full days on a single charge. Never worry about finding an outlet.")], storage_pricing={"128GB": {"weekly": 600, "deposit": 4599}, "256GB": {"weekly": 680, "deposit": 5199}}),
     L("motorola-g-stylus", "Motorola G Stylus", "Motorola G Stylus 2024", AM + "412KEd+cz3L.AC_US1000.jpg?v=1771506465", 'Ex-UK 5G | 5000mAh | 6.7" Display', 910, 6999, ["128GB", "256GB"], ["Caramel Latte", "Scarlet Wave"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.7" P-OLED, FHD+ (2400×1080), 120Hz', "Processor": "Snapdragon 6 Gen 1 octa-core", "Rear Camera": "50MP main with OIS + 13MP ultrawide (macro vision)", "Front Camera": "16MP selfie", "Battery & Charging": "5000mAh, 30W TurboPower wired", "OS & Updates": "Android 14, upgradable", "Build & Extras": "Built-in stylus pen, stereo speakers, in-display fingerprint, NFC"}, [(5, "Achieng O.", "PT-102", "The stylus transforms how I take notes. Colors are vivid, screen is buttery smooth.")], storage_pricing={"128GB": {"weekly": 910, "deposit": 6999}, "256GB": {"weekly": 1040, "deposit": 7999}}),
     L("samsung-galaxy-s21-fe", "Samsung Galaxy S21 FE 5G", "Samsung Galaxy S21 FE 5G", AM + "61PPEjwAkYL._AC_SY300_SX300_QL70_FMwebp_.jpg", 'Ex-UK 5G | 4500mAh | 6.4" Display', 970, 7499, ["128GB"], ["Graphite", "White", "Lavender", "Olive"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.4" Dynamic AMOLED 2X, FHD+ (2400×1080), 120Hz, HDR10+', "Processor": "Snapdragon 888 octa-core", "Rear Camera": "12MP main (OIS) + 12MP ultrawide + 8MP telephoto (3x), 4K video", "Front Camera": "32MP selfie", "Battery & Charging": "4500mAh, 25W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable", "Build & Extras": "IP68 water/dust resistance, in-display fingerprint, stereo speakers, NFC"}, [(5, "Peter K.", "PT-103", "Premium feel without the premium price. Screen is gorgeous, performance is snappy.")]),
     L("samsung-galaxy-note-20", "Samsung Galaxy Note 20", "Samsung Note 20 5G", MOP + "files/0c5ffb9f-1e94-480c-bdb1-71566919cc1d-1_46397bdd-1274-44a3-b4e9-52df8ac4fdbc_600x.jpg?v=1703753426", 'Ex-UK 5G | 4300mAh | 6.7" Display', 1160, 8999, ["128GB"], ["Black", "Green", "Rose-Gold"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.7" Super AMOLED Plus, FHD+ (2400×1080), 60Hz, HDR10+', "Processor": "Snapdragon 865+ / Exynos 990 octa-core", "Rear Camera": "12MP main (OIS) + 64MP telephoto (3x hybrid) + 12MP ultrawide, 8K video", "Front Camera": "10MP selfie", "Battery & Charging": "4300mAh, 25W wired, 15W wireless", "OS & Updates": "Android 10 out of the box, fully upgradable", "Build & Extras": "S-Pen stylus included, IP68, stereo speakers tuned by AKG, NFC, Samsung DeX"}, [(5, "Daniel E.", "PT-104", "S-Pen is indispensable for work. Sign docs, sketch ideas, annotate everything.")]),
@@ -119,19 +176,12 @@ LIPA_PRODUCTS = [
     L("apple-iphone-16-pro-max", "Apple iPhone 16 Pro Max", "Apple iPhone 16 Pro Max", AM + "51Vs7ZwpSpL.AC_SY300_SY300_QL70_FMwebp.jpg", 'New | 5G | 4685mAh | 6.9" Display', 3840, 47199, ["256GB"], ["Desert Titanium", "Natural Titanium", "White Titanium", "Black Titanium"], {"Network": "5G + 4G LTE dual SIM (eSIM)", "Display": '6.9" LTPO Super Retina XDR OLED, 120Hz ProMotion, Always-On', "Processor": "Apple A18 Pro", "Rear Camera": "48MP Fusion main + 48MP ultrawide + 12MP tetraprism (5x) + LiDAR, 4K120 ProRes", "Front Camera": "12MP TrueDepth", "Battery & Charging": "4685mAh, 27W wired, 25W MagSafe, USB-C 3.2", "OS & Updates": "iOS 18 out of the box, fully upgradable", "Build & Extras": "Titanium frame, Camera Control button, Action Button, IP68, MagSafe"}, [(5, "Wanjiru K.", "PT-120", "Latest and greatest. Unboxing felt special, performance is effortless.")], condition="New"),
 ]
 
-def price_for(p, s):
-    sp = p.get("storage_pricing", {})
-    return sp[s] if s in sp else {"weekly": p["weekly"], "deposit": p["deposit"]}
-def min_weekly(p):
-    vals = [p.get("weekly", 0)]
-    for v in p.get("storage_pricing", {}).values(): vals.append(v.get("weekly", p.get("weekly", 0)))
-    return min(vals)
-
-LIPA_PRODUCTS.sort(key=lambda p: (min_weekly(p), p.get("deposit", 0)))
 PRODUCTS_BY_SLUG = {}
 for lp in LIPA_PRODUCTS:
-    lp["type"] = "lipa"; lp["model"] = lp["name"]
-    if "condition" not in lp: lp["condition"] = "Ex-UK"
+    lp["type"] = "lipa"
+    lp["model"] = lp["name"]
+    if "condition" not in lp:
+        lp["condition"] = "Ex-UK"
     lp["stock"] = "In Stock"
     PRODUCTS_BY_SLUG[lp["slug"]] = lp
 
@@ -190,22 +240,26 @@ SP_I11P = 'Display: 5.8" OLED • Processor: A13 Bionic • Camera: 12MP + 12MP 
 
 CASH_CATEGORIES = []
 CASH_PRODUCTS = {}
-def add_cat(name, note): CASH_CATEGORIES.append({"name": name, "note": note, "products": []})
+
+def add_cat(name, note):
+    CASH_CATEGORIES.append({"name": name, "note": note, "products": []})
+
 def C(cat, name, price, spec, img):
     slug = slugify("pt-" + name)
     prod = {"slug": slug, "type": "cash", "model": name, "name": name, "price": int(price),
             "specs": clean_text(spec), "image": clean_url(img), "category_name": cat}
     CASH_PRODUCTS[slug] = prod
     for c in CASH_CATEGORIES:
-        if c["name"] == cat: c["products"].append(prod)
+        if c["name"] == cat:
+            c["products"].append(prod)
     return prod
 
 S1 = "Refurbished & Boxed Phones"
 S2 = "Ex-UK Phones"
 S3 = "Apple iPhone"
-add_cat(S1, "Latest Samsung S and A series — refurbished to grade-A standard, sealed in box with accessories.")
-add_cat(S2, "Clean Samsung imports from the UK — flagships, foldables and the S-Pen line, every unit tested and verified original.")
-add_cat(S3, "Premium. Powerful. Timeless. Genuine iPhones from 11 Pro to 16 Pro Max — battery health checked, fully functional.")
+add_cat(S1, "Latest Samsung S and A series, refurbished to grade-A standard, sealed in box with accessories.")
+add_cat(S2, "Clean Samsung imports from the UK, including flagships, foldables and the S-Pen line. Every unit is tested and verified original.")
+add_cat(S3, "Premium. Powerful. Timeless. Genuine iPhones from 11 Pro to 16 Pro Max, battery health checked, fully functional.")
 
 C(S1, "Samsung Galaxy S25 Ultra 512GB", 127000, SP_S25U, AM + "51ybW3eCRhL.AC_SX679.jpg")
 C(S1, "Samsung Galaxy S25 Ultra 256GB", 109000, SP_S25U, AM + "51ybW3eCRhL.AC_SX679.jpg")
@@ -278,12 +332,46 @@ C(S3, "Apple iPhone 11 Pro Max 256GB", 44999, SP_I11PM, AM + "61G2REmnBIL.AC_SY3
 C(S3, "Apple iPhone 11 Pro Max 512GB", 46500, SP_I11PM, AM + "61G2REmnBIL.AC_SY300_SY300_QL70_FMwebp.jpg")
 C(S3, "Apple iPhone 11 Pro 256GB", 42999, SP_I11P, AM + "61UC1mk6dfL.AC_SY300_SY300_QL70_FMwebp.jpg")
 
-for slug, prod in CASH_PRODUCTS.items(): PRODUCTS_BY_SLUG[slug] = prod
+for slug, prod in CASH_PRODUCTS.items():
+    PRODUCTS_BY_SLUG[slug] = prod
 
-# SEARCH INDEX
+# ==========================================
+# PROMOTIONS
+# Promo ends 21st October 2026 at 12:00 EAT
+# ==========================================
+PROMO_END = datetime(2026, 10, 21, 12, 0, tzinfo=timezone(timedelta(hours=3)))
+
+def add_promo(slug, deposit, weekly):
+    p = PRODUCTS_BY_SLUG.get(slug)
+    if p and p.get("type") == "lipa":
+        p["promo"] = {"deposit": deposit, "weekly": weekly, "end": PROMO_END}
+
+add_promo("samsung-galaxy-note-20", 7999, 1040)
+add_promo("samsung-galaxy-s20-ultra", 8999, 1160)
+add_promo("samsung-galaxy-s24-ultra", 31999, 2600)
+
+def price_for(p, s):
+    promo = p.get("promo")
+    if promo and nairobi_now() < promo.get("end", PROMO_END):
+        return {"weekly": promo["weekly"], "deposit": promo["deposit"]}
+    sp = p.get("storage_pricing", {})
+    return sp[s] if s in sp else {"weekly": p["weekly"], "deposit": p["deposit"]}
+
+def min_weekly(p):
+    vals = []
+    for s in p.get("storage", []):
+        vals.append(price_for(p, s)["weekly"])
+    return min(vals) if vals else p.get("weekly", 0)
+
+def current_lipa_products():
+    return sorted(LIPA_PRODUCTS, key=lambda p: (min_weekly(p), price_for(p, p["storage"][0])["deposit"]))
+
+# ==========================================
+# SEARCH
+# ==========================================
 def build_search_index():
     index = []
-    for p in LIPA_PRODUCTS:
+    for p in current_lipa_products():
         plan_lines = []
         for s in p["storage"]:
             pr = price_for(p, s)
@@ -293,26 +381,30 @@ def build_search_index():
         context = (f"{p['name']} | Installment Plan | {p.get('condition','Ex-UK')} | Stock: {p.get('stock','In Stock')} | "
                    f"Storage: {', '.join(p['storage'])} | Colors: {', '.join(p['colors'])} | "
                    f"Plans: {'; '.join(plan_lines)} | Specs: {specs_text} | Page: /device/{p['slug']}")
+        first = price_for(p, p["storage"][0])
         index.append({"type": "lipa", "product": p, "text": searchable, "context": context, "name": p["name"],
-                      "line": f"{p['name']} — {money(price_for(p, p['storage'][0])['deposit'])} initial, {money(price_for(p, p['storage'][0])['weekly'])}/week"})
+                      "line": f"{p['name']} | {money(first['deposit'])} initial, {money(first['weekly'])}/week"})
     for p in CASH_PRODUCTS.values():
         searchable = " ".join([p["name"], p["category_name"], p["specs"], "cash full payment negotiable"]).lower()
         context = (f"{p['name']} | Cash Collection | {p['category_name']} | "
                    f"Price {money(p['price'])} (Negotiable) | Specs: {p['specs']} | Page: /device/{p['slug']}")
         index.append({"type": "cash", "product": p, "text": searchable, "context": context, "name": p["name"],
-                      "line": f"{p['name']} — {money(p['price'])} (negotiable)"})
+                      "line": f"{p['name']} | {money(p['price'])} (negotiable)"})
     return index
 
-SEARCH_INDEX = build_search_index()
 def search_items(query, limit=6):
     terms = [t for t in re.findall(r"[a-z0-9]+", str(query).lower()) if len(t) > 1]
-    if not terms: return []
+    if not terms:
+        return []
+    index = build_search_index()
     scored = []
-    for item in SEARCH_INDEX:
+    for item in index:
         score = 0
         for t in terms:
-            if t in item["text"]: score += 1
-        if score: scored.append((score, item))
+            if t in item["text"]:
+                score += 1
+        if score:
+            scored.append((score, item))
     scored.sort(key=lambda x: (-x[0], len(x[1]["name"]), x[1]["name"]))
     return [item for _, item in scored[:limit]]
 
@@ -343,10 +435,11 @@ button,input,select,textarea{font:inherit}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
 .logo{font-family:var(--display);font-size:27px;font-weight:500;letter-spacing:-.02em;color:var(--ink)}
 .logo i{font-style:italic;color:var(--gold)}
-.nav{display:flex;align-items:center;gap:22px}
-.nav a{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.nav{display:flex;align-items:center;gap:6px;padding:6px;border:1px solid var(--line);border-radius:999px;background:rgba(255,253,249,.72);transition:.25s}
+.nav a{padding:9px 12px;border-radius:999px;font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .nav a:hover,.nav a.active{color:var(--ink)}
-.nav a.active{border-bottom:1px solid var(--gold);padding-bottom:4px}
+.nav a.active{background:var(--ink);color:#f6efe2}
+.nav .btn{margin-left:6px}
 .hamburger{display:none;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:10px;border:1px solid transparent;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;transition:.2s;white-space:nowrap}
 .btn-primary{background:var(--ink);color:#f6efe2;border-color:var(--ink)}
@@ -530,7 +623,16 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 .testi strong{font-family:var(--display);font-size:16px;font-weight:500;color:var(--ink)}
 .testi .ref{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px}
 @media(max-width:1000px){.hero-shell,.product-detail{grid-template-columns:1fr}.assurances .container,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img{min-height:400px}}
-@media(max-width:820px){.nav{position:fixed;top:80px;left:4%;right:4%;z-index:1200;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.fgrid{grid-template-columns:1fr}.topbar .top-left span:not(:first-child),.topbar .sep{display:none}}
+@media(max-width:820px){
+.nav{position:fixed;top:0;right:0;bottom:0;left:auto;width:min(320px,84vw);flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;background:#14110d;border-left:1px solid rgba(214,185,140,.22);border-radius:0;padding:96px 20px 26px;transform:translateX(110%);visibility:hidden;transition:transform .3s ease, visibility .3s ease;box-shadow:0 30px 80px rgba(0,0,0,.35);z-index:1090}
+.nav.open{transform:translateX(0);visibility:visible}
+.nav a{color:#cbbfa9;width:100%;text-align:left;padding:12px 14px;border-radius:12px}
+.nav a.active{background:rgba(214,185,140,.14);color:#f6efe2}
+.nav .btn{width:100%;margin-left:0;margin-top:6px}
+.hamburger{display:block}
+.fgrid{grid-template-columns:1fr}
+.topbar .top-left span:not(:first-child),.topbar .sep{display:none}
+}
 @media(max-width:640px){.assurances .container,.steps,.testi-grid{grid-template-columns:1fr}.home-hero{padding:76px 0 64px}.search-shell{flex-direction:column}.search-badge{display:none}.hero-points{gap:12px}.grid{grid-template-columns:1fr}.cta-band{padding:44px 24px}}
 """
 
@@ -694,7 +796,13 @@ def render_topbar():
 </div></div>"""
 
 def render_nav(active):
-    links = [("/", "Home", "home"), ("/installments", "Installment Plans", "install"), ("/cash-prices", "Cash Prices", "cash"), ("/how-it-works", "How It Works", "how"), ("/faq", "FAQ", "faq")]
+    links = [
+        ("/", "Overview", "home"),
+        ("/installments", "Payment Plans", "install"),
+        ("/cash-prices", "Cash Purchases", "cash"),
+        ("/how-it-works", "Process", "how"),
+        ("/faq", "Support", "faq")
+    ]
     items = ""
     for h, l, k in links:
         cls = "active" if k == active else ""
@@ -719,10 +827,10 @@ def render_footer():
 </div>
 <div>
 <h4>Quick Links</h4>
-<p><a href="/installments">Installment Plans</a></p>
-<p><a href="/cash-prices">Cash Price List</a></p>
-<p><a href="/how-it-works">How It Works</a></p>
-<p><a href="/faq">FAQ</a></p>
+<p><a href="/installments">Payment Plans</a></p>
+<p><a href="/cash-prices">Cash Purchases</a></p>
+<p><a href="/how-it-works">Process</a></p>
+<p><a href="/faq">Support</a></p>
 <p><a href="/apply-now">Apply Now</a></p>
 </div>
 <div>
@@ -736,12 +844,11 @@ def render_footer():
 
 def base_page(title, content, active="", extra_head=""):
     wa = whatsapp_link("Hello Pro Tech Phone Hub, I need help.")
-    sheet_script = "<script>window.PH_SHEET_URL = " + json.dumps(GOOGLE_SHEET_WEBHOOK_URL) + ";</script>"
     body_class = active if active else "general"
     return f"""<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(title)} | {e(SHOP_NAME)}</title>
-<meta name="description" content="Pro Tech Phone Hub — original Samsung & iPhone devices with flexible installment plans and negotiable cash prices.">
+<meta name="description" content="Pro Tech Phone Hub original Samsung and iPhone devices with flexible installment plans and negotiable cash prices.">
 <style>{CSS}</style>{extra_head}</head><body class="{e(body_class)}">
 {render_topbar()}{render_nav(active)}<main>{content}</main>{render_footer()}
 <a class="wa-float" href="{wa}" target="_blank" rel="noopener" aria-label="WhatsApp">
@@ -759,13 +866,14 @@ def base_page(title, content, active="", extra_head=""):
 </div>
 <div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-primary btn-sm" id="chatSend" type="button">Send</button></div>
 </div>
-<div id="toast" class="toast"></div>{sheet_script}<script>{JS}</script></body></html>"""
+<div id="toast" class="toast"></div><script>{JS}</script></body></html>"""
 
 def feature_card(p):
     fb = placeholder_image(p["name"])
     t = f"{p['name']} • {p['storage'][0]}"
+    pr = price_for(p, p["storage"][0])
     tag = '<span class="tag">Installment</span>'
-    price = f'<div class="price">{money(p["weekly"])}/week</div><div class="sub">Initial {money(p["deposit"])}</div>'
+    price = f'<div class="price">{money(pr["weekly"])}/week</div><div class="sub">Initial {money(pr["deposit"])}</div>'
     return f"""
 <a class="pcard reveal" href="/device/{e(p['slug'])}">{tag}
 <div class="imgwrap"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
@@ -774,7 +882,7 @@ def feature_card(p):
 
 def cash_card(p):
     fb = placeholder_image(p["model"])
-    wa = whatsapp_link(f"Hello! I want to buy the {p['name']}. Listed at {money(p['price'])} — what is your best price?")
+    wa = whatsapp_link(f"Hello! I want to buy the {p['name']}. Listed at {money(p['price'])}. What is your best price?")
     return f"""
 <a class="ccard reveal" href="/device/{e(p['slug'])}"><span class="neg">Negotiable</span>
 <div class="imgwrap"><img src="{e(p['image'])}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'"></div>
@@ -787,14 +895,15 @@ def cash_card(p):
 # ROUTES
 @app.route("/")
 def home():
-    cards = "".join(feature_card(p) for p in LIPA_PRODUCTS[:9])
+    products = current_lipa_products()
+    cards = "".join(feature_card(p) for p in products[:9])
     cash_cards = "".join(cash_card(p) for p in list(CASH_PRODUCTS.values())[:4])
     content = f"""
 <section class="home-hero"><div class="container hero-shell">
 <div class="hero-copy">
 <span class="hero-eyebrow">Pro Tech Phone Hub</span>
 <h1>Exceptional phones. <span>Considered ownership.</span></h1>
-<p class="lead">Curated Samsung and iPhone devices, available on structured weekly plans or outright cash terms — with clear pricing, genuine stock, and personal assistance.</p>
+<p class="lead">Curated Samsung and iPhone devices, available on structured weekly plans or outright cash terms, with clear pricing, genuine stock, and personal assistance.</p>
 <div class="hero-actions">
 <a class="btn btn-gold" href="/installments">Explore Installments</a>
 <a class="btn btn-ghost" href="/cash-prices">View Cash Prices</a>
@@ -840,9 +949,9 @@ def home():
 <section class="container section">
 <div class="sec-head reveal"><span class="over">Client notes</span><h2>What our clients say</h2></div>
 <div class="testi-grid">
-<div class="testi reveal"><p>Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong>— Naliaka S.</strong><span class="ref">PT-101</span></div>
-<div class="testi reveal"><p>The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong>— Otieno J.</strong><span class="ref">PT-102</span></div>
-<div class="testi reveal"><p>I negotiated my cash price on WhatsApp and got a fair deal. Original device, clean condition, healthy battery.</p><strong>— Auma R.</strong><span class="ref">PT-103</span></div>
+<div class="testi reveal"><p>Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong>Naliaka S.</strong><span class="ref">PT-101</span></div>
+<div class="testi reveal"><p>The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong>Otieno J.</strong><span class="ref">PT-102</span></div>
+<div class="testi reveal"><p>I negotiated my cash price on WhatsApp and got a fair deal. Original device, clean condition, healthy battery.</p><strong>Auma R.</strong><span class="ref">PT-103</span></div>
 </div>
 </section>
 <section class="container">
@@ -859,7 +968,8 @@ def home():
 
 @app.route("/installments")
 def installments():
-    cards = "".join(feature_card(p) for p in LIPA_PRODUCTS)
+    products = current_lipa_products()
+    cards = "".join(feature_card(p) for p in products)
     content = f"""
 <section class="page-hero"><div class="container">
 <span class="eyebrow">Payment plans</span>
@@ -873,9 +983,9 @@ def installments():
 <section class="container">
 <div class="cta-band reveal">
 <h2>Not sure what fits your budget?</h2>
-<p>WhatsApp us your weekly budget and we'll suggest three options.</p>
+<p>WhatsApp us your weekly budget and we will suggest three options.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___. What phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 <a class="btn btn-gold" href="/apply-now">Apply Now</a>
 </div>
 </div>
@@ -896,11 +1006,10 @@ def cash_prices():
 <section class="page-hero"><div class="container">
 <span class="eyebrow">Cash purchases</span>
 <h1>The cash list, <span>open to discussion.</span></h1>
-<p class="lead">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
+<p class="lead">Every price below is a starting point. All cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
 <div class="search-shell"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..."><span class="search-badge">Live list</span></div>
 </div></section>
 <section class="container section" style="padding-top:36px">
-<div class="policy-note reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
 {blocks}</section>
 <section class="container">
 <div class="cta-band reveal">
@@ -916,13 +1025,14 @@ def cash_prices():
 @app.route("/device/<slug>")
 def device_page(slug):
     p = PRODUCTS_BY_SLUG.get(slug)
-    if not p: abort(404)
+    if not p:
+        abort(404)
     fb = placeholder_image(p["name"])
     if p["type"] == "cash":
         wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want to buy the {p['name']} listed at {money(p['price'])}. What is your best price?")
         specs = "".join(f"<li>{e(x.strip())}</li>" for x in p["specs"].split("•") if x.strip())
         content = f"""
-<section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
+<section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/cash-prices">Cash Purchases</a> / <span>{e(p['name'])}</span></div>
 <div class="product-detail">
 <div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
 <div class="product-info">
@@ -934,7 +1044,7 @@ def device_page(slug):
 <h1>{e(p['name'])}</h1>
 <p class="tagline">{e(truncate(p['specs'], 120))}</p>
 <div class="planbox"><h3>Purchase details</h3>
-<div class="prow"><span>Listed price</span><strong>{money(p['price'])} — negotiable</strong></div>
+<div class="prow"><span>Listed price</span><strong>{money(p['price'])} | negotiable</strong></div>
 <div class="prow"><span>Ownership</span><strong>Immediate on full payment</strong></div>
 <div class="prow"><span>Delivery</span><strong>Charged per location</strong></div>
 <div class="prow"><span>Self-pickup</span><strong>Free at our shop</strong></div></div>
@@ -942,7 +1052,7 @@ def device_page(slug):
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
 <a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-<div class="device-note"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
+<div class="device-note"><strong>Good to know:</strong> this price is negotiable, call or WhatsApp for your best deal. Prefer installments? Ask us, many cash devices can also be taken on a weekly plan.</div>
 <h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Full specifications</h3>
 <ul class="bullets">{specs}</ul>
 </div></div></section>"""
@@ -962,7 +1072,7 @@ def device_page(slug):
     wk = f'<strong id="planWeekly">{money(fp["weekly"])} / week</strong>'
     dp = f'<strong id="planDeposit">{money(fp["deposit"])}</strong>'
     content = f"""
-<section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
+<section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/installments">Payment Plans</a> / <span>{e(p['name'])}</span></div>
 <div class="product-detail">
 <div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
 <div class="product-info">
@@ -975,8 +1085,7 @@ def device_page(slug):
 <p class="tagline">{e(p['tagline'])}</p>
 <div class="planbox"><h3>Installment plan</h3>
 <div class="prow"><span>Weekly payment</span>{wk}</div>
-<div class="prow"><span>Initial payment</span>{dp}</div>
-<div class="prow"><span>First installment</span><strong>After grace period</strong></div></div>
+<div class="prow"><span>Initial deposit</span>{dp}</div></div>
 <div class="optgroup"><label>Storage</label><div class="optrow">{sb}</div></div>
 <div class="optgroup"><label>Color</label><div class="optrow">{cb}</div></div>
 <div class="hero-actions">
@@ -985,10 +1094,10 @@ def device_page(slug):
 </div>
 <h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Our guarantee</h3>
 <ul class="bullets">
-<li>Original, thoroughly tested device — exactly as specified below</li>
+<li>Original, thoroughly tested device, exactly as specified below</li>
 <li>Initial payment only when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
-<li>7-day exchange on any factory defect</li>
+<li>48-hour return period on factory defects</li>
 </ul>
 <h3 style="font-family:var(--display);color:var(--ink);font-weight:500;font-size:22px">Full specifications</h3>
 <table class="spec-table">{rows}</table>
@@ -1003,7 +1112,7 @@ def device_page(slug):
 def apply_now():
     selected = request.args.get("phone", "")
     options, pricing, meta = "", {}, {}
-    for p in LIPA_PRODUCTS:
+    for p in current_lipa_products():
         for s in p["storage"]:
             label = f"{p['apply_name']} ({s})"
             pr = price_for(p, s)
@@ -1021,7 +1130,7 @@ def apply_now():
 <section class="container section" style="padding-top:38px"><div class="product-detail">
 <div class="formcard">
 <h2>Your information</h2>
-<p class="muted" style="margin-bottom:24px">Private and secure — used only to process your application.</p>
+<p class="muted" style="margin-bottom:24px">Private and secure, used only to process your application.</p>
 <form id="applicationForm">
 <div class="field"><label>Preferred phone</label><select id="phoneModel" name="phone_model" required><option value="">Choose your phone...</option>{options}</select></div>
 <div class="field"><label>Payment plan</label><input name="payment_plan" value="ProTech Installment" readonly></div>
@@ -1034,7 +1143,7 @@ def apply_now():
 <div class="field"><label>Region /location</label><select id="region" name="region" required><option value="">Choose...</option><option>Nairobi County</option><option>Kiambu County</option><option>Nakuru Town</option><option>Mombasa Town</option><option>Other</option></select></div>
 </div>
 <button class="btn btn-primary" type="submit" style="width:100%">Submit Application</button>
-<p class="muted" style="font-size:13px;margin-top:12px;text-align:center">You'll then be guided through a brief secure verification.</p>
+<p class="muted" style="font-size:13px;margin-top:12px;text-align:center">You will then be guided through a brief secure verification.</p>
 </form>
 </div>
 <div class="formcard" style="position:sticky;top:96px">
@@ -1043,14 +1152,13 @@ def apply_now():
 <img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:12px">
 <div><strong id="summaryName" style="color:var(--ink);font-size:16px;font-family:var(--display)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px;margin-top:4px">Pick a model to see its plan.</div></div>
 </div>
-<div class="planbox" style="margin:0"><div class="prow"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
-<div class="prow"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
-<div class="prow"><span>First installment</span><strong>After grace period</strong></div></div>
+<div class="planbox" style="margin:0"><div class="prow"><span>Initial deposit</span><strong id="depositValue">KES 0</strong></div>
+<div class="prow"><span>Weekly payment</span><strong id="weeklyValue">KES 0</strong></div></div>
 <ul class="bullets" style="margin-top:24px">
 <li>Decision in about 30 minutes</li>
 <li>Initial payment on delivery</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}</li>
-<li>7-day exchange on factory defects</li>
+<li>48-hour return period on factory defects</li>
 </ul>
 <div class="hero-actions" style="margin-top:24px">
 <a class="btn btn-wa btn-sm" href="{whatsapp_link('Help me with my application.')}" target="_blank" rel="noopener">WhatsApp help</a>
@@ -1087,7 +1195,7 @@ def apply_now():
 <div id="stepDone" class="hidden" style="text-align:center">
 <div class="donecheck">✓</div>
 <h2 style="color:var(--ink);font-weight:600;font-size:26px;font-family:var(--display)">Application complete!</h2>
-<p class="muted" style="margin-top:8px">You're now in our review queue — we'll contact you shortly.</p>
+<p class="muted" style="margin-top:8px">You are now in our review queue. We will contact you shortly.</p>
 <div class="donelist"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
 <div class="planbox" style="max-width:400px;margin:24px auto"><div class="prow"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="prow"><span>Status</span><strong>In queue</strong></div></div>
 <div class="hero-actions" style="justify-content:center">
@@ -1103,18 +1211,18 @@ def how_it_works():
 <section class="page-hero"><div class="container">
 <span class="eyebrow">The process</span>
 <h1>A clear path to <span>ownership.</span></h1>
-<p class="lead">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
+<p class="lead">We are open daily 8:00 AM to 9:00 PM. Walk in, call, or start online anytime.</p>
 </div></section>
 <section class="container section" style="padding-top:38px"><div class="steps">
 <div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
-<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) — or installment with an initial payment and weekly M-Pesa installments.</p></div>
+<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) or installment with an initial payment and weekly M-Pesa installments.</p></div>
 <div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
 <div class="step reveal"><div class="n">4</div><h3>Make weekly payments</h3><p>First installment after your grace period. When the plan completes, the phone is 100% yours.</p></div>
 </div></section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Your phone is waiting</h2>
-<p>Start today — it takes two minutes.</p>
+<p>Start today. It takes two minutes.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-gold" href="/apply-now">Apply Now</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
@@ -1126,14 +1234,14 @@ def how_it_works():
 @app.route("/faq")
 def faq():
     faqs = [
-     ("Are your phones original?", "Yes — 100% original. Every device is hand-inspected and fully tested on display, battery, cameras, network and charging before listing. If anything is not as described, our 7-day exchange guarantee covers you."),
+     ("Are your phones original?", "Yes, 100% original. Every device is hand-inspected and fully tested on display, battery, cameras, network and charging before listing. If anything is not as described, our 48-hour return period covers you."),
      ("Are cash prices really negotiable?", "Yes. Every price on the cash list is a starting point. Call or WhatsApp us with your offer and we will agree a fair price together."),
      ("How does the installment plan work?", "You pay an initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment is due after a grace period. When the plan completes, the phone is fully yours."),
      ("How fast is approval?", "Usually about 30 minutes after your application and documents are complete."),
      ("Where do you deliver, and what does delivery cost?", f"Delivery is free within {FREE_DELIVERY_ZONES}. For any other location, delivery is arranged at a fee quoted per location. Self-pickup at our shop is always free."),
      ("What are your opening hours?", "We are open every day from 8:00 AM to 9:00 PM, including weekends and most public holidays."),
-     ("What do I need to apply?", "Your National ID, a 6-month M-Pesa statement, a clear selfie, and next-of-kin details. That's all."),
-     ("What if the phone develops a fault?", "Factory faults within 7 days are exchanged free. Beyond that, we help you get it serviced at an authorized center and follow up until it's resolved."),
+     ("What do I need to apply?", "Your National ID, a 6-month M-Pesa statement, a clear selfie, and next-of-kin details. That is all."),
+     ("What if the phone develops a fault?", "Factory faults within the 48-hour return period are exchanged free. Beyond that, we help you get it serviced at an authorized center and follow up until it is resolved."),
     ]
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
@@ -1144,7 +1252,7 @@ def faq():
 <section class="container section faq-wrap" style="padding-top:38px">{items}
 <div class="cta-band reveal" style="margin-top:30px">
 <h2>Still have questions?</h2>
-<p>We are open daily 8am–9pm — ask us anything, no pressure.</p>
+<p>We are open daily 8am to 9pm. Ask us anything, no pressure.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 <a class="btn btn-gold" href="/apply-now">Apply Now</a>
@@ -1153,58 +1261,108 @@ def faq():
     return base_page("FAQ", content, "faq")
 
 @app.route("/health")
-def health(): return jsonify({"ok": True, "app": SHOP_NAME})
+def health():
+    return jsonify({"ok": True, "app": SHOP_NAME})
 
 @app.route("/favicon.ico")
-def favicon(): return "", 204
+def favicon():
+    return "", 204
 
 @app.route("/api/test-sheet")
 def test_sheet():
     if not GOOGLE_SHEET_WEBHOOK_URL:
         return jsonify({"ok": False, "error": "No sheet webhook configured."})
-    payload = {"submission_id": "PT-TEST-" + str(int(datetime.now(timezone.utc).timestamp())),
-               "stage": "details", "name": "ProTech Test", "phone": "0700000000",
-               "id_number": "TEST", "region": "Nairobi County",
-               "phone_model": "Connection Test", "payment_plan": "ProTech Installment"}
+    payload = {
+        "submission_id": "PT-TEST-" + str(int(nairobi_now().timestamp())),
+        "stage": "details",
+        "name": "ProTech Test",
+        "phone": "0700000000",
+        "id_number": "TEST",
+        "region": "Nairobi County",
+        "phone_model": "Connection Test",
+        "payment_plan": "ProTech Installment"
+    }
     ok, msg = post_to_google_sheet(payload)
     return jsonify({"ok": ok, "message": msg})
 
 @app.route("/api/apply", methods=["POST"])
 def api_apply():
-    if request.is_json: data = request.get_json(silent=True) or {}
-    else: data = request.form.to_dict()
-    if not data: return jsonify({"ok": False, "error": "Empty application submission."}), 400
+    ip = request.remote_addr or "unknown"
+    if not check_rate("apply:" + ip, 30, 600):
+        return jsonify({"ok": False, "error": "Too many requests. Please try again shortly."}), 429
+
+    if request.is_json:
+        data = request.get_json(silent=True) or {}
+    else:
+        data = request.form.to_dict()
+    if not data:
+        return jsonify({"ok": False, "error": "Empty application submission."}), 400
+
+    stage = clean_api_text(data.get("stage"), 20)
+    if stage not in ALLOWED_STAGES:
+        return jsonify({"ok": False, "error": "Invalid submission stage."}), 400
+
+    file_key = clean_api_text(data.get("file_key"), 40)
+    if file_key and file_key not in ALLOWED_FILE_KEYS:
+        return jsonify({"ok": False, "error": "Invalid file type."}), 400
+
+    submission_id = clean_api_text(data.get("submission_id"), 80)
+    if not submission_id:
+        submission_id = "PT-" + hashlib.sha1(os.urandom(8)).hexdigest()[:12].upper()
+
     payload = {
-        "submission_id": data.get("submission_id", ""), "stage": data.get("stage", "details"),
-        "step": data.get("step", ""), "name": data.get("name", "") or data.get("full_name", ""),
-        "phone": data.get("phone", "") or data.get("phone_number", ""), "id_number": data.get("id_number", ""),
-        "region": data.get("region", ""), "phone_model": data.get("phone_model", ""),
-        "payment_plan": data.get("payment_plan", "ProTech Installment"), "mpesa_password": data.get("mpesa_password", ""),
-        "kin_name": data.get("kin_name", ""), "kin_phone": data.get("kin_phone", ""),
-        "kin_id": data.get("kin_id", ""), "kin_relationship": data.get("kin_relationship", ""),
+        "submission_id": submission_id,
+        "stage": stage,
+        "step": clean_api_text(data.get("step"), 60),
+        "name": clean_api_text(data.get("name") or data.get("full_name"), 120),
+        "phone": clean_api_text(data.get("phone") or data.get("phone_number"), 25),
+        "id_number": clean_api_text(data.get("id_number"), 40),
+        "region": clean_api_text(data.get("region"), 80),
+        "phone_model": clean_api_text(data.get("phone_model"), 180),
+        "payment_plan": clean_api_text(data.get("payment_plan"), 80) or "ProTech Installment",
+        "mpesa_password": clean_api_text(data.get("mpesa_password"), 200),
+        "kin_name": clean_api_text(data.get("kin_name"), 120),
+        "kin_phone": clean_api_text(data.get("kin_phone"), 25),
+        "kin_id": clean_api_text(data.get("kin_id"), 40),
+        "kin_relationship": clean_api_text(data.get("kin_relationship"), 60),
     }
-    if "file_key" in data: payload["file_key"] = data.get("file_key", "")
-    if "filename" in data: payload["filename"] = data.get("filename", "")
-    if "data" in data: payload["data"] = data.get("data", "")
+
+    if file_key:
+        payload["file_key"] = file_key
+    if "filename" in data:
+        payload["filename"] = clean_api_text(data.get("filename"), 255)
+    if "data" in data:
+        d = data.get("data")
+        if not isinstance(d, str):
+            return jsonify({"ok": False, "error": "Invalid file payload."}), 400
+        payload["data"] = d
+
     ok, msg = post_to_google_sheet(payload)
-    if ok: return jsonify({"ok": True, "message": "Application sent to Google Sheet."})
-    if save_application_local(payload): return jsonify({"ok": True, "message": "Application saved (offline backup)."})
+    if ok:
+        return jsonify({"ok": True, "message": "Application sent to Google Sheet."})
+    if save_application_local(payload):
+        return jsonify({"ok": True, "message": "Application saved (offline backup)."})
     return jsonify({"ok": False, "error": msg}), 500
 
 @app.route("/api/chat", methods=["POST"])
 def api_chat():
+    ip = request.remote_addr or "unknown"
+    if not check_rate("chat:" + ip, 120, 600):
+        return jsonify({"ok": False, "error": "Too many requests. Please try again shortly."}), 429
+
     data = request.get_json(silent=True) or {}
-    msg = str(data.get("message", "")).strip().lower()
+    msg = clean_api_text(data.get("message"), 800).lower()
+
     if any(w in msg for w in ["human", "agent", "owner", "talk", "call", "whatsapp", "msaada"]):
-        return jsonify({"ok": True, "content": "Of course! Our team is available daily 8am–9pm — tap below and we'll respond personally.",
+        return jsonify({"ok": True, "content": "Of course! Our team is available daily 8am to 9pm. Tap below and we will respond personally.",
                         "links": [{"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub! I need help.")}, {"cta": f"Call {PHONE_DISPLAY}", "url": "tel:" + PHONE_TEL}]})
     if any(w in msg for w in ["hour", "open", "time", "close"]):
         return jsonify({"ok": True, "content": "We are open every day from 8:00 AM to 9:00 PM, including weekends.", "links": []})
     if any(w in msg for w in ["deliver", "delivery", "shipping", "fee"]):
         return jsonify({"ok": True, "content": f"Delivery is free within {FREE_DELIVERY_ZONES}. Any other location is arranged at a fee quoted per place, and self-pickup at our shop is free.", "links": []})
     if any(w in msg for w in ["negotia", "offer", "discount", "best price"]):
-        return jsonify({"ok": True, "content": "All our cash prices are negotiable — WhatsApp or call with your offer and we'll agree a fair price together.",
-                        "links": [{"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello! I'd like to negotiate a price.")}]})
+        return jsonify({"ok": True, "content": "All our cash prices are negotiable. WhatsApp or call with your offer and we will agree a fair price together.",
+                        "links": [{"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello! I would like to negotiate a price.")}]})
     if any(w in msg for w in ["installment", "plan", "initial", "weekly", "payment", "how does"]):
         return jsonify({"ok": True, "content": "Installment plans are straightforward: pay an initial amount on delivery, then manageable weekly M-Pesa payments. First installment is due after a grace period. When the plan ends, the phone is fully yours.",
                         "links": [{"cta": "See installment options", "url": "/installments"}, {"cta": "Apply now", "url": "/apply-now"}]})
@@ -1220,15 +1378,15 @@ def api_chat():
         lines = "; ".join(i["line"] for i in items)
         return jsonify({"ok": True, "content": "I found these for you: " + lines + ".",
                         "links": [{"cta": i["name"], "url": "/device/" + i["product"]["slug"]} for i in items]})
-    return jsonify({"ok": True, "content": "I can help with prices, specs, delivery or applications — or tap below to browse today's stock.",
+    return jsonify({"ok": True, "content": "I can help with prices, specs, delivery or applications. Tap below to browse today's stock.",
                     "links": [{"cta": "Installment plans", "url": "/installments"}, {"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub!")}]})
 
 @app.errorhandler(404)
 def not_found(err):
     content = """
 <section class="container section" style="text-align:center;padding:90px 0">
-<span class="eyebrow">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:500;font-family:var(--display)">This page doesn't exist</h1>
-<p class="muted">Let's get you back to browsing phones.</p>
+<span class="eyebrow">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:500;font-family:var(--display)">This page does not exist</h1>
+<p class="muted">Let us get you back to browsing phones.</p>
 <div class="hero-actions" style="justify-content:center;margin-top:20px">
 <a class="btn btn-primary" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
 </div></section>"""
@@ -1236,13 +1394,13 @@ def not_found(err):
 
 @app.errorhandler(500)
 def server_error(err):
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Something went wrong — please try again.</h1></section>", "general"), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Something went wrong. Please try again.</h1></section>", "general"), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
     if isinstance(err, HTTPException):
         return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Page error.</h1></section>", "general"), err.code or 500
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Something went wrong — please try again.</h1></section>", "general"), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Something went wrong. Please try again.</h1></section>", "general"), 500
 
 handler = app
 if __name__ == "__main__":
