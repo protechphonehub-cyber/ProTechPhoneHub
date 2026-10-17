@@ -35,10 +35,10 @@ def placeholder_image(text):
     clean = re.sub(r"[^A-Za-z0-9 ]+", "", str(text))[:18].strip() or "ProTech"
     clean = escape(clean, quote=True)
     svg = ("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'>"
-           "<rect width='100%' height='100%' fill='#7c3aed'/>"
-           "<rect x='18' y='18' width='864' height='864' rx='48' fill='#9333ea'/>"
-           f"<text x='50%' y='54%' fill='#fdf4ff' font-family='Arial' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
-           "<text x='50%' y='64%' fill='#e9d5ff' font-family='Arial' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
+           "<rect width='100%' height='100%' fill='#f8fafc'/>"
+           "<rect x='18' y='18' width='864' height='864' rx='24' fill='#e2e8f0'/>"
+           f"<text x='50%' y='54%' fill='#0f172a' font-family='Inter, sans-serif' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
+           "<text x='50%' y='64%' fill='#64748b' font-family='Inter, sans-serif' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
            "</svg>")
     return "data:image/svg+xml;utf8," + urllib.parse.quote(svg, safe="")
 
@@ -317,195 +317,233 @@ def search_items(query, limit=6):
     return [item for _, item in scored[:limit]]
 
 # ==========================================
-# PURPLISH GIRLISH CSS
+# PREMIUM TECH RETAIL CSS
 # ==========================================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap');
-:root{--ink:#3b0764;--purple:#7c3aed;--purple2:#9333ea;--violet:#6d28d9;--pink:#ec4899;--rose:#f472b6;--lavender:#ede9fe;--lilac:#f5f3ff;--orchid:#faf5ff;--paper:#ffffff;--line:#e9d5ff;--muted:#7e69ab;--shadow:0 14px 40px rgba(124,58,237,.09);--display:'Quicksand',sans-serif;--body:'Nunito',sans-serif}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:var(--body);color:var(--ink);background:linear-gradient(180deg,var(--orchid),var(--lilac) 40%,var(--lavender));line-height:1.65;overflow-x:hidden}
-a{color:inherit;text-decoration:none}
-img{max-width:100%;display:block}
-button,input,select,textarea{font:inherit}
-.container{width:min(1160px,92%);margin:auto}
-.section{padding:60px 0}
-.muted{color:var(--muted)}
-.hidden{display:none!important}
-.topbar{background:linear-gradient(90deg,var(--violet),var(--purple),var(--pink));color:#fff;font-size:12px;font-weight:700;letter-spacing:.06em}
-.topbar .container{display:flex;justify-content:space-between;padding:9px 0;flex-wrap:wrap;gap:8px}
-.topbar b{color:#fbcfe8}
-.header{position:sticky;top:0;z-index:1100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(124,58,237,.06)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px}
-.logo{font-family:var(--display);font-size:26px;font-weight:700;color:var(--purple);letter-spacing:-.01em}
-.logo i{font-style:normal;color:var(--pink)}
-.nav{display:flex;align-items:center;gap:20px}
-.nav a{font-weight:700;font-size:13.5px;color:var(--purple2);letter-spacing:.02em;transition:.2s}
-.nav a:hover,.nav a.active{color:var(--pink)}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:999px;border:none;font-weight:800;font-size:13.5px;cursor:pointer;transition:.25s;white-space:nowrap}
-.btn-pink{background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;box-shadow:0 8px 24px rgba(236,72,153,.3)}
-.btn-pink:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(236,72,153,.4)}
-.btn-purple{background:linear-gradient(135deg,var(--purple),var(--violet));color:#fff;box-shadow:0 8px 24px rgba(124,58,237,.3)}
-.btn-purple:hover{transform:translateY(-2px)}
-.btn-line{color:var(--purple);border:2px solid var(--purple);background:transparent}
-.btn-line:hover{background:var(--purple);color:#fff}
-.btn-lav{color:var(--purple);border:2px solid var(--line);background:var(--lilac)}
-.btn-lav:hover{border-color:var(--purple)}
-.btn-wa{color:#fff;background:linear-gradient(135deg,#25d366,#4ade80);box-shadow:0 8px 24px rgba(37,211,102,.25)}
-.btn-sm{padding:9px 16px;font-size:12px}
-.hamburger{display:none;width:44px;height:44px;border-radius:50%;border:2px solid var(--purple);background:var(--lilac);font-size:20px;cursor:pointer;color:var(--purple)}
-.hero{background:linear-gradient(135deg,var(--violet) 0%,var(--purple) 40%,var(--pink) 100%);color:#fff;padding:80px 0 60px;position:relative;overflow:hidden}
-.hero:before{content:"";position:absolute;top:-50%;right:-20%;width:600px;height:600px;border-radius:50%;background:rgba(255,255,255,.06)}
-.hero:after{content:"";position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;border-radius:50%;background:rgba(236,72,153,.15)}
-.hero-inner{max-width:900px;position:relative;z-index:1}
-.kicker{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1.5px solid rgba(255,255,255,.4);border-radius:999px;color:#fbcfe8;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;backdrop-filter:blur(4px)}
-.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,5.5vw,4.2rem);line-height:1.08;color:#fff;margin:20px 0 14px;letter-spacing:-.02em}
-.hero h1 em{font-style:normal;color:#fbcfe8}
-.hero p.lead{color:rgba(255,255,255,.85);max-width:700px;font-size:1.05rem}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
-.hero-stats{display:flex;gap:30px;margin-top:36px;flex-wrap:wrap}
-.hstat{border-left:3px solid var(--rose);padding-left:14px}
-.hstat b{display:block;font-family:var(--display);font-size:26px;color:#fbcfe8;font-weight:700}
-.hstat span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:700}
-.trust-strip{background:linear-gradient(90deg,var(--pink),var(--rose));color:#fff;padding:14px 0}
-.trust-strip .container{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:10px}
-.trust-item{font-weight:800;font-size:13px}
-.trust-item span{display:block;font-weight:600;font-size:11px;color:rgba(255,255,255,.8);letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
-.sec-head{margin-bottom:30px}
-.sec-head .over{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--pink);margin-bottom:8px}
-.sec-head h2{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,3.2vw,2.5rem);color:var(--purple);letter-spacing:-.01em}
-.sec-head h2:after{content:"";display:block;width:50px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--pink),var(--rose));margin-top:10px}
-.sec-head p{color:var(--muted);margin-top:10px;max-width:700px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:20px}
-.pcard{position:relative;background:var(--paper);border:1.5px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:.3s;box-shadow:0 6px 20px rgba(124,58,237,.05)}
-.pcard:hover{transform:translateY(-6px);border-color:var(--rose);box-shadow:0 16px 40px rgba(236,72,153,.12)}
-.pcard .imgwrap{background:linear-gradient(180deg,#fff,var(--lilac));padding:20px;height:220px;display:grid;place-items:center}
-.pcard .imgwrap img{max-height:180px;width:auto;object-fit:contain}
-.pcard .tag{position:absolute;top:12px;left:12px;background:var(--purple);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
-.pcard .tag.deal{background:var(--pink)}
-.pcard .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
-.pcard h3{font-family:var(--display);font-weight:700;font-size:16px;color:var(--purple);line-height:1.35}
-.pcard .price{font-weight:800;font-size:18px;color:var(--pink)}
-.pcard .price .strike{text-decoration:line-through;color:#c4b5fd;font-weight:600;font-size:12px;margin-right:6px}
-.pcard .sub{font-size:12px;color:var(--muted);font-weight:600}
-.pcard .go{margin-top:auto;padding-top:10px;border-top:1.5px dashed var(--line);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--rose)}
-.ccard{position:relative;background:var(--paper);border:1.5px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:.3s;box-shadow:0 6px 20px rgba(124,58,237,.05)}
-.ccard:hover{transform:translateY(-5px);border-color:var(--rose);box-shadow:0 14px 36px rgba(236,72,153,.1)}
-.ccard .neg{position:absolute;top:12px;right:12px;background:var(--pink);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
-.ccard .imgwrap{background:var(--lilac);padding:18px;height:200px;display:grid;place-items:center}
-.ccard .imgwrap img{max-height:165px;width:auto;object-fit:contain}
-.ccard .body{padding:14px;display:flex;flex-direction:column;gap:7px;flex:1}
-.ccard h4{font-family:var(--display);font-weight:700;font-size:14.5px;color:var(--purple);line-height:1.35}
-.ccard .spec{font-size:11.5px;color:var(--muted);line-height:1.5}
-.ccard .price{font-weight:800;font-size:18px;color:var(--pink);margin-top:auto;padding-top:8px;border-top:1.5px dashed var(--line)}
-.ccard .price small{font-size:10px;color:var(--rose);font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-left:6px}
-.ccard .cta-row{display:flex;gap:8px;margin-top:8px}
-.ccard .cta-row a{flex:1;text-align:center;padding:9px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.product-detail{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
-.product-img{background:linear-gradient(180deg,#fff,var(--lilac));border:1.5px solid var(--line);border-radius:24px;padding:36px;display:grid;place-items:center;min-height:440px}
-.product-img img{max-width:100%;max-height:380px;width:auto;object-fit:contain}
-.product-info h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3vw,2.4rem);color:var(--purple);margin-bottom:8px}
-.product-info .tagline{color:var(--muted);font-size:14px;margin-bottom:16px}
-.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.pill{padding:6px 12px;border-radius:999px;background:var(--lilac);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--purple)}
-.pill.gold{background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff}
-.pill.wine{background:var(--violet);color:#fff}
-.planbox{background:linear-gradient(135deg,var(--purple),var(--violet));color:#fff;border-radius:20px;padding:22px;margin:16px 0}
-.planbox h3{font-family:var(--display);font-weight:700;font-size:16px;color:#fbcfe8;margin-bottom:12px}
-.prow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.15);font-weight:600;font-size:14px}
-.prow:last-child{border-bottom:none}
-.prow strong{color:#fbcfe8;font-weight:800;text-align:right}
-.prow .strike{text-decoration:line-through;color:rgba(255,255,255,.5);font-size:12px;margin-right:6px}
-.optgroup{margin:16px 0}
-.optgroup label{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
-.optrow{display:flex;flex-wrap:wrap;gap:8px}
-.optbtn{padding:9px 16px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--purple2);cursor:pointer;font-weight:700;font-size:13px;transition:.2s}
-.optbtn.active,.optbtn:hover{border-color:var(--pink);background:var(--lilac);color:var(--pink)}
-.bullets{display:grid;gap:9px;margin:16px 0}
-.bullets li{list-style:none;padding-left:24px;position:relative;color:var(--muted);font-size:14px}
-.bullets li:before{content:"💜";position:absolute;left:0;font-size:12px}
-.spec-table{width:100%;border-collapse:collapse;margin:16px 0}
-.spec-table th,.spec-table td{padding:11px 13px;border:1.5px solid var(--line);text-align:left;font-size:13px;vertical-align:top}
-.spec-table th{width:140px;background:var(--lilac);color:var(--purple);font-weight:800}
-.reviewbox{background:#fff;border:1.5px solid var(--line);border-left:4px solid var(--pink);border-radius:18px;padding:22px;box-shadow:0 6px 20px rgba(124,58,237,.05)}
-.reviewbox .stars{color:var(--pink);letter-spacing:2px;font-size:17px;margin-bottom:6px}
-.reviewbox strong{color:var(--purple)}
-.reviewbox .ref{display:block;font-size:11px;color:#c4b5fd;letter-spacing:.06em;margin:4px 0 8px}
-.formcard{background:var(--paper);border:1.5px solid var(--line);border-radius:22px;padding:28px;box-shadow:var(--shadow)}
-.formcard h2{font-family:var(--display);font-weight:700;font-size:20px;color:var(--purple);margin-bottom:6px}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.field{display:grid;gap:6px;margin-bottom:12px}
-.field label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--purple)}
-input,select,textarea{width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--lilac);outline:none;font-weight:600;transition:.2s;color:var(--ink)}
-input:focus,select:focus,textarea:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(236,72,153,.08);background:#fff}
-.filelabel{display:flex;align-items:center;justify-content:space-between;gap:10px;border:2px dashed var(--rose);background:var(--lilac);padding:12px 14px;border-radius:14px;cursor:pointer;transition:.2s}
-.filelabel:hover{border-color:var(--pink);background:var(--orchid)}
-.filelabel input{display:none}
-.filelabel span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
-.progress{height:8px;border-radius:99px;background:var(--lavender);overflow:hidden;margin:12px 0}
-.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--pink));transition:width .4s;border-radius:99px}
-.donecheck{width:80px;height:80px;margin:6px auto 12px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;display:grid;place-items:center;font-size:36px;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
-@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
-.donelist{display:grid;gap:8px;margin:12px auto;max-width:380px}
-.donelist div{padding:10px 14px;border-radius:12px;background:var(--lilac);border:1.5px solid var(--line);color:var(--purple);font-weight:700;font-size:13px}
-.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(59,7,100,.5);backdrop-filter:blur(10px);padding:18px}
-.modal.open{display:grid}
-.modalbox{width:min(740px,100%);max-height:88vh;overflow:auto;background:var(--paper);border-radius:24px;padding:28px;position:relative;box-shadow:0 30px 80px rgba(124,58,237,.3)}
-.modalclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:var(--lilac);border:1.5px solid var(--line);cursor:pointer;font-size:17px;color:var(--purple)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--purple);color:#fff;padding:13px 20px;border-radius:14px;display:none;z-index:3000;box-shadow:0 10px 30px rgba(124,58,237,.3)}
-.toast.show{display:block}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
-.step{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:22px;text-align:center;box-shadow:0 6px 20px rgba(124,58,237,.05)}
-.step .n{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-family:var(--display);font-size:20px;display:grid;place-items:center;margin:0 auto 10px;font-weight:700}
-.step h3{font-family:var(--display);font-weight:700;font-size:15px;color:var(--purple);margin-bottom:6px}
-.step p{color:var(--muted);font-size:13px}
-.faq-item{border:1.5px solid var(--line);border-radius:16px;background:#fff;padding:18px 20px;margin-bottom:11px;transition:.2s}
-.faq-item:hover{border-color:var(--rose)}
-.faq-item summary{cursor:pointer;font-weight:800;color:var(--purple);list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:14px}
-.faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary:after{content:"+";font-size:22px;color:var(--pink);font-weight:600}
-.faq-item[open] summary:after{content:"−"}
-.faq-item p{margin-top:10px;color:var(--muted);padding-top:10px;border-top:1.5px dashed var(--line);font-size:13.5px}
-.footer{background:linear-gradient(135deg,var(--violet),var(--purple));color:#e9d5ff;padding:50px 0 20px;margin-top:50px}
-.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:28px;margin-bottom:24px}
-.footer h4{font-family:var(--display);color:#fff;margin-bottom:10px;font-weight:700}
-.footer a,.footer p{color:#e9d5ff;font-size:13.5px}
-.footer a:hover{color:#fbcfe8}
-.copyright{border-top:1px solid rgba(255,255,255,.15);padding-top:14px;text-align:center;font-size:12px;color:rgba(255,255,255,.7)}
-.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#25d366,#4ade80);display:grid;place-items:center;box-shadow:0 10px 30px rgba(37,211,102,.35)}
-.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:12px 20px;border-radius:999px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 10px 30px rgba(124,58,237,.3);border:none}
-.chat-panel{position:fixed;left:22px;bottom:80px;z-index:1700;width:min(370px,calc(100vw - 44px));height:520px;background:#fff;border-radius:22px;box-shadow:0 30px 80px rgba(124,58,237,.25);display:none;flex-direction:column;overflow:hidden;border:1.5px solid var(--line)}
-.chat-panel.open{display:flex;animation:fadeUp .3s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
-.chat-head{padding:14px 16px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;display:flex;align-items:center;gap:12px}
-.chat-head .av{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;font-family:var(--display);font-size:17px;color:var(--purple);font-weight:700}
-.chat-body{flex:1;overflow:auto;padding:14px;background:var(--orchid)}
-.msg{max-width:86%;margin-bottom:10px;padding:11px 14px;border-radius:16px;font-size:13.5px;line-height:1.6}
-.msg.bot{background:#fff;border:1.5px solid var(--line);border-bottom-left-radius:4px}
-.msg.user{margin-left:auto;background:linear-gradient(135deg,var(--purple),var(--violet));color:#fff;border-bottom-right-radius:4px}
-.msg a.chip{display:inline-block;margin:6px 5px 0 0;padding:7px 12px;border-radius:999px;background:var(--lilac);border:1.5px solid var(--line);color:var(--purple);font-weight:800;font-size:12px}
-.chat-input{display:flex;gap:8px;padding:12px;border-top:1.5px solid var(--line);background:#fff}
-.chat-input input{flex:1;border-radius:999px;padding:11px 16px;border:2px solid var(--line);background:var(--lilac)}
-.reveal{transition:opacity .7s ease,transform .7s ease}
-.reveal-init{opacity:0;transform:translateY(22px)}
-.reveal.visible{opacity:1;transform:none}
-.cat-section{margin-bottom:50px}
-.cat-head{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2.5px solid var(--purple);margin-bottom:12px}
-.cat-head h3{font-family:var(--display);font-weight:700;font-size:clamp(1.2rem,2.5vw,1.8rem);color:var(--purple)}
-.cat-head .count{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pink)}
-.policy-note{padding:14px 16px;border-radius:16px;background:var(--lilac);border-left:4px solid var(--pink);color:var(--purple);font-size:13.5px;font-weight:600;margin-bottom:20px}
-.cta-band{background:linear-gradient(135deg,var(--purple),var(--pink));border-radius:24px;padding:44px;text-align:center;color:#fff;box-shadow:0 20px 50px rgba(124,58,237,.2)}
-.cta-band h2{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3vw,2.3rem);color:#fff;margin-bottom:8px}
-.cta-band p{color:rgba(255,255,255,.85);margin-bottom:22px}
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.testi{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:24px;position:relative;box-shadow:0 6px 20px rgba(124,58,237,.05)}
-.testi:before{content:"💬";font-size:28px;position:absolute;top:14px;left:16px}
-.testi p{color:var(--muted);font-size:13.5px;margin:30px 0 12px}
-.testi strong{color:var(--purple);font-size:13px}
-.testi .ref{display:block;font-size:11px;color:#c4b5fd;letter-spacing:.06em}
-@media(max-width:1000px){.product-detail{grid-template-columns:1fr}.steps,.testi-grid{grid-template-columns:1fr 1fr}.trust-strip .container{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}}
-@media(max-width:820px){.nav{position:fixed;top:80px;left:4%;right:4%;z-index:1200;flex-direction:column;background:#fff;border:2px solid var(--purple);border-radius:20px;padding:18px;display:none;box-shadow:0 20px 50px rgba(124,58,237,.15)}.nav.open{display:flex}.hamburger{display:block}.fgrid{grid-template-columns:1fr}}
-@media(max-width:560px){.grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.trust-strip .container{grid-template-columns:1fr}}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+:root {
+  --bg: #ffffff;
+  --surface: #f8fafc;
+  --surface-2: #f1f5f9;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --accent: #f59e0b;
+  --success: #16a34a;
+  --danger: #ef4444;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: 'Inter', system-ui, -apple-system, sans-serif;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+button, input, select, textarea { font: inherit; }
+.container { width: min(1200px, 92%); margin: auto; }
+.section { padding: 80px 0; }
+.muted { color: var(--muted); }
+.hidden { display: none !important; }
+
+.topbar { background: #0f172a; color: #f8fafc; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; }
+.topbar .container { display: flex; justify-content: space-between; padding: 10px 0; flex-wrap: wrap; gap: 8px; }
+.topbar b { color: #38bdf8; font-weight: 600; }
+
+.header { position: sticky; top: 0; z-index: 1100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+.header-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; }
+.logo { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
+.logo i { font-style: normal; color: var(--primary); }
+.nav { display: flex; align-items: center; gap: 24px; }
+.nav a { font-weight: 500; font-size: 14px; color: var(--muted); transition: color 0.2s; }
+.nav a:hover, .nav a.active { color: var(--ink); }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius); border: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
+.btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
+.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
+.btn-outline { color: var(--ink); border: 1px solid var(--border); background: #fff; }
+.btn-outline:hover { border-color: var(--ink); background: var(--surface); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-accent:hover { filter: brightness(1.1); }
+.btn-wa { color: #fff; background: #25D366; }
+.btn-wa:hover { background: #1DA851; }
+.btn-sm { padding: 8px 16px; font-size: 13px; }
+.hamburger { display: none; width: 40px; height: 40px; border-radius: var(--radius); border: 1px solid var(--border); background: #fff; font-size: 20px; cursor: pointer; color: var(--ink); }
+
+.hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; padding: 100px 0 80px; position: relative; overflow: hidden; }
+.hero:before { content: ""; position: absolute; top: -50%; right: -10%; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%); }
+.hero-inner { max-width: 800px; position: relative; z-index: 1; }
+.kicker { display: inline-block; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; color: #94a3b8; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px; }
+.hero h1 { font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.1; color: #fff; margin-bottom: 20px; letter-spacing: -0.03em; }
+.hero h1 em { font-style: normal; color: #38bdf8; }
+.hero p.lead { color: #cbd5e1; max-width: 600px; font-size: 1.125rem; line-height: 1.6; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
+.hero-stats { display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap; }
+.hstat { border-left: 2px solid var(--primary); padding-left: 16px; }
+.hstat b { display: block; font-size: 24px; color: #fff; font-weight: 700; }
+.hstat span { font-size: 13px; text-transform: uppercase; color: #94a3b8; font-weight: 500; letter-spacing: 0.05em; }
+
+.trust-strip { background: #f8fafc; border-bottom: 1px solid var(--border); padding: 24px 0; }
+.trust-strip .container { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; gap: 20px; }
+.trust-item { font-weight: 600; font-size: 14px; color: var(--ink); }
+.trust-item span { display: block; font-weight: 400; font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+.sec-head { margin-bottom: 40px; }
+.sec-head .over { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; }
+.sec-head h2 { font-weight: 800; font-size: clamp(1.8rem, 3vw, 2.5rem); color: var(--ink); letter-spacing: -0.02em; }
+.sec-head p { color: var(--muted); margin-top: 12px; max-width: 600px; font-size: 16px; }
+
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
+.pcard, .ccard { position: relative; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; box-shadow: var(--shadow-sm); }
+.pcard:hover, .ccard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: #cbd5e1; }
+.pcard .imgwrap, .ccard .imgwrap { background: var(--surface); padding: 24px; height: 240px; display: grid; place-items: center; }
+.pcard .imgwrap img, .ccard .imgwrap img { max-height: 190px; width: auto; object-fit: contain; }
+.pcard .tag, .ccard .neg { position: absolute; top: 16px; left: 16px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
+.pcard .tag.deal { background: var(--accent); }
+.ccard .neg { left: auto; right: 16px; background: #ea580c; }
+.pcard .body, .ccard .body { padding: 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.pcard h3, .ccard h4 { font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.4; }
+.pcard .price, .ccard .price { font-weight: 700; font-size: 18px; color: var(--ink); margin-top: 8px; }
+.pcard .price .strike { text-decoration: line-through; color: var(--muted); font-weight: 400; font-size: 14px; margin-right: 6px; }
+.pcard .sub { font-size: 13px; color: var(--muted); font-weight: 500; }
+.pcard .go { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; color: var(--primary); }
+.ccard .spec { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 4px 0; }
+.ccard .price small { font-size: 11px; color: #ea580c; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-left: 8px; }
+.ccard .cta-row { display: flex; gap: 8px; margin-top: 16px; }
+.ccard .cta-row a { flex: 1; text-align: center; padding: 10px; border-radius: var(--radius); font-size: 13px; font-weight: 600; }
+
+.product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+.product-img { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; display: grid; place-items: center; min-height: 480px; }
+.product-img img { max-width: 100%; max-height: 400px; width: auto; object-fit: contain; }
+.product-info h1 { font-weight: 800; font-size: 2rem; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; }
+.product-info .tagline { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
+.pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
+.pill { padding: 6px 12px; border-radius: 999px; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--ink); border: 1px solid var(--border); }
+.pill.gold { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+.pill.wine { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
+.planbox { background: #0f172a; color: #fff; border-radius: var(--radius-lg); padding: 24px; margin: 20px 0; }
+.planbox h3 { font-weight: 700; font-size: 16px; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
+.prow { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 500; font-size: 15px; }
+.prow:last-child { border-bottom: none; }
+.prow strong { color: #fff; font-weight: 600; text-align: right; }
+.optgroup { margin: 24px 0; }
+.optgroup label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
+.optrow { display: flex; flex-wrap: wrap; gap: 8px; }
+.optbtn { padding: 10px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: #fff; color: var(--ink); cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; }
+.optbtn.active, .optbtn:hover { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+.bullets { display: grid; gap: 12px; margin: 20px 0; }
+.bullets li { list-style: none; padding-left: 28px; position: relative; color: var(--muted); font-size: 15px; }
+.bullets li:before { content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+.spec-table { width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.spec-table th, .spec-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; vertical-align: top; }
+.spec-table tr:last-child th, .spec-table tr:last-child td { border-bottom: none; }
+.spec-table th { width: 160px; background: var(--surface); color: var(--ink); font-weight: 600; }
+.reviewbox { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
+.reviewbox .stars { color: var(--accent); letter-spacing: 2px; font-size: 18px; margin-bottom: 12px; }
+.reviewbox strong { color: var(--ink); }
+.reviewbox .ref { display: block; font-size: 12px; color: var(--muted); margin: 4px 0 12px; }
+
+.formcard { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); }
+.formcard h2 { font-weight: 700; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
+.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.field { display: grid; gap: 8px; margin-bottom: 16px; }
+.field label { font-size: 13px; font-weight: 600; color: var(--ink); }
+input, select, textarea { width: 100%; padding: 12px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: #fff; outline: none; font-weight: 400; transition: all 0.2s; color: var(--ink); }
+input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+.filelabel { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px dashed var(--border); background: var(--surface); padding: 14px 16px; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }
+.filelabel:hover { border-color: var(--primary); background: #eff6ff; }
+.filelabel input { display: none; }
+.filelabel span { color: var(--muted); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
+.progress { height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin: 16px 0; }
+.progress span { display: block; height: 100%; width: 0; background: var(--primary); transition: width 0.4s; border-radius: 99px; }
+.donecheck { width: 72px; height: 72px; margin: 12px auto 20px; border-radius: 50%; background: #dcfce7; color: var(--success); display: grid; place-items: center; font-size: 32px; font-weight: 700; }
+.donelist { display: grid; gap: 10px; margin: 16px auto; max-width: 400px; }
+.donelist div { padding: 12px 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-weight: 500; font-size: 14px; }
+
+.modal { position: fixed; inset: 0; z-index: 2000; display: none; place-items: center; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); padding: 20px; }
+.modal.open { display: grid; }
+.modalbox { width: min(640px, 100%); max-height: 90vh; overflow: auto; background: #fff; border-radius: var(--radius-lg); padding: 32px; position: relative; box-shadow: var(--shadow-lg); }
+.modalclose { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); cursor: pointer; font-size: 18px; color: var(--muted); }
+.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 14px 24px; border-radius: var(--radius); display: none; z-index: 3000; box-shadow: var(--shadow-lg); font-weight: 500; }
+.toast.show { display: block; }
+
+.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+.step { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--shadow-sm); }
+.step .n { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 20px; display: grid; place-items: center; margin: 0 auto 16px; font-weight: 700; }
+.step h3 { font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 8px; }
+.step p { color: var(--muted); font-size: 14px; line-height: 1.5; }
+.faq-item { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; padding: 20px 24px; margin-bottom: 12px; transition: all 0.2s; }
+.faq-item:hover { border-color: #cbd5e1; }
+.faq-item summary { cursor: pointer; font-weight: 600; color: var(--ink); list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
+.faq-item summary::-webkit-details-marker { display: none; }
+.faq-item summary:after { content: "+"; font-size: 24px; color: var(--muted); font-weight: 400; line-height: 1; }
+.faq-item[open] summary:after { content: "−"; }
+.faq-item p { margin-top: 16px; color: var(--muted); padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.6; }
+
+.footer { background: #0f172a; color: #94a3b8; padding: 60px 0 24px; margin-top: 80px; }
+.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
+.footer h4 { color: #fff; margin-bottom: 16px; font-weight: 600; font-size: 15px; }
+.footer a, .footer p { color: #94a3b8; font-size: 14px; line-height: 1.8; }
+.footer a:hover { color: #fff; }
+.copyright { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; font-size: 13px; color: #64748b; }
+
+.wa-float { position: fixed; right: 24px; bottom: 24px; z-index: 1500; width: 56px; height: 56px; border-radius: 50%; background: #25D366; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
+.chat-btn { position: fixed; left: 24px; bottom: 24px; z-index: 1600; padding: 12px 24px; border-radius: var(--radius); background: var(--ink); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: var(--shadow-lg); border: none; }
+.chat-panel { position: fixed; left: 24px; bottom: 84px; z-index: 1700; width: min(380px, calc(100vw - 48px)); height: 540px; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border); }
+.chat-panel.open { display: flex; animation: fadeUp 0.3s ease; }
+@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.chat-head { padding: 16px; background: var(--ink); color: #fff; display: flex; align-items: center; gap: 12px; }
+.chat-head .av { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: grid; place-items: center; font-weight: 700; color: #fff; }
+.chat-body { flex: 1; overflow: auto; padding: 16px; background: var(--surface); }
+.msg { max-width: 85%; margin-bottom: 12px; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
+.msg.bot { background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--ink); }
+.msg.user { margin-left: auto; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+.msg a.chip { display: inline-block; margin: 8px 6px 0 0; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--primary); font-weight: 600; font-size: 13px; }
+.chat-input { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: #fff; }
+.chat-input input { flex: 1; border-radius: var(--radius); padding: 10px 14px; border: 1px solid var(--border); background: var(--surface); }
+
+.reveal { transition: opacity 0.6s ease, transform 0.6s ease; }
+.reveal-init { opacity: 0; transform: translateY(20px); }
+.reveal.visible { opacity: 1; transform: none; }
+.cat-section { margin-bottom: 60px; }
+.cat-head { display: flex; align-items: baseline; gap: 16px; padding-bottom: 16px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
+.cat-head h3 { font-weight: 800; font-size: 1.5rem; color: var(--ink); letter-spacing: -0.01em; }
+.cat-head .count { font-size: 13px; font-weight: 500; color: var(--muted); }
+.policy-note { padding: 16px 20px; border-radius: var(--radius); background: #eff6ff; border-left: 4px solid var(--primary); color: var(--ink); font-size: 14px; font-weight: 500; margin-bottom: 24px; }
+.cta-band { background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: var(--radius-lg); padding: 60px 40px; text-align: center; color: #fff; box-shadow: var(--shadow-lg); }
+.cta-band h2 { font-weight: 800; font-size: 2rem; color: #fff; margin-bottom: 12px; letter-spacing: -0.02em; }
+.cta-band p { color: rgba(255,255,255,0.8); margin-bottom: 28px; font-size: 16px; }
+.cta-band .btn-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
+.cta-band .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
+.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+.testi { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; position: relative; box-shadow: var(--shadow-sm); }
+.testi:before { content: "“"; font-family: serif; font-size: 48px; color: var(--primary); position: absolute; top: 12px; left: 20px; line-height: 1; opacity: 0.2; }
+.testi p { color: var(--muted); font-size: 14px; margin: 24px 0 16px; line-height: 1.6; }
+.testi strong { color: var(--ink); font-size: 14px; }
+.testi .ref { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+@media (max-width: 1000px) {
+  .product-detail { grid-template-columns: 1fr; }
+  .steps, .testi-grid { grid-template-columns: 1fr 1fr; }
+  .trust-strip .container { grid-template-columns: 1fr 1fr; }
+  .footer-grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 820px) {
+  .nav { position: fixed; top: 70px; left: 4%; right: 4%; z-index: 1200; flex-direction: column; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: none; box-shadow: var(--shadow-lg); }
+  .nav.open { display: flex; }
+  .hamburger { display: block; }
+  .fgrid { grid-template-columns: 1fr; }
+}
+@media (max-width: 560px) {
+  .grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .trust-strip .container { grid-template-columns: 1fr; }
+  .hero-stats { gap: 24px; }
+}
 """
 
 JS = r"""
@@ -669,7 +707,7 @@ def render_nav(active):
 <header class="header"><div class="container header-inner">
 <a class="logo" href="/">Pro Tech <i>Phone Hub</i></a>
 <nav class="nav" id="mainNav">{items}
-<a class="btn btn-pink btn-sm" href="/apply-now">Apply Now 💜</a>
+<a class="btn btn-primary btn-sm" href="/apply-now">Apply Now</a>
 <a class="btn btn-wa btn-sm" href="{whatsapp_link('Hi Pro Tech Phone Hub!')}" target="_blank" rel="noopener">WhatsApp</a>
 </nav>
 <button class="hamburger" id="menuBtn" aria-label="Menu">☰</button>
@@ -681,7 +719,7 @@ def render_footer():
 <div>
 <a class="logo" style="color:#fff" href="/">Pro Tech <i>Phone Hub</i></a>
 <p style="margin-top:12px;max-width:420px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list.</p>
-<p style="margin-top:10px"><strong style="color:#fbcfe8">{e(OPEN_HOURS)}</strong></p>
+<p style="margin-top:10px"><strong style="color:#38bdf8">{e(OPEN_HOURS)}</strong></p>
 </div>
 <div>
 <h4>Quick Links</h4>
@@ -711,18 +749,18 @@ def base_page(title, content, active="", extra_head=""):
 {render_topbar()}{render_nav(active)}<main>{content}</main>{render_footer()}
 <a class="wa-float" href="{wa}" target="_blank" rel="noopener" aria-label="WhatsApp">
 <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.8-.1 1.5Z"/></svg></a>
-<button class="chat-btn" id="chatBtn" type="button">💬 Chat with us</button>
+<button class="chat-btn" id="chatBtn" type="button">Chat with us</button>
 <div class="chat-panel" id="chatPanel">
-<div class="chat-head"><div class="av">P</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.8)">Online • {e(OPEN_HOURS)}</div></div>
-<button class="modalclose" id="chatClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.2);border:none;color:#fff" aria-label="Close">×</button></div>
+<div class="chat-head"><div class="av">PT</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.7)">Online • {e(OPEN_HOURS)}</div></div>
+<button class="modalclose" id="chatClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.1);border:none;color:#fff" aria-label="Close">×</button></div>
 <div class="chat-body" id="chatBody"></div>
-<div class="chat-quick" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:var(--orchid)">
-<button type="button" data-q="Best phones under 50k?" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Under 50k</button>
-<button type="button" data-q="How do installment plans work?" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Installments?</button>
-<button type="button" data-q="Where do you deliver?" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Delivery</button>
-<button type="button" data-q="I want to talk to someone" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Human help</button>
+<div class="chat-quick" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px;background:var(--surface)">
+<button type="button" data-q="Best phones under 50k?" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Under 50k</button>
+<button type="button" data-q="How do installment plans work?" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Installments?</button>
+<button type="button" data-q="Where do you deliver?" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Delivery</button>
+<button type="button" data-q="I want to talk to someone" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Human help</button>
 </div>
-<div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-pink btn-sm" id="chatSend" type="button">Send</button></div>
+<div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-primary btn-sm" id="chatSend" type="button">Send</button></div>
 </div>
 <div id="toast" class="toast"></div>{sheet_script}<script>{JS}</script></body></html>"""
 
@@ -746,7 +784,7 @@ def cash_card(p):
 <div class="body"><h4>{e(p['model'])}</h4>
 <div class="spec">{e(truncate(p['specs'], 90))}</div>
 <div class="price">{money(p['price'])}<small>Negotiable</small></div>
-<div class="cta-row"><a class="btn btn-lav btn-sm" href="/device/{e(p['slug'])}">Details</a><a class="btn btn-wa btn-sm" href="{wa}" target="_blank" rel="noopener">Best Price</a></div>
+<div class="cta-row"><a class="btn btn-outline btn-sm" href="/device/{e(p['slug'])}">Details</a><a class="btn btn-wa btn-sm" href="{wa}" target="_blank" rel="noopener">Best Price</a></div>
 </div></a>"""
 
 # ROUTES
@@ -759,8 +797,8 @@ def home():
 <h1>Original phones. Honest pricing. <em>Payments that fit.</em></h1>
 <p class="lead">Hand-picked Samsung and iPhone devices on flexible installment plans — or take any unit outright at a negotiable cash price. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
 <div class="hero-actions">
-<a class="btn btn-pink" href="/installments">Browse Installment Plans</a>
-<a class="btn" style="color:#fff;border:2px solid rgba(255,255,255,.5);background:transparent" href="/cash-prices">View Cash Prices</a>
+<a class="btn btn-primary" href="/installments">Browse Installment Plans</a>
+<a class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3)" href="/cash-prices">View Cash Prices</a>
 </div>
 <div class="hero-stats">
 <div class="hstat"><b>8am–9pm</b><span>open daily</span></div>
@@ -778,7 +816,7 @@ def home():
 <section class="container section">
 <div class="sec-head reveal"><span class="over">Installment plans</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
-<div style="text-align:center;margin-top:30px"><a class="btn btn-line" href="/installments">View all installment options →</a></div>
+<div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
 </section>
 <section class="container section">
 <div class="sec-head reveal"><span class="over">Customer stories</span><h2>What our clients say</h2></div>
@@ -793,7 +831,7 @@ def home():
 <h2>Ready for your next phone?</h2>
 <p>Start your application today or WhatsApp us for personalized recommendations.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Start Application</a>
+<a class="btn" style="background:#fff;color:var(--primary);font-weight:700" href="/apply-now">Start Application</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
@@ -804,9 +842,9 @@ def home():
 def installments():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS)
     content = f"""
-<section class="hero" style="padding:56px 0 26px"><div class="container">
+<section class="hero" style="padding:60px 0 40px"><div class="container">
 <span class="kicker">Flexible payment options</span>
-<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Installment <em>plans</em></h1>
+<h1 style="margin-top:16px">Installment <em>plans</em></h1>
 <p class="lead" style="max-width:740px">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
 </div></section>
 <section class="container section" style="padding-top:30px"><div class="grid">{cards}</div></section>
@@ -816,7 +854,7 @@ def installments():
 <p>WhatsApp us your weekly budget and we'll suggest three options.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn" style="background:#fff;color:var(--primary);font-weight:800" href="/apply-now">Apply Now</a>
 </div>
 </div>
 </section>"""
@@ -833,11 +871,11 @@ def cash_prices():
 <p class="muted reveal" style="margin-bottom:16px">{e(c['note'])}</p>
 <div class="grid">{cards}</div></section>"""
     content = f"""
-<section class="hero" style="padding:56px 0 26px"><div class="container">
+<section class="hero" style="padding:60px 0 40px"><div class="container">
 <span class="kicker">Immediate ownership</span>
-<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Cash <em>prices</em></h1>
+<h1 style="margin-top:16px">Cash <em>prices</em></h1>
 <p class="lead" style="max-width:740px">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
-<div style="max-width:500px;margin-top:20px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..." style="width:100%;padding:13px 18px;border-radius:999px;border:2px solid var(--line);background:#fff;outline:none"></div>
+<div style="max-width:500px;margin-top:20px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..." style="width:100%;padding:13px 18px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;outline:none"></div>
 </div></section>
 <section class="container section" style="padding-top:30px">
 <div class="policy-note reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
@@ -880,10 +918,10 @@ def device_page(slug):
 <div class="prow"><span>Self-pickup</span><strong>Free at our shop</strong></div></div>
 <div class="hero-actions">
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
-<a class="btn btn-line" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-<div style="margin-top:18px;padding:14px 16px;background:var(--lilac);border-left:4px solid var(--pink);border-radius:14px;color:var(--purple);font-size:13.5px"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
-<h3 style="font-family:var(--display);color:var(--purple);margin-top:20px;font-weight:700">Full specifications</h3>
+<div style="margin-top:18px;padding:14px 16px;background:var(--surface);border-left:4px solid var(--primary);border-radius:var(--radius);color:var(--ink);font-size:13.5px"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
+<h3 style="color:var(--ink);margin-top:20px;font-weight:700">Full specifications</h3>
 <ul class="bullets">{specs}</ul>
 </div></div></section>"""
         return base_page(p["name"], content, "cash")
@@ -920,17 +958,17 @@ def device_page(slug):
 <div class="optgroup"><label>Storage</label><div class="optrow">{sb}</div></div>
 <div class="optgroup"><label>Color</label><div class="optrow">{cb}</div></div>
 <div class="hero-actions">
-<a class="btn btn-pink" id="applyCta" href="{apply_href}">Take on Installment</a>
+<a class="btn btn-primary" id="applyCta" href="{apply_href}">Take on Installment</a>
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
 </div>
-<h3 style="font-family:var(--display);color:var(--purple);margin-top:20px;font-weight:700">Our guarantee</h3>
+<h3 style="color:var(--ink);margin-top:20px;font-weight:700">Our guarantee</h3>
 <ul class="bullets">
 <li>Original, thoroughly tested device — exactly as specified below</li>
 <li>Initial payment only when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
 <li>7-day exchange on any factory defect</li>
 </ul>
-<h3 style="font-family:var(--display);color:var(--purple);font-weight:700">Full specifications</h3>
+<h3 style="color:var(--ink);font-weight:700">Full specifications</h3>
 <table class="spec-table">{rows}</table>
 </div></div></section>
 <section class="container section" style="padding-top:0">
@@ -953,15 +991,15 @@ def apply_now():
             options += f'<option value="{e(label)}"{sel}>{e(label)}</option>'
     ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
     content = f"""
-<section class="hero" style="padding:50px 0 22px;text-align:center"><div class="container" style="max-width:840px">
+<section class="hero" style="padding:60px 0 40px;text-align:center"><div class="container" style="max-width:840px">
 <span class="kicker">Join Pro Tech Phone Hub</span>
-<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Apply in <em>under 2 minutes</em></h1>
+<h1 style="margin-top:16px">Apply in <em>under 2 minutes</em></h1>
 <p class="lead" style="margin:auto">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
 </div></section>
-<section class="container section" style="padding-top:28px"><div class="product-detail">
+<section class="container section" style="padding-top:40px"><div class="product-detail">
 <div class="formcard">
 <h2>Your information</h2>
-<p class="muted" style="margin-bottom:18px">Private and secure — used only to process your application.</p>
+<p class="muted" style="margin-bottom:24px">Private and secure — used only to process your application.</p>
 <form id="applicationForm">
 <div class="field"><label>Preferred phone</label><select id="phoneModel" name="phone_model" required><option value="">Choose your phone...</option>{options}</select></div>
 <div class="field"><label>Payment plan</label><input name="payment_plan" value="ProTech Installment" readonly></div>
@@ -973,28 +1011,28 @@ def apply_now():
 <div class="field"><label>National ID number</label><input id="id_number" name="id_number" required placeholder="ID number"></div>
 <div class="field"><label>Region /location</label><select id="region" name="region" required><option value="">Choose...</option><option>Nairobi County</option><option>Kiambu County</option><option>Nakuru Town</option><option>Mombasa Town</option><option>Other</option></select></div>
 </div>
-<button class="btn btn-pink" type="submit" style="width:100%">Submit Application 💜</button>
-<p class="muted" style="font-size:12px;margin-top:10px;text-align:center">You'll then be guided through a brief secure verification.</p>
+<button class="btn btn-primary" type="submit" style="width:100%">Submit Application</button>
+<p class="muted" style="font-size:13px;margin-top:12px;text-align:center">You'll then be guided through a brief secure verification.</p>
 </form>
 </div>
 <div class="formcard" style="position:sticky;top:96px">
 <h2>Your summary</h2>
-<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:16px;background:var(--lilac);margin:12px 0 16px">
-<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:12px">
-<div><strong id="summaryName" style="font-family:var(--display);color:var(--purple)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:12.5px">Pick a model to see its plan.</div></div>
+<div style="display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin:16px 0 24px">
+<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:var(--radius)">
+<div><strong id="summaryName" style="color:var(--ink);font-size:16px">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px;margin-top:4px">Pick a model to see its plan.</div></div>
 </div>
 <div class="planbox" style="margin:0"><div class="prow"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
 <div class="prow"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
 <div class="prow"><span>First installment</span><strong>After grace period</strong></div></div>
-<ul class="bullets" style="margin-top:16px">
+<ul class="bullets" style="margin-top:24px">
 <li>Decision in about 30 minutes</li>
 <li>Initial payment on delivery</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}</li>
 <li>7-day exchange on factory defects</li>
 </ul>
-<div class="hero-actions">
+<div class="hero-actions" style="margin-top:24px">
 <a class="btn btn-wa btn-sm" href="{whatsapp_link('Help me with my application.')}" target="_blank" rel="noopener">WhatsApp help</a>
-<a class="btn btn-line btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-outline btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
 </div></section>
@@ -1003,18 +1041,18 @@ def apply_now():
 <input type="hidden" id="docFullName"><input type="hidden" id="docPhoneNumber"><input type="hidden" id="docIdNumber">
 <input type="hidden" id="docRegion"><input type="hidden" id="docPhoneModel"><input type="hidden" id="docSubmissionId">
 <div class="progress"><span id="docProgress" style="width:33%"></span></div>
-<p style="padding:12px 16px;border-radius:14px;background:var(--lilac);border:1.5px solid var(--line);color:var(--purple);font-size:14px;font-weight:600;margin:0 0 14px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
-<div id="stepMpesa"><div style="background:var(--orchid);border:1.5px solid var(--line);border-radius:16px;padding:22px"><h3 style="font-family:var(--display);color:var(--purple);font-weight:700">M-Pesa statement (6 months)</h3>
+<p style="padding:14px 18px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);color:var(--ink);font-size:14px;font-weight:500;margin:0 0 20px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
+<div id="stepMpesa"><div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">M-Pesa statement (6 months)</h3>
 <ul class="bullets"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
 <div class="field"><label>Upload the M-Pesa PDF</label><label class="filelabel"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
 <div class="field"><label>Statement password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
-<button class="btn btn-pink" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
-<div id="stepIdentity" class="hidden"><div style="background:var(--orchid);border:1.5px solid var(--line);border-radius:16px;padding:22px"><h3 style="font-family:var(--display);color:var(--purple);font-weight:700">Identity verification</h3>
+<button class="btn btn-primary" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
+<div id="stepIdentity" class="hidden"><div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">Identity verification</h3>
 <div class="field"><label>Front of National ID</label><label class="filelabel"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>↑</strong></label></div>
 <div class="field"><label>Back of National ID</label><label class="filelabel"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>↑</strong></label></div>
 <div class="field"><label>Official selfie</label><label class="filelabel"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>↑</strong></label></div>
-<button class="btn btn-pink" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
-<div id="stepKin" class="hidden"><div style="background:var(--orchid);border:1.5px solid var(--line);border-radius:16px;padding:22px"><h3 style="font-family:var(--display);color:var(--purple);font-weight:700">Next of kin</h3>
+<button class="btn btn-primary" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
+<div id="stepKin" class="hidden"><div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">Next of kin</h3>
 <div class="fgrid">
 <div class="field"><label>Full name</label><input id="kName" placeholder="Next of kin name"></div>
 <div class="field"><label>Phone number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
@@ -1023,16 +1061,16 @@ def apply_now():
 <div class="field"><label>Kin ID number</label><input id="kId" placeholder="Kin ID number"></div>
 <div class="field"><label>Relationship</label><select id="kRel"><option value="">Choose...</option><option>Parent</option><option>Sibling</option><option>Spouse</option><option>Child</option><option>Aunt/Uncle</option><option>Cousin</option><option>Friend</option></select></div>
 </div>
-<button class="btn btn-pink" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
+<button class="btn btn-primary" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
 <div id="stepDone" class="hidden" style="text-align:center">
 <div class="donecheck">✓</div>
-<h2 style="font-family:var(--display);color:var(--purple);font-weight:700">Application complete!</h2>
-<p class="muted">You're now in our review queue — we'll contact you shortly.</p>
+<h2 style="color:var(--ink);font-weight:800;font-size:24px">Application complete!</h2>
+<p class="muted" style="margin-top:8px">You're now in our review queue — we'll contact you shortly.</p>
 <div class="donelist"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
-<div class="planbox" style="max-width:380px;margin:14px auto"><div class="prow"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="prow"><span>Status</span><strong>In queue</strong></div></div>
+<div class="planbox" style="max-width:400px;margin:24px auto"><div class="prow"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="prow"><span>Status</span><strong>In queue</strong></div></div>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
-<a class="btn btn-line" href="/">Back home</a>
+<a class="btn btn-outline" href="/">Back home</a>
 </div></div>
 </div></div>"""
     return base_page("Apply Now", content, "", ps)
@@ -1040,9 +1078,9 @@ def apply_now():
 @app.route("/how-it-works")
 def how_it_works():
     content = f"""
-<section class="hero" style="padding:56px 0 26px"><div class="container">
+<section class="hero" style="padding:60px 0 40px"><div class="container">
 <span class="kicker">Simple process</span>
-<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">How it <em>works</em></h1>
+<h1 style="margin-top:16px">How it <em>works</em></h1>
 <p class="lead">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
 </div></section>
 <section class="container section" style="padding-top:30px"><div class="steps">
@@ -1056,7 +1094,7 @@ def how_it_works():
 <h2>Your phone is waiting</h2>
 <p>Start today — it takes two minutes.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn" style="background:#fff;color:var(--primary);font-weight:800" href="/apply-now">Apply Now</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
 </div>
 </div>
@@ -1077,9 +1115,9 @@ def faq():
     ]
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
-<section class="hero" style="padding:56px 0 26px"><div class="container">
+<section class="hero" style="padding:60px 0 40px"><div class="container">
 <span class="kicker">Answers</span>
-<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Frequently asked <em>questions</em></h1>
+<h1 style="margin-top:16px">Frequently asked <em>questions</em></h1>
 </div></section>
 <section class="container section" style="padding-top:30px;max-width:840px">{items}
 <div class="cta-band reveal" style="margin-top:30px">
@@ -1087,7 +1125,7 @@ def faq():
 <p>We are open daily 8am–9pm — ask us anything, no pressure.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn" style="background:#fff;color:var(--primary);font-weight:800" href="/apply-now">Apply Now</a>
 </div></div>
 </section>"""
     return base_page("FAQ", content, "faq")
@@ -1167,22 +1205,22 @@ def api_chat():
 def not_found(err):
     content = """
 <section class="container section" style="text-align:center;padding:90px 0">
-<span class="kicker">Page not found</span><h1 style="font-family:var(--display);color:var(--purple);margin-top:14px;font-weight:700">This page doesn't exist</h1>
+<span class="kicker">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:800">This page doesn't exist</h1>
 <p class="muted">Let's get you back to browsing phones.</p>
 <div class="hero-actions" style="justify-content:center;margin-top:20px">
-<a class="btn btn-pink" href="/">Back home</a><a class="btn btn-line" href="/cash-prices">Cash prices</a>
+<a class="btn btn-primary" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
 </div></section>"""
     return base_page("Not found", content, ""), 404
 
 @app.errorhandler(500)
 def server_error(err):
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display);color:var(--purple)\">Something went wrong — please try again.</h1></section>", ""), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
     if isinstance(err, HTTPException):
-        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display);color:var(--purple)\">Page error.</h1></section>", ""), err.code or 500
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display);color:var(--purple)\">Something went wrong — please try again.</h1></section>", ""), 500
+        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Page error.</h1></section>", ""), err.code or 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 handler = app
 if __name__ == "__main__":
