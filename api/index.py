@@ -431,7 +431,7 @@ button,input,select,textarea{font:inherit}
 .topbar a{color:#e7dbc6;transition:.2s}
 .topbar a:hover{color:var(--gold-soft)}
 .sep{color:var(--gold)}
-.header{position:sticky;top:0;z-index:1100;background:rgba(246,243,238,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(230,221,207,.9)}
+.header{position:sticky;top:0;z-index:1100;background:rgba(246,243,238,.98);border-bottom:1px solid rgba(230,221,207,.9)}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
 .logo{font-family:var(--display);font-size:27px;font-weight:500;letter-spacing:-.02em;color:var(--ink)}
 .logo i{font-style:italic;color:var(--gold)}
@@ -465,7 +465,7 @@ button,input,select,textarea{font:inherit}
 .hero-points{display:flex;flex-wrap:wrap;gap:18px;margin-top:28px;color:#ab9d85;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
 .hero-points span{display:inline-flex;align-items:center;gap:8px}
 .hero-points span:before{content:"";width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
-.concierge-card{background:linear-gradient(180deg,rgba(255,253,249,.06),rgba(255,253,249,.03));border:1px solid rgba(214,185,140,.24);border-radius:24px;padding:30px;backdrop-filter:blur(6px)}
+.concierge-card{background:linear-gradient(180deg,rgba(255,253,249,.06),rgba(255,253,249,.03));border:1px solid rgba(214,185,140,.24);border-radius:24px;padding:30px}
 .concierge-card .card-label{display:block;color:var(--gold-soft);font-size:10.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin-bottom:10px}
 .concierge-card h3{font-family:var(--display);font-size:28px;font-weight:500;color:#f8f1e3;margin-bottom:16px}
 .concierge-card ul{display:grid;gap:0;list-style:none;border-top:1px solid rgba(214,185,140,.16)}
@@ -624,7 +624,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 .testi .ref{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px}
 @media(max-width:1000px){.hero-shell,.product-detail{grid-template-columns:1fr}.assurances .container,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img{min-height:400px}}
 @media(max-width:820px){
-.nav{position:fixed;top:0;right:0;bottom:0;left:auto;width:min(320px,84vw);flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;background:#14110d;border-left:1px solid rgba(214,185,140,.22);border-radius:0;padding:96px 20px 26px;transform:translateX(110%);visibility:hidden;transition:transform .3s ease, visibility .3s ease;box-shadow:0 30px 80px rgba(0,0,0,.35);z-index:1090}
+.nav{position:fixed;top:0;right:0;bottom:0;left:auto;width:min(320px,84vw);flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;background:#14110d;border-left:1px solid rgba(214,185,140,.22);border-radius:0;padding:96px 20px 26px;transform:translateX(110%);visibility:hidden;transition:transform .3s ease, visibility .3s ease;box-shadow:0 30px 80px rgba(0,0,0,.35);z-index:1090;overflow-y:auto}
 .nav.open{transform:translateX(0);visibility:visible}
 .nav a{color:#cbbfa9;width:100%;text-align:left;padding:12px 14px;border-radius:12px}
 .nav a.active{background:rgba(214,185,140,.14);color:#f6efe2}
