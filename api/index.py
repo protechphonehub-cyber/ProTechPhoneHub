@@ -4,6 +4,9 @@ from datetime import datetime, timezone, timedelta
 from flask import Flask, request, jsonify, abort
 from werkzeug.exceptions import HTTPException
 
+# ==========================================
+# PRO TECH PHONE HUB CONFIGURATION
+# ==========================================
 SHOP_NAME = "Pro Tech Phone Hub"
 PHONE_DISPLAY = "0720 890 018"
 PHONE_TEL = "+254720890018"
@@ -18,6 +21,9 @@ APP_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "protech_app
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 120 * 1024 * 1024
 
+# ==========================================
+# HELPERS
+# ==========================================
 def e(v): return escape(str(v), quote=True)
 def slugify(v):
     v = re.sub(r"[^a-z0-9]+", "-", str(v).lower().strip())
@@ -35,10 +41,10 @@ def placeholder_image(text):
     clean = re.sub(r"[^A-Za-z0-9 ]+", "", str(text))[:18].strip() or "ProTech"
     clean = escape(clean, quote=True)
     svg = ("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'>"
-           "<rect width='100%' height='100%' fill='#0A192F'/>"
-           "<rect x='18' y='18' width='864' height='864' rx='48' fill='#112240' stroke='#233554' stroke-width='2'/>"
-           f"<text x='50%' y='54%' fill='#E2E8F0' font-family='Arial' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
-           "<text x='50%' y='64%' fill='#00B4D8' font-family='Arial' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
+           "<rect width='100%' height='100%' fill='#ffffff'/>"
+           "<rect x='18' y='18' width='864' height='864' rx='48' fill='#f4f6fb'/>"
+           f"<text x='50%' y='54%' fill='#101828' font-family='Arial' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
+           "<text x='50%' y='64%' fill='#667085' font-family='Arial' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
            "</svg>")
     return "data:image/svg+xml;utf8," + urllib.parse.quote(svg, safe="")
 
@@ -52,7 +58,6 @@ def post_to_google_sheet(payload):
     body = json.dumps(payload, ensure_ascii=False).encode("utf-8")
     req = urllib.request.Request(GOOGLE_SHEET_WEBHOOK_URL, data=body, method="POST",
         headers={"Content-Type": "text/plain;charset=utf-8", "User-Agent": "Mozilla/5.0"})
-    
     opener = urllib.request.build_opener(NoRedirectHandler)
     try:
         response = opener.open(req, timeout=60)
@@ -71,8 +76,8 @@ def post_to_google_sheet(payload):
                     else: return False, f"GAS Error: {j}"
                 except Exception as e2: return True, "Redirect fired (Script ran, echo unreadable)"
         return False, f"HTTP Error: {h.code} - {h.read().decode('utf-8', 'ignore')[:200]}"
-    except Exception as e:
-        return False, f"Network Error: {str(e)}"
+    except Exception as ex:
+        return False, f"Network Error: {str(ex)}"
 
 def save_application_local(payload):
     try:
@@ -84,6 +89,9 @@ def save_application_local(payload):
         return True
     except Exception: return False
 
+# ==========================================
+# PRO TECH PRODUCT DATA
+# ==========================================
 def L(slug, name, apply_name, image, tagline, weekly, deposit, storage, colors, specs, reviews, storage_pricing=None, condition=None):
     d = {"slug": slug, "name": name, "apply_name": apply_name, "image": image, "tagline": tagline,
          "weekly": weekly, "deposit": deposit, "storage": storage, "colors": colors, "specs": specs, "reviews": reviews}
@@ -97,7 +105,7 @@ MOP = "https://mophones.co/cdn/shop/"
 LIPA_PRODUCTS = [
     L("motorola-g-power", "Motorola G Power", "Motorola G Power 2023", MOP + "files/motorola-moto-g-power-5g-1_673x.jpg?v=1770894988", 'Ex-UK 5G | 5000mAh | 6.5" Display', 560, 4299, ["128GB"], ["Mineral Black", "Bright White"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.5" HD+ (720×1600) IPS LCD, 120Hz refresh', "Processor": "Octa-core 5G platform, 4GB RAM", "Rear Camera": "50MP main (f/1.8) + 2MP macro, LED flash, 1080p video", "Front Camera": "8MP selfie (f/2.2)", "Battery & Charging": "5000mAh, TurboPower fast charging", "OS & Updates": "Android 13 out of the box, upgradable", "Build & Extras": "Side fingerprint reader, water-repellent coating, 3.5mm jack, microSD slot"}, [(5, "Wanjiku M.", "PT-101", "Battery lasts two full days on a single charge. Never worry about finding an outlet.")]),
     L("motorola-g-stylus", "Motorola G Stylus", "Motorola G Stylus 2024", AM + "412KEd+cz3L.AC_US1000.jpg?v=1771506465", 'Ex-UK 5G | 5000mAh | 6.7" Display', 910, 6999, ["128GB", "256GB"], ["Caramel Latte", "Scarlet Wave"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.7" P-OLED, FHD+ (2400×1080), 120Hz', "Processor": "Snapdragon 6 Gen 1 octa-core", "Rear Camera": "50MP main with OIS + 13MP ultrawide (macro vision)", "Front Camera": "16MP selfie", "Battery & Charging": "5000mAh, 30W TurboPower wired", "OS & Updates": "Android 14, upgradable", "Build & Extras": "Built-in stylus pen, stereo speakers, in-display fingerprint, NFC"}, [(5, "Achieng O.", "PT-102", "The stylus transforms how I take notes. Colors are vivid, screen is buttery smooth.")], storage_pricing={"128GB": {"weekly": 910, "deposit": 6999}, "256GB": {"weekly": 1040, "deposit": 7999}}),
-    L("samsung-galaxy-s21-fe", "Samsung Galaxy S21 FE 5G", "Samsung Galaxy S21 FE 5G", AM + "61PPEjwAkYL._Ac_SY300_SX300_QL70_FMwebp_.jpg", 'Ex-UK 5G | 4500mAh | 6.4" Display', 970, 7499, ["128GB"], ["Graphite", "White", "Lavender", "Olive"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.4" Dynamic AMOLED 2X, FHD+ (2400×1080), 120Hz, HDR10+', "Processor": "Snapdragon 888 octa-core", "Rear Camera": "12MP main (OIS) + 12MP ultrawide + 8MP telephoto (3x), 4K video", "Front Camera": "32MP selfie", "Battery & Charging": "4500mAh, 25W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable", "Build & Extras": "IP68 water/dust resistance, in-display fingerprint, stereo speakers, NFC"}, [(5, "Peter K.", "PT-103", "Premium feel without the premium price. Screen is gorgeous, performance is snappy.")]),
+    L("samsung-galaxy-s21-fe", "Samsung Galaxy S21 FE 5G", "Samsung Galaxy S21 FE 5G", AM + "61PPEjwAkYL._AC_SY300_SX300_QL70_FMwebp_.jpg", 'Ex-UK 5G | 4500mAh | 6.4" Display', 970, 7499, ["128GB"], ["Graphite", "White", "Lavender", "Olive"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.4" Dynamic AMOLED 2X, FHD+ (2400×1080), 120Hz, HDR10+', "Processor": "Snapdragon 888 octa-core", "Rear Camera": "12MP main (OIS) + 12MP ultrawide + 8MP telephoto (3x), 4K video", "Front Camera": "32MP selfie", "Battery & Charging": "4500mAh, 25W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable", "Build & Extras": "IP68 water/dust resistance, in-display fingerprint, stereo speakers, NFC"}, [(5, "Peter K.", "PT-103", "Premium feel without the premium price. Screen is gorgeous, performance is snappy.")]),
     L("samsung-galaxy-note-20", "Samsung Galaxy Note 20", "Samsung Note 20 5G", MOP + "files/0c5ffb9f-1e94-480c-bdb1-71566919cc1d-1_46397bdd-1274-44a3-b4e9-52df8ac4fdbc_600x.jpg?v=1703753426", 'Ex-UK 5G | 4300mAh | 6.7" Display', 1160, 8999, ["128GB"], ["Black", "Green", "Rose-Gold"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.7" Super AMOLED Plus, FHD+ (2400×1080), 60Hz, HDR10+', "Processor": "Snapdragon 865+ / Exynos 990 octa-core", "Rear Camera": "12MP main (OIS) + 64MP telephoto (3x hybrid) + 12MP ultrawide, 8K video", "Front Camera": "10MP selfie", "Battery & Charging": "4300mAh, 25W wired, 15W wireless", "OS & Updates": "Android 10 out of the box, fully upgradable", "Build & Extras": "S-Pen stylus included, IP68, stereo speakers tuned by AKG, NFC, Samsung DeX"}, [(5, "Daniel E.", "PT-104", "S-Pen is indispensable for work. Sign docs, sketch ideas, annotate everything.")]),
     L("samsung-galaxy-s21-plus", "Samsung Galaxy S21+", "Samsung Galaxy S21 Plus 5G", MOP + "products/BLACK_d72adc1a-b989-4cf6-a641-b2919ad0a2de_500x.jpg?v=1676990538", 'Ex-UK 5G | 4800mAh | 6.7" Display', 1110, 8499, ["128GB", "256GB"], ["Black", "Silver", "Purple"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.7" Dynamic AMOLED 2X, FHD+ (2400×1080), 120Hz, HDR10+', "Processor": "Snapdragon 888 / Exynos 2100 octa-core", "Rear Camera": "12MP main (OIS) + 64MP telephoto (3x hybrid) + 12MP ultrawide, 8K video", "Front Camera": "10MP selfie", "Battery & Charging": "4800mAh, 25W wired, 15W wireless", "OS & Updates": "Android 11 out of the box, fully upgradable", "Build & Extras": "IP68, in-display fingerprint, stereo speakers, NFC, Samsung DeX"}, [(5, "Samuel O.", "PT-105", "Gets me through 12-hour shifts without breaking a sweat. Reliable workhorse.")], storage_pricing={"128GB": {"weekly": 1110, "deposit": 8499}, "256GB": {"weekly": 1420, "deposit": 10999}}),
     L("samsung-galaxy-s22-plus", "Samsung Galaxy S22+", "Samsung Galaxy S22 Plus 5G", AM + "714oVGJtWeL.AC_SY300_SY300_QL70_FMwebp.jpg", 'Ex-UK 5G | 4500mAh | 6.6" Display', 1230, 9499, ["128GB"], ["Phantom Black", "Lavender", "Green"], {"Network": "5G + 4G LTE dual SIM", "Display": '6.6" Dynamic AMOLED 2X, FHD+ (2340×1080), 120Hz, HDR10+', "Processor": "Snapdragon 8 Gen 1 / Exynos 2200 octa-core", "Rear Camera": "50MP main (OIS) + 10MP telephoto (3x) + 12MP ultrawide, 8K video", "Front Camera": "10MP selfie", "Battery & Charging": "4500mAh, 45W wired, 15W wireless", "OS & Updates": "Android 12 out of the box, fully upgradable", "Build & Extras": "IP68, Armor Aluminum frame, in-display fingerprint, stereo speakers, NFC"}, [(5, "Grace W.", "PT-106", "Perfect size, amazing low-light photos. Fits my lifestyle perfectly.")]),
@@ -133,6 +141,9 @@ for lp in LIPA_PRODUCTS:
     lp["stock"] = "In Stock"
     PRODUCTS_BY_SLUG[lp["slug"]] = lp
 
+# ==========================================
+# PRO TECH CASH PRODUCTS
+# ==========================================
 SP_S26U = 'Display: 6.9" Dynamic AMOLED 2X, 144Hz, 3000 nits • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 200MP main + 50MP periscope (5x) + 50MP telephoto (3x) + 50MP ultrawide • Front: 12MP • Battery: 5000mAh, 60W wired • OS: Android 16, 7 years updates • Build: Titanium frame, IP68, S-Pen'
 SP_S26P = 'Display: 6.7" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4900mAh, 45W wired • OS: Android 16 • Build: Armor Aluminum, IP68'
 SP_S26 = 'Display: 6.36" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4300mAh, 45W wired • OS: Android 16 • Build: IP68, Gorilla Glass Victus 2'
@@ -191,7 +202,7 @@ def add_cat(name, note): CASH_CATEGORIES.append({"name": name, "note": note, "pr
 def C(cat, name, price, spec, img):
     slug = slugify("pt-" + name)
     prod = {"slug": slug, "type": "cash", "model": name, "name": name, "price": int(price),
-            "specs": clean_text(spec), "image": clean_text(img), "category_name": cat}
+            "specs": clean_text(spec), "image": clean_url(img), "category_name": cat}
     CASH_PRODUCTS[slug] = prod
     for c in CASH_CATEGORIES:
         if c["name"] == cat: c["products"].append(prod)
@@ -204,7 +215,6 @@ add_cat(S1, "Latest Samsung S and A series — refurbished to grade-A standard, 
 add_cat(S2, "Clean Samsung imports from the UK — flagships, foldables and the S-Pen line, every unit tested and verified original.")
 add_cat(S3, "Premium. Powerful. Timeless. Genuine iPhones from 11 Pro to 16 Pro Max — battery health checked, fully functional.")
 
-# ---------- 1) REFURBISHED & BOXED (poster column 1) ----------
 C(S1, "Samsung Galaxy S25 Ultra 512GB", 127000, SP_S25U, AM + "51ybW3eCRhL.AC_SX679.jpg")
 C(S1, "Samsung Galaxy S25 Ultra 256GB", 109000, SP_S25U, AM + "51ybW3eCRhL.AC_SX679.jpg")
 C(S1, "Samsung Galaxy S26 Ultra 256GB", 128000, SP_S26U, AM + "618F1CD-gbL.AC_SX679.jpg")
@@ -227,8 +237,6 @@ C(S1, "Samsung Galaxy A17 256GB / 8GB", 35000, SP_A17, AM + "61urRuuqCiL.AC_SY30
 C(S1, "Samsung Galaxy A26 256GB / 8GB", 36500, SP_A26, AM + "51ZmengIdlL.AC_SY300_SY300_QL70_FMwebp.jpg")
 C(S1, "Samsung Galaxy A27 128GB / 6GB", 35500, SP_A27, AM + "41Md7kOXowL.SY300_SX300_QL70_FMwebp.jpg")
 C(S1, "Samsung Galaxy A27 256GB / 8GB", 42000, SP_A27, AM + "41Md7kOXowL.SY300_SX300_QL70_FMwebp.jpg")
-
-# ---------- 2) EX-UK (poster column 2) ----------
 C(S2, "Samsung Galaxy S24 Ultra 512GB", 96999, SP_S24U, AM + "71WcjsOVOmL.AC_SX679.jpg")
 C(S2, "Samsung Galaxy S24 Ultra 256GB", 89999, SP_S24U, AM + "71WcjsOVOmL.AC_SX679.jpg")
 C(S2, "Samsung Galaxy S23 Ultra 512GB", 77999, SP_S23U, AM + "71iBKcLHXFL.AC_SX679.jpg")
@@ -259,8 +267,6 @@ C(S2, "Samsung Galaxy S21 Ultra 256GB", 45999, SP_S21U, AM + "61fNCOu3kaL.AC_SY3
 C(S2, "Samsung Galaxy S20 Ultra 256GB", 37999, SP_S20U, MOP + "files/S20Ultra1_455x.jpg?v=1718780519")
 C(S2, "Samsung Galaxy S10 4G 128GB", 32000, SP_S10, "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10.jpg")
 C(S2, "Samsung Galaxy S10 5G 256GB", 33500, SP_S105G, "https://fdn2.gsmarena.com/vv/bigpic/samsung-galaxy-s10-5g.jpg")
-
-# ---------- 3) APPLE iPHONE (poster column 3) ----------
 C(S3, "Apple iPhone 16 Pro Max 256GB", 111499, SP_I16PM, AM + "51Vs7ZwpSpL.AC_SY300_SY300_QL70_FMwebp.jpg")
 C(S3, "Apple iPhone 15 Pro Max 256GB", 96499, SP_I15PM, AM + "81OdN4WB6VL.AC_SY300_SY300_QL70_FMwebp.jpg")
 C(S3, "Apple iPhone 15 128GB", 66000, SP_I15, AM + "51PtFHUPjBL.AC_SY300_SY300_QL70_FMwebp.jpg")
@@ -282,6 +288,9 @@ C(S3, "Apple iPhone 11 Pro 256GB", 42999, SP_I11P, AM + "61UC1mk6dfL.AC_SY300_SY
 
 for slug, prod in CASH_PRODUCTS.items(): PRODUCTS_BY_SLUG[slug] = prod
 
+# ==========================================
+# SEARCH INDEX
+# ==========================================
 def build_search_index():
     index = []
     for p in LIPA_PRODUCTS:
@@ -317,288 +326,203 @@ def search_items(query, limit=6):
     scored.sort(key=lambda x: (-x[0], len(x[1]["name"]), x[1]["name"]))
     return [item for _, item in scored[:limit]]
 
+# ==========================================
+# TRUEWAVE DESIGN CSS (MODERN LIGHT)
+# ==========================================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap');
-:root {
-  --bg: #0A192F;
-  --bg-deep: #050A15;
-  --card: #112240;
-  --card-hover: #1A2F4A;
-  --border: #233554;
-  --text: #E2E8F0;
-  --text-light: #8892B0;
-  --accent: #00B4D8;
-  --accent-light: #48CAE4;
-  --success: #10B981;
-  --shadow: 0 4px 6px -1px rgba(0,0,0,.4), 0 10px 15px -3px rgba(0,0,0,.4);
-  --shadow-lg: 0 20px 25px -5px rgba(0,0,0,.6), 0 10px 10px -5px rgba(0,0,0,.3);
-  --display: 'Playfair Display', serif;
-  --body: 'Inter', sans-serif;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { font-family: var(--body); color: var(--text); background: var(--bg); line-height: 1.6; overflow-x: hidden; }
-a { color: inherit; text-decoration: none; }
-img { max-width: 100%; display: block; decoding: async; }
-button, input, select, textarea { font: inherit; }
-.container { width: min(1220px, 92%); margin: auto; }
-.section { padding: 68px 0; }
-.muted { color: var(--text-light); }
-.hidden { display: none !important; }
-
-.topbar { overflow: hidden; background: var(--bg-deep); color: #fff; font-weight: 600; font-size: 12.5px; letter-spacing: .05em; position: relative; z-index: 1200; border-bottom: 1px solid var(--border); }
-.marquee { display: flex; width: max-content; animation: marquee 35s linear infinite; }
-.marquee span { padding: 12px 30px; white-space: nowrap; color: var(--accent-light); }
-@keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-
-.header { position: sticky; top: 0; z-index: 1100; background: rgba(10, 25, 47, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); box-shadow: var(--shadow); }
-.header-inner { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 16px 0; }
-.logo { font-family: var(--display); font-size: 28px; font-weight: 800; display: inline-flex; align-items: baseline; letter-spacing: -0.02em; color: var(--text); }
-.logo i { font-style: normal; color: var(--accent); }
-.nav { display: flex; align-items: center; gap: 24px; }
-.nav a { color: var(--text-light); font-weight: 600; font-size: 14px; transition: .25s; letter-spacing: 0.01em; }
-.nav a:hover, .nav a.active { color: var(--accent); }
-
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 9px; padding: 13px 24px; border-radius: 8px; border: 1px solid transparent; font-family: var(--body); font-weight: 700; cursor: pointer; transition: .3s; white-space: nowrap; letter-spacing: 0.02em; text-transform: uppercase; font-size: 12px; }
-.btn-accent { color: var(--bg); background: var(--accent); box-shadow: 0 4px 14px rgba(0, 180, 216, .25); }
-.btn-accent:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(0, 180, 216, .35); }
-.btn-outline { color: var(--text); border-color: var(--border); background: transparent; }
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
-.btn-whatsapp { color: #fff; background: #25D366; box-shadow: 0 4px 14px rgba(37, 211, 102, .25); }
-.btn-whatsapp:hover { transform: translateY(-2px); }
-.btn-sm { padding: 9px 16px; font-size: 11px; border-radius: 6px; }
-.hamburger { display: none; background: var(--card); border: 1px solid var(--border); width: 46px; height: 46px; border-radius: 8px; font-size: 20px; cursor: pointer; box-shadow: var(--shadow); color: var(--text); }
-
-.hero { position: relative; padding: 80px 0 40px; overflow: hidden; }
-.hero-inner { position: relative; z-index: 1; max-width: 920px; }
-.eyebrow { display: inline-flex; padding: 8px 16px; border-radius: 4px; border: 1px solid rgba(0, 180, 216, .3); background: rgba(0, 180, 216, .05); color: var(--accent); font-family: var(--body); font-size: 11px; font-weight: 800; letter-spacing: .15em; text-transform: uppercase; }
-.hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.6rem, 6vw, 4.8rem); line-height: 1.05; letter-spacing: -.03em; margin: 24px 0 20px; color: var(--text); }
-.grad { background: linear-gradient(90deg, var(--accent), #48CAE4, var(--accent)); background-size: 220% auto; -webkit-background-clip: text; background-clip: text; color: transparent; animation: shine 6s linear infinite; }
-@keyframes shine { to { background-position: 220% center; } }
-.hero p { max-width: 780px; color: var(--text-light); font-size: clamp(1.05rem, 1.8vw, 1.2rem); font-weight: 400; line-height: 1.7; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 32px; }
-.hero-stats { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; }
-.stat-pill { padding: 12px 18px; border-radius: 6px; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow); font-weight: 600; font-size: 13px; color: var(--text); display: flex; align-items: center; gap: 8px; }
-.stat-pill:before { content: "✓"; color: var(--success); font-weight: 800; }
-
-.section-head { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 32px; }
-.section-head h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 3vw, 2.6rem); letter-spacing: -0.02em; color: var(--text); }
-.section-head h2:after { content: ""; display: block; width: 60px; height: 3px; margin-top: 12px; background: var(--accent); }
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 24px; }
-
-.card { position: relative; display: flex; flex-direction: column; overflow: hidden; background: var(--card); border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); transition: .4s cubic-bezier(0.2, 0.8, 0.2, 1); min-height: 100%; }
-.card:hover { transform: translateY(-8px); border-color: rgba(0, 180, 216, .4); box-shadow: var(--shadow-lg); }
-.card img { height: 220px; width: 100%; object-fit: contain; background: var(--bg-deep); padding: 20px; transition: .4s; }
-.card:hover img { transform: scale(1.03); }
-.card-body { padding: 20px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
-.card-body h3 { font-family: var(--display); font-weight: 600; font-size: 18px; line-height: 1.3; color: var(--text); }
-.price { color: var(--accent); font-family: var(--body); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; }
-.stock-badge, .badge { position: absolute; z-index: 2; top: 16px; left: 16px; padding: 6px 12px; border-radius: 4px; font-size: 10px; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; background: rgba(10, 25, 47, .95); border: 1px solid var(--border); color: var(--text-light); }
-.stock-badge:before { content: ""; display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--success); margin-right: 6px; animation: blink 2s ease-in-out infinite; }
-.stock-badge.low { border-color: rgba(234, 88, 12, .3); color: #f97316; background: rgba(234, 88, 12, .1); }
-.stock-badge.low:before { background: #f97316; }
-@keyframes blink { 50% { opacity: .3; } }
-.link { color: var(--accent); font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: auto; }
-.micro { font-size: 11px; color: var(--text-light); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; }
-.calc-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: auto; padding-top: 8px; }
-
-.why-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
-.panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: var(--shadow); position: relative; overflow: hidden; }
-.panel h3 { font-family: var(--display); font-weight: 700; font-size: 22px; margin-bottom: 12px; color: var(--text); }
-.panel h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.4rem, 3vw, 2.1rem); margin-bottom: 12px; color: var(--text); }
-.cta-band { margin: 40px auto 80px; background: var(--card); border: 1px solid var(--accent); border-radius: 16px; padding: 48px; text-align: center; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; color: var(--text); }
-.cta-band h2 { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 3vw, 2.8rem); margin-bottom: 12px; }
-.cta-band p { color: var(--text-light); margin-bottom: 24px; }
-
-.footer { border-top: 1px solid var(--border); background: var(--bg-deep); padding: 56px 0 24px; margin-top: 48px; }
-.footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 32px; margin-bottom: 32px; }
-.footer h4 { font-family: var(--display); margin-bottom: 16px; font-size: 18px; color: var(--text); }
-.footer a, .footer p { color: var(--text-light); font-size: 14px; line-height: 1.8; }
-.footer a:hover { color: var(--accent); }
-.copyright { border-top: 1px solid var(--border); padding-top: 24px; color: var(--text-light); font-size: 13px; text-align: center; }
-
-.page-hero { padding: 70px 0 30px; }
-.page-hero h1 { font-family: var(--display); font-weight: 700; font-size: clamp(2.2rem, 5vw, 4rem); letter-spacing: -.03em; margin: 16px 0 12px; color: var(--text); }
-.product-page { display: grid; grid-template-columns: 1.1fr .9fr; gap: 40px; align-items: start; }
-.product-image { width: 100%; height: 500px; object-fit: contain; background: var(--bg-deep); padding: 30px; border: 1px solid var(--border); border-radius: 12px; box-shadow: var(--shadow); }
-.product-panel { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: var(--shadow); }
-.product-panel h1 { font-family: var(--display); font-weight: 700; font-size: clamp(1.8rem, 3vw, 2.6rem); margin-bottom: 10px; letter-spacing: -0.02em; color: var(--text); }
-.plan-box { position: relative; margin: 24px 0; padding: 28px; border-radius: 12px; background: var(--bg); border: 1px solid var(--border); box-shadow: var(--shadow); overflow: hidden; }
-.plan-title { font-family: var(--body); font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: .15em; font-size: 12px; margin-bottom: 12px; }
-.plan-row { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; font-weight: 500; border-bottom: 1px dashed var(--border); color: var(--text); }
-.plan-row strong { color: var(--text); font-weight: 700; }
-.plan-row:last-of-type { border-bottom: none; }
-.option-row { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0 20px; }
-.option-btn { padding: 12px 18px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg); color: var(--text-light); cursor: pointer; font-weight: 600; font-size: 13px; transition: .2s; }
-.option-btn.active, .option-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0, 180, 216, .05); }
-.notice { padding: 16px 20px; border-radius: 8px; background: rgba(0, 180, 216, .05); border: 1px solid rgba(0, 180, 216, .2); color: var(--accent-light); font-size: 14px; margin: 16px 0; font-weight: 500; display: flex; align-items: center; gap: 10px; }
-.notice:before { content: "🛡"; font-size: 18px; }
-.promise-list, .trust-list, .box-list, .spec-list { display: grid; gap: 12px; margin: 16px 0 24px; }
-.promise-list li, .trust-list li, .box-list li, .spec-list li { list-style: none; padding-left: 28px; position: relative; color: var(--text); font-weight: 500; line-height: 1.6; }
-.promise-list li:before, .trust-list li:before, .box-list li:before, .spec-list li:before { content: "✓"; position: absolute; left: 0; color: var(--success); font-weight: 800; font-size: 16px; }
-.spec-table { width: 100%; border-collapse: collapse; margin: 16px 0 24px; }
-.spec-table th, .spec-table td { padding: 14px 16px; border: 1px solid var(--border); text-align: left; font-size: 14px; vertical-align: top; color: var(--text); }
-.spec-table th { width: 140px; color: var(--accent); background: var(--bg); font-weight: 700; }
-.review { border: 1px solid var(--border); border-radius: 12px; padding: 24px; background: var(--card); margin-bottom: 16px; box-shadow: var(--shadow); }
-.review-top { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; margin-bottom: 10px; }
-.stars { color: var(--accent); letter-spacing: 2px; font-size: 18px; }
-
-.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.field { display: grid; gap: 8px; margin-bottom: 16px; }
-.field label { font-weight: 700; font-size: 13px; color: var(--text); text-transform: uppercase; letter-spacing: 0.05em; }
-input, select, textarea { width: 100%; padding: 14px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); outline: none; transition: .2s; font-size: 15px; }
-input:focus, select:focus, textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 180, 216, .1); }
-textarea { min-height: 120px; resize: vertical; }
-.file-label { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 2px dashed var(--border); background: var(--bg); padding: 18px 20px; border-radius: 8px; cursor: pointer; transition: .25s; }
-.file-label:hover { border-color: var(--accent); background: rgba(0, 180, 216, .03); }
-.file-label input { display: none; }
-.file-label span { color: var(--text-light); font-size: 14px; font-weight: 600; }
-
-.modal { position: fixed; inset: 0; z-index: 2000; display: none; place-items: center; background: rgba(5, 10, 21, .8); backdrop-filter: blur(8px); padding: 20px; }
-.modal.open { display: grid; }
-.modal-box { width: min(820px, 100%); max-height: 90vh; overflow: auto; background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 36px; position: relative; box-shadow: var(--shadow-lg); }
-.modal-close { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border-radius: 50%; background: var(--bg); border: 1px solid var(--border); cursor: pointer; color: var(--text); font-size: 20px; display: grid; place-items: center; }
-.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--card); border: 1px solid var(--accent); color: var(--text); padding: 16px 24px; border-radius: 8px; display: none; z-index: 3000; box-shadow: var(--shadow-lg); font-weight: 600; }
-.toast.show { display: block; animation: toastIn .3s ease; }
-@keyframes toastIn { from { opacity: 0; transform: translate(-50%, 10px); } to { opacity: 1; transform: translate(-50%, 0); } }
-
-.reveal { transition: opacity .8s ease, transform .8s ease; }
-.reveal-init { opacity: 0; transform: translateY(30px); }
-.reveal.visible { opacity: 1; transform: none; }
-
-.faq-item { border: 1px solid var(--border); border-radius: 12px; background: var(--card); padding: 24px; margin-bottom: 16px; box-shadow: var(--shadow); }
-.faq-item summary { cursor: pointer; font-weight: 700; list-style: none; font-size: 16px; color: var(--text); }
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item p { margin-top: 16px; color: var(--text-light); line-height: 1.7; }
-
-.steps-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
-.step-number { width: 48px; height: 48px; border-radius: 8px; display: grid; place-items: center; background: rgba(0, 180, 216, .1); border: 1px solid rgba(0, 180, 216, .3); color: var(--accent); font-weight: 800; font-size: 20px; margin-bottom: 16px; }
-
-.category-note { color: var(--text-light); margin-bottom: 24px; max-width: 900px; font-size: 15px; line-height: 1.7; }
-.breadcrumbs { color: var(--text-light); font-size: 13px; margin-bottom: 16px; font-weight: 500; }
-.breadcrumbs a { color: var(--accent); }
-.product-meta { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
-.meta-pill { padding: 8px 14px; border-radius: 6px; background: var(--bg); border: 1px solid var(--border); font-size: 12px; color: var(--text-light); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
-.meta-pill.gold { background: rgba(0, 180, 216, .08); border-color: rgba(0, 180, 216, .3); color: var(--accent); }
-
-.wa-float { position: fixed; right: 24px; bottom: 24px; z-index: 1500; width: 64px; height: 64px; border-radius: 50%; background: #25D366; display: grid; place-items: center; box-shadow: 0 16px 40px rgba(37, 211, 102, .4); }
-.wa-float:before { content: ""; position: absolute; inset: 0; border-radius: 50%; animation: waPulse 2.5s ease-out infinite; }
-@keyframes waPulse { 0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, .5); } 100% { box-shadow: 0 0 0 24px rgba(37, 211, 102, 0); } }
-
-.exec-grid { display: grid; grid-template-columns: 1.1fr .9fr; gap: 32px; align-items: start; }
-.exec-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 40px; box-shadow: var(--shadow-lg); position: relative; overflow: hidden; }
-.exec-card:before { content: ""; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: var(--accent); pointer-events: none; }
-.exec-label { font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: var(--accent); font-weight: 800; margin-bottom: 12px; display: inline-flex; align-items: center; gap: 8px; }
-.choice-field { margin-bottom: 16px; border-radius: 10px; border: 1px solid var(--border); background: var(--bg); padding: 18px; transition: .25s; }
-.choice-field:focus-within { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(0, 180, 216, .1); }
-.choice-label { font-size: 11px; letter-spacing: .15em; text-transform: uppercase; color: var(--text-light); font-weight: 700; margin-bottom: 8px; }
-.choice-field input, .choice-field select { width: 100%; border: none; background: transparent; padding: 0; font-weight: 600; color: var(--text); outline: none; box-shadow: none; font-size: 16px; }
-.app-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; align-items: stretch; }
-.apply-summary { position: sticky; top: 100px; }
-.summary-line { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px dashed var(--border); font-weight: 600; color: var(--text-light); }
-.summary-line strong { color: var(--text); }
-.summary-phone { display: flex; align-items: center; gap: 16px; padding: 16px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg); margin: 0 0 16px; }
-.summary-phone img { width: 80px; height: 80px; object-fit: contain; background: var(--card); border: 1px solid var(--border); border-radius: 8px; flex: none; }
-.exec-points { display: grid; gap: 12px; margin: 20px 0 0; }
-.exec-points div { display: flex; gap: 12px; align-items: flex-start; padding: 14px 16px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); font-weight: 600; color: var(--text); }
-.exec-points div:before { content: "✓"; color: var(--success); font-weight: 800; font-size: 16px; }
-.secure-band { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-top: 16px; }
-.secure-band.compact { margin: 16px auto 0; max-width: 880px; }
-.secure-pill { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 6px; background: rgba(0, 180, 216, .05); border: 1px solid rgba(0, 180, 216, .2); color: var(--accent-light); font-size: 11px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-.page-hero.apply-hero { padding: 40px 0 10px; text-align: center; }
-.apply-hero .container { max-width: 880px; }
-.apply-section { padding-top: 24px; }
-.apply-progress { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; margin: 14px 0 8px; }
-.apply-progress-bar { height: 100%; width: 0%; background: linear-gradient(90deg, var(--accent), #48CAE4); transition: width .4s ease; }
-.apply-progress-text { font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 16px; }
-.doc-progress { height: 6px; border-radius: 999px; background: var(--border); overflow: hidden; margin: 12px 0 16px; }
-.doc-progress span { display: block; height: 100%; width: 0; background: linear-gradient(90deg, var(--accent), #48CAE4); transition: width .45s ease; }
-.doc-tip { font-size: 14px; color: var(--text); background: var(--bg); border: 1px solid var(--border); padding: 14px 16px; border-radius: 8px; margin-bottom: 20px; }
-.done-badge { width: 80px; height: 80px; margin: 12px auto 20px; border-radius: 50%; display: grid; place-items: center; background: var(--success); color: #fff; font-size: 36px; animation: popIn .5s cubic-bezier(.2, 1.4, .4, 1); }
-@keyframes popIn { from { transform: scale(0); } to { transform: scale(1); } }
-.done-list { display: grid; gap: 10px; margin: 20px auto; max-width: 420px; text-align: left; }
-.done-list div { padding: 12px 16px; border-radius: 8px; background: rgba(16, 185, 129, .08); border: 1px solid rgba(16, 185, 129, .2); color: var(--success); font-weight: 600; font-size: 14px; }
-.why-note { background: rgba(0, 180, 216, .05); border: 1px solid rgba(0, 180, 216, .2); color: var(--text); padding: 14px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; }
-.why-note strong { color: var(--accent); display: block; margin-bottom: 4px; }
-
-.assistant-dot { position: fixed; left: 24px; bottom: 24px; z-index: 1600; width: 60px; height: 60px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); box-shadow: var(--shadow-lg); display: none; place-items: center; cursor: pointer; }
-.assistant-dot.show { display: grid; }
-.assistant-dot .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--success); position: relative; }
-.assistant-dot .dot:after { content: ""; position: absolute; inset: 0; border-radius: 50%; animation: waPulse 2.5s ease-out infinite; }
-.assistant-panel { position: fixed; left: 24px; bottom: 96px; z-index: 1700; width: min(400px, calc(100vw - 48px)); height: 580px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-lg); display: none; flex-direction: column; overflow: hidden; }
-.assistant-panel.open { display: flex; animation: fadeUp .3s ease; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
-.assistant-head { padding: 20px; background: var(--bg-deep); border-bottom: 1px solid var(--border); }
-.assistant-head .row { display: flex; align-items: center; gap: 14px; }
-.assistant-avatar { width: 48px; height: 48px; border-radius: 10px; display: grid; place-items: center; background: rgba(0, 180, 216, .1); font-weight: 800; color: var(--accent); font-size: 20px; font-family: var(--display); }
-.online-text { color: var(--success); font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
-.online-text:before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
-.assistant-body { flex: 1; overflow: auto; padding: 20px; background: var(--bg); }
-.assistant-msg { max-width: 88%; margin-bottom: 12px; padding: 14px 18px; border-radius: 12px; font-size: 14px; line-height: 1.6; animation: fadeUp .25s ease; }
-.assistant-msg.bot { background: var(--card); border: 1px solid var(--border); border-bottom-left-radius: 4px; box-shadow: var(--shadow); color: var(--text); }
-.assistant-msg.user { margin-left: auto; background: var(--accent); color: var(--bg); border-bottom-right-radius: 4px; }
-.assistant-input { display: flex; gap: 10px; padding: 16px; border-top: 1px solid var(--border); background: var(--card); }
-.assistant-input input { flex: 1; padding: 14px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); color: var(--text); }
-.assistant-close { margin-left: auto; width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); cursor: pointer; color: var(--text-light); font-size: 18px; display: grid; place-items: center; }
-.assistant-quick { display: flex; gap: 8px; flex-wrap: wrap; padding: 0 16px 16px; background: var(--bg); }
-.assistant-quick button { padding: 8px 14px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); font-size: 12px; font-weight: 600; color: var(--text-light); cursor: pointer; transition: .2s; }
-.assistant-quick button:hover { color: var(--accent); border-color: var(--accent); }
-.ai-cards { display: grid; gap: 10px; margin-top: 12px; }
-.ai-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; background: var(--card); box-shadow: var(--shadow); }
-.ai-card.whatsapp { background: rgba(37, 211, 102, .05); border-color: rgba(37, 211, 102, .2); }
-.ai-card.gold { background: rgba(0, 180, 216, .05); border-color: rgba(0, 180, 216, .2); }
-.ai-card-title { font-weight: 700; font-size: 14px; color: var(--text); }
-.ai-card-sub { color: var(--text-light); font-size: 12px; margin-top: 2px; }
-.ai-card-btn { padding: 10px 16px; border-radius: 6px; font-weight: 700; font-size: 11px; color: var(--bg); background: var(--accent); white-space: nowrap; text-transform: uppercase; letter-spacing: 0.05em; }
-.ai-card.whatsapp .ai-card-btn { background: #25D366; color: #fff; }
-.ai-card.outline .ai-card-btn { background: var(--card); border: 1px solid var(--border); color: var(--text); }
-
-.search-box { display: flex; gap: 10px; margin: 24px 0 12px; }
-.search-box input { flex: 1; padding: 16px 20px; border-radius: 8px; border: 1px solid var(--border); background: var(--card); outline: none; box-shadow: var(--shadow); font-size: 15px; color: var(--text); }
-.chips { display: flex; flex-wrap: wrap; gap: 10px; margin: 28px 0 12px; }
-.chip { padding: 10px 16px; border-radius: 6px; border: 1px solid var(--border); background: var(--card); color: var(--text-light); font-size: 13px; font-weight: 600; box-shadow: var(--shadow); transition: .25s; }
-.chip:hover { color: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
-
-@media (max-width: 1020px) {
-  .product-page, .exec-grid { grid-template-columns: 1fr; }
-  .why-grid, .steps-grid { grid-template-columns: 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .apply-summary { position: static; }
-}
-@media (max-width: 860px) {
-  .nav { position: fixed; top: 80px; right: 4%; left: 4%; z-index: 1200; flex-direction: column; align-items: stretch; gap: 12px; padding: 20px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); display: none; box-shadow: var(--shadow-lg); }
-  .nav.open { display: flex; }
-  .hamburger { display: block; }
-  .form-grid, .app-grid { grid-template-columns: 1fr; }
-  .product-image { height: 350px; }
-  .section { padding: 48px 0; }
-}
-@media (max-width: 560px) {
-  .grid { grid-template-columns: 1fr; }
-  .card img { height: 180px; padding: 12px; }
-  .hero-actions .btn { width: 100%; }
-  .assistant-panel { left: 12px; right: 12px; width: auto; bottom: 84px; height: 65vh; }
-  .secure-pill { font-size: 10px; padding: 6px 10px; }
-}
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
+:root{--bg:#f5f7fc;--ink:#101828;--muted:#55607a;--gold:#c8a24a;--gold-dark:#a88534;--blue:#2563eb;--line:#e7ebf4;--success:#15803d;--shadow:0 18px 50px rgba(15,23,42,.08);--display:'Plus Jakarta Sans',sans-serif;--body:'Inter',sans-serif}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:linear-gradient(180deg,#f8faff,#f2f5fb 34%,#f8f7f2);line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit}
+.container{width:min(1220px,92%);margin:auto}
+.section{padding:58px 0}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+.topbar{overflow:hidden;background:linear-gradient(90deg,#b28c34,#f0dfae,#b28c34);color:#191103;font-weight:800;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;position:relative;z-index:1200}
+.marquee{display:flex;width:max-content;animation:marquee 28s linear infinite}
+.marquee span{padding:10px 26px;white-space:nowrap}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.header{position:sticky;top:0;z-index:1100;background:rgba(255,255,255,.92);border-bottom:1px solid rgba(231,235,244,.9);box-shadow:0 10px 30px rgba(15,23,42,.04)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 0}
+.logo{font-family:var(--display);font-size:30px;font-weight:800;display:inline-flex;align-items:baseline}
+.logo-true{color:var(--gold-dark)}
+.logo-wave{color:#0f172a}
+.nav{display:flex;align-items:center;gap:19px}
+.nav a{color:var(--muted);font-weight:600;font-size:14px;transition:.25s}
+.nav a:hover,.nav a.active{color:#0f172a}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:16px;border:1px solid transparent;font-family:var(--display);font-weight:700;cursor:pointer;transition:.25s;white-space:nowrap}
+.btn-gold{color:#171204;background:linear-gradient(135deg,var(--gold),#ecd79b);box-shadow:0 12px 28px rgba(200,162,74,.24)}
+.btn-gold:hover{transform:translateY(-2px)}
+.btn-outline{color:#0f172a;border-color:#d9dfec;background:rgba(255,255,255,.9)}
+.btn-outline:hover{border-color:var(--gold-dark);color:var(--gold-dark);transform:translateY(-1px)}
+.btn-whatsapp{color:#07130c;background:linear-gradient(135deg,#5ed18b,#b7f4cf);box-shadow:0 12px 28px rgba(34,197,94,.18)}
+.btn-trust{color:#fff;background:linear-gradient(135deg,#1d4ed8,#3b82f6);box-shadow:0 12px 28px rgba(37,99,235,.28)}
+.btn-trust:hover{transform:translateY(-2px)}
+.btn-sm{padding:9px 14px;font-size:12.5px;border-radius:12px}
+.hamburger{display:none;background:#fff;border:1px solid var(--line);width:46px;height:46px;border-radius:14px;font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+.hero{position:relative;padding:72px 0 28px;overflow:hidden}
+.hero-inner{position:relative;z-index:1;max-width:920px}
+.eyebrow{display:inline-flex;padding:9px 14px;border-radius:999px;border:1px solid rgba(200,162,74,.26);background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(200,162,74,.13));color:var(--gold-dark);font-family:var(--display);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;box-shadow:var(--shadow)}
+.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,6vw,4.8rem);line-height:1.02;letter-spacing:-.06em;margin:20px 0 16px}
+.grad{background:linear-gradient(90deg,var(--gold-dark),#f0dfae,var(--gold-dark));background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
+@keyframes shine{to{background-position:220% center}}
+.hero p{max-width:780px;color:var(--muted);font-size:clamp(1rem,1.8vw,1.16rem);font-weight:500}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
+.hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.stat-pill{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(200,162,74,.18);box-shadow:var(--shadow);font-weight:700;font-size:13px;color:#171204}
+.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:24px}
+.section-head h2{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem)}
+.section-head h2:after{content:"";display:block;width:58px;height:4px;border-radius:2px;margin-top:9px;background:linear-gradient(90deg,var(--gold),#efdc9f)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:18px}
+.card{position:relative;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(250,252,255,.98));border:1px solid rgba(231,235,244,.95);border-radius:28px;box-shadow:var(--shadow);transition:.3s;min-height:100%}
+.card:hover{transform:translateY(-7px);border-color:rgba(200,162,74,.45);box-shadow:0 24px 55px rgba(15,23,42,.13)}
+.card img{height:210px;width:100%;object-fit:contain;background:radial-gradient(circle at center,#fff,#f8fafc);padding:14px;transition:.35s}
+.card:hover img{transform:scale(1.04)}
+.card-body{padding:17px;display:flex;flex-direction:column;gap:8px;flex:1}
+.card-body h3{font-family:var(--display);font-weight:700;font-size:16px;line-height:1.35;min-height:2.7em}
+.price{color:var(--gold-dark);font-family:var(--display);font-weight:800;font-size:18px}
+.badge{position:absolute;z-index:2;top:12px;left:12px;padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.92);border:1px solid rgba(200,162,74,.35);color:var(--gold-dark)}
+.badge.deal{background:#15803d;color:#fff;border-color:#15803d}
+.link{color:var(--blue);font-weight:700;font-size:14px}
+.micro{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+.panel{background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(252,253,255,.98));border:1px solid var(--line);border-radius:30px;padding:26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.panel h3{font-family:var(--display);font-weight:700;font-size:20px;margin-bottom:8px}
+.panel h2{font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3vw,2.1rem);margin-bottom:8px}
+.cta-band{margin:30px auto 70px;background:linear-gradient(180deg,#fff,#fbf9f3);border:1px solid rgba(200,162,74,.22);border-radius:32px;padding:38px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
+.cta-band h2{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,3vw,2.5rem);margin-bottom:8px}
+.footer{border-top:1px solid var(--line);background:rgba(255,255,255,.9);padding:46px 0 22px;margin-top:36px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:22px;margin-bottom:24px}
+.footer h4{font-family:var(--display);margin-bottom:10px}
+.footer a,.footer p{color:var(--muted);font-size:14px}
+.footer a:hover{color:var(--gold-dark)}
+.copyright{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:13px;text-align:center}
+.page-hero{padding:58px 0 20px}
+.page-hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,5vw,3.8rem);letter-spacing:-.05em;margin:14px 0 10px}
+.chips{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 8px}
+.chip{padding:9px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--muted);font-size:13px;font-weight:700;box-shadow:var(--shadow);transition:.25s}
+.chip:hover{color:#0f172a;border-color:rgba(200,162,74,.42);transform:translateY(-2px)}
+.search-box{display:flex;gap:10px;margin:18px 0 8px}
+.search-box input{flex:1;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:#fff;outline:none;box-shadow:var(--shadow)}
+.product-page{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:start}
+.product-image{width:100%;height:470px;object-fit:contain;background:radial-gradient(circle at center,#fff,#f8fafc);padding:20px;border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)}
+.product-panel{background:linear-gradient(180deg,#fff,#fdfdfb);border:1px solid var(--line);border-radius:30px;padding:26px;box-shadow:var(--shadow)}
+.product-panel h1{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,3vw,2.5rem);margin-bottom:7px}
+.plan-box{position:relative;margin:18px 0;padding:22px;border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,246,236,.96));border:1px solid rgba(200,162,74,.34);box-shadow:0 18px 44px rgba(15,23,42,.08);overflow:hidden}
+.plan-title{font-family:var(--display);font-weight:800;color:var(--gold-dark);text-transform:uppercase;letter-spacing:.1em;font-size:13px;margin-bottom:8px}
+.plan-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-weight:600;border-bottom:1px dashed rgba(200,162,74,.18)}
+.plan-row:last-of-type{border-bottom:none}
+.option-row{display:flex;flex-wrap:wrap;gap:9px;margin:9px 0 15px}
+.option-btn{padding:9px 13px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;font-weight:700;font-size:13px;transition:.2s}
+.option-btn.active,.option-btn:hover{border-color:rgba(200,162,74,.55);color:#0f172a;background:rgba(200,162,74,.08)}
+.notice{padding:14px 15px;border-radius:18px;background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(200,162,74,.09));border:1px solid rgba(37,99,235,.12);color:#172554;font-size:14px;margin:13px 0;font-weight:500}
+.promise-list,.trust-list,.box-list,.spec-list{display:grid;gap:9px;margin:10px 0 16px}
+.promise-list li,.trust-list li,.box-list li,.spec-list li{list-style:none;padding-left:24px;position:relative;color:var(--muted);font-weight:500}
+.promise-list li:before,.trust-list li:before,.box-list li:before,.spec-list li:before{content:"✓";position:absolute;left:0;color:var(--success);font-weight:800}
+.spec-table{width:100%;border-collapse:collapse;margin:10px 0 18px}
+.spec-table th,.spec-table td{padding:12px 13px;border:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
+.spec-table th{width:130px;color:var(--gold-dark);background:#faf6ec;font-weight:700}
+.review{border:1px solid var(--line);border-radius:22px;padding:19px;background:#fff;margin-bottom:14px;box-shadow:var(--shadow)}
+.review-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:7px}
+.stars{color:var(--gold-dark);letter-spacing:2px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
+.field{display:grid;gap:7px;margin-bottom:13px}
+.field label{font-weight:700;font-size:14px}
+input,select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1px solid var(--line);background:#fff;color:#0f172a;outline:none;transition:.2s}
+input:focus,select:focus,textarea:focus{border-color:rgba(200,162,74,.65);box-shadow:0 0 0 4px rgba(200,162,74,.12)}
+textarea{min-height:110px;resize:vertical}
+.file-label{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px dashed rgba(200,162,74,.5);background:linear-gradient(135deg,rgba(200,162,74,.07),rgba(255,255,255,.92));padding:13px 14px;border-radius:15px;cursor:pointer;transition:.25s}
+.file-label:hover{border-color:var(--gold-dark)}
+.file-label input{display:none}
+.file-label span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.progress{height:9px;border-radius:999px;background:#edf0f6;overflow:hidden;margin:8px 0 10px}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#1d4ed8,#60a5fa);transition:width .45s ease}
+.doc-tip{font-size:13px;color:#172554;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.12);padding:10px 12px;border-radius:12px}
+.done-badge{width:94px;height:94px;margin:6px auto 14px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--success),#34d399);color:#fff;font-size:46px;animation:popIn .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
+.done-list{display:grid;gap:8px;margin:14px auto;max-width:420px;text-align:left}
+.done-list div{padding:10px 14px;border-radius:12px;background:rgba(21,128,61,.08);border:1px solid rgba(21,128,61,.3);color:var(--success);font-weight:700;font-size:14px}
+.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(15,23,42,.45);backdrop-filter:blur(10px);padding:20px}
+.modal.open{display:grid}
+.modal-box{width:min(820px,100%);max-height:88vh;overflow:auto;background:linear-gradient(180deg,#fff,#fbfcff);border:1px solid var(--line);border-radius:30px;padding:28px;position:relative;box-shadow:0 30px 90px rgba(15,23,42,.26)}
+.modal-close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:999px;background:#f4f6fb;border:1px solid var(--line);cursor:pointer}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(200,162,74,.4);color:#fff;padding:13px 17px;border-radius:15px;display:none;z-index:3000;box-shadow:var(--shadow)}
+.toast.show{display:block;animation:toastIn .25s ease}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+.reveal{transition:opacity .7s ease,transform .7s ease}
+.reveal-init{opacity:0;transform:translateY(26px)}
+.reveal.visible{opacity:1;transform:none}
+.faq-item{border:1px solid var(--line);border-radius:22px;background:#fff;padding:19px;margin-bottom:13px;box-shadow:var(--shadow)}
+.faq-item summary{cursor:pointer;font-weight:700;list-style:none}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item p{margin-top:11px;color:var(--muted)}
+.steps-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.step-number{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(200,162,74,.12);border:1px solid rgba(200,162,74,.24);color:var(--gold-dark);font-weight:800;font-size:18px;margin-bottom:12px}
+.category-note{color:var(--muted);margin-bottom:18px;max-width:900px}
+.breadcrumbs{color:var(--muted);font-size:13px;margin-bottom:12px}
+.product-meta{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
+.meta-pill{padding:7px 11px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:12px;color:var(--muted);font-weight:700}
+.meta-pill.gold{background:rgba(200,162,74,.09);border-color:rgba(200,162,74,.24);color:var(--gold-dark)}
+.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#25d366,#63d692);display:grid;place-items:center;box-shadow:0 12px 32px rgba(37,211,102,.36)}
+.wa-float:before{content:"";position:absolute;inset:0;border-radius:50%;animation:waPulse 2.2s ease-out infinite}
+@keyframes waPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.45)}100%{box-shadow:0 0 0 24px rgba(37,211,102,0)}}
+.exec-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start}
+.exec-card{background:linear-gradient(180deg,#fff,#fbfcff);border:1px solid rgba(37,99,235,.16);border-radius:30px;padding:30px;box-shadow:0 20px 55px rgba(15,23,42,.10);position:relative;overflow:hidden}
+.exec-card:before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#1d4ed8,#60a5fa);pointer-events:none}
+.exec-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#1d4ed8;font-weight:800;margin-bottom:8px;display:inline-flex;align-items:center;gap:6px}
+.choice-field{margin-bottom:12px;border-radius:20px;border:1px solid #edf1f7;background:linear-gradient(180deg,#fbfcff,#f8fafc);padding:14px;transition:.25s}
+.choice-field:focus-within{border-color:rgba(37,99,235,.5);box-shadow:0 0 0 4px rgba(37,99,235,.1)}
+.choice-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1d4ed8;font-weight:800;margin-bottom:7px}
+.choice-field input,.choice-field select{width:100%;border:none;background:transparent;padding:0;font-weight:700;color:#0f172a;outline:none;box-shadow:none}
+.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
+.apply-summary{position:sticky;top:96px}
+.summary-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(200,162,74,.18);font-weight:600}
+.summary-phone{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:18px;background:#fbfcff;margin:0 0 12px}
+.summary-phone img{width:74px;height:74px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:12px;flex:none}
+.exec-points{display:grid;gap:10px;margin:14px 0 0}
+.exec-points div{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:#fbfcff;font-weight:600}
+.exec-points div:before{content:"✓";color:var(--success);font-weight:800}
+.secure-band{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
+.secure-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#f0f6ff;border:1px solid rgba(37,99,235,.2);color:#1d4ed8;font-size:11.5px;font-weight:700}
+.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:13px 22px;border-radius:16px;background:#fff;border:1px solid rgba(200,162,74,.4);color:var(--gold-dark);font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow)}
+.chat-panel{position:fixed;left:22px;bottom:88px;z-index:1700;width:min(390px,calc(100vw - 44px));height:560px;background:#fff;border:1px solid var(--line);border-radius:30px;box-shadow:0 30px 90px rgba(15,23,42,.24);display:none;flex-direction:column;overflow:hidden}
+.chat-panel.open{display:flex;animation:fadeUp .3s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
+.chat-head{padding:16px;background:linear-gradient(180deg,#fff,#fbfcff);border-bottom:1px solid var(--line)}
+.chat-head .row{display:flex;align-items:center;gap:12px}
+.chat-avatar{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(200,162,74,.22),rgba(37,99,235,.1));font-weight:800;color:var(--gold-dark);font-size:18px}
+.online-text{color:var(--success);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.online-text:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e}
+.chat-body{flex:1;overflow:auto;padding:14px;background:linear-gradient(180deg,#f8fafc,#fff)}
+.msg{max-width:88%;margin-bottom:10px;padding:12px 14px;border-radius:17px;font-size:14px;line-height:1.55;animation:fadeUp .25s ease}
+.msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px;box-shadow:var(--shadow)}
+.msg.user{margin-left:auto;background:#0f172a;color:#fff;border-bottom-right-radius:6px}
+.msg a.chip-link{display:inline-block;margin:8px 6px 0 0;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg,rgba(200,162,74,.12),#fff);border:1px solid rgba(200,162,74,.3);color:var(--gold-dark);font-weight:800;font-size:12px}
+.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
+.chat-input input{flex:1;padding:12px 14px;border-radius:14px}
+.chat-quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:#f8fafc}
+.chat-quick button{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
+.chat-quick button:hover{color:#0f172a;border-color:rgba(200,162,74,.45)}
+@media(max-width:1020px){.product-page{grid-template-columns:1fr}.steps-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.exec-grid{grid-template-columns:1fr}.apply-summary{position:static}}
+@media(max-width:860px){.nav{position:fixed;top:92px;right:4%;left:4%;z-index:1200;flex-direction:column;align-items:stretch;gap:8px;padding:16px;border-radius:22px;border:1px solid var(--line);background:#fff;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.form-grid,.app-grid{grid-template-columns:1fr}.product-image{height:330px}.section{padding:42px 0}}
+@media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.card img{height:150px;padding:8px}.card-body h3{font-size:13px}.price{font-size:15px}.hero-actions .btn{width:100%}.chat-panel{left:12px;right:12px;width:auto;bottom:84px;height:62vh}}
+@media(max-width:430px){.grid{grid-template-columns:1fr}}
 """
 
+# ==========================================
+# PRO TECH JS (ADAPTED FOR TRUEWAVE DESIGN)
+# ==========================================
 JS = r"""
-function fmtKES(n){ return 'KES ' + Number(n).toLocaleString(); }
-function escHtml(s){ var d=document.createElement('div'); d.textContent=s==null?'':String(s); return d.innerHTML; }
-document.addEventListener('DOMContentLoaded', function(){
- [initMenu,initReveal,initStorageButtons,initColorButtons,initCashSearch,
- initFileLabels,initApplyForm,initModalClose,initAssistant].forEach(function(fn){try{fn();}catch(e){}});
+function fmtKES(n){return 'KES '+Number(n).toLocaleString();}
+document.addEventListener('DOMContentLoaded',function(){
+ [initMenu,initReveal,initStorage,initColors,initCashSearch,initFileLabels,initModalClose,initApply,initChat].forEach(function(fn){try{fn();}catch(e){}});
 });
-function initMenu(){
- var b=document.getElementById('menuBtn'),n=document.getElementById('mainNav');
- if(b&&n){b.addEventListener('click',function(){n.classList.toggle('open');});}
-}
-function initReveal(){
- if(!('IntersectionObserver' in window)){return;}
- var o=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');o.unobserve(en.target);}});},{threshold:.08});
- document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('reveal-init');o.observe(el);});
-}
-function initStorageButtons(){
+function initMenu(){var b=document.getElementById('menuBtn'),n=document.getElementById('mainNav');if(b&&n){b.addEventListener('click',function(){n.classList.toggle('open');});}}
+function initReveal(){if(!('IntersectionObserver' in window))return;var o=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');o.unobserve(en.target);}});},{threshold:.08});document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('reveal-init');o.observe(el);});}
+function initStorage(){
  document.querySelectorAll('.storage-btn').forEach(function(btn){
   btn.addEventListener('click',function(){
    document.querySelectorAll('.storage-btn').forEach(function(b){b.classList.remove('active');});
@@ -606,426 +530,171 @@ function initStorageButtons(){
    var a=document.getElementById('applyCta');
    if(a&&btn.dataset.product&&btn.dataset.storage){a.href='/apply-now?phone='+encodeURIComponent(btn.dataset.product+' ('+btn.dataset.storage+')');}
    var w=document.getElementById('planWeekly'),d=document.getElementById('planDeposit');
-   if(w&&btn.dataset.weekly){w.textContent=btn.dataset.weekly;}
-   if(d&&btn.dataset.deposit){d.textContent=btn.dataset.deposit;}
+   if(w&&btn.dataset.weekly){w.innerHTML=btn.dataset.weekly;}
+   if(d&&btn.dataset.deposit){d.innerHTML=btn.dataset.deposit;}
   });
  });
 }
-function initColorButtons(){
- document.querySelectorAll('.color-btn').forEach(function(b){
-  b.addEventListener('click',function(){
-   document.querySelectorAll('.color-btn').forEach(function(x){x.classList.remove('active');});
-   b.classList.add('active');
-  });
- });
-}
-function initCashSearch(){
- var s=document.getElementById('cashSearch');
- if(!s)return;
- s.addEventListener('input',function(){
-  var t=s.value.toLowerCase();
-  document.querySelectorAll('.cash-card').forEach(function(c){
-   c.style.display=c.innerText.toLowerCase().indexOf(t)>-1?'':'none';
-  });
- });
-}
-function initFileLabels(){
- document.querySelectorAll('.file-label input').forEach(function(i){
-  i.addEventListener('change',function(){
-   var l=i.closest('.file-label');
-   var t=l?l.querySelector('span'):null;
-   if(t){t.textContent=i.files&&i.files.length?i.files[0].name:'Upload file';}
-  });
- });
-}
-function initModalClose(){
- document.querySelectorAll('[data-close]').forEach(function(b){
-  b.addEventListener('click',function(){closeModal(b.getAttribute('data-close'));});
- });
-}
-function openModal(id){
- var m=document.getElementById(id);
- if(m){m.classList.add('open');document.body.style.overflow='hidden';}
-}
-function closeModal(id){
- var m=document.getElementById(id);
- if(m){m.classList.remove('open');document.body.style.overflow='';}
-}
-function showToast(msg){
- var t=document.getElementById('toast');
- if(!t)return;
- t.textContent=msg;
- t.classList.add('show');
- setTimeout(function(){t.classList.remove('show');},5000);
-}
-function val(id){
- var f=document.getElementById(id);
- return f?f.value:'';
-}
-function setStep(p){
- var b=document.getElementById('docProgressBar');
- if(b){b.style.width=p+'%';}
-}
-function jMsg(t){
- var m=document.getElementById('journeyMsg');
- if(m){m.textContent=t;}
-}
-var TW_SUB_ID=null;
-var TW_STEP=2;
-var TW_DONE=false;
-function jGo(step){
- TW_STEP=step;
- if(step===5){TW_DONE=true;}
+function initColors(){document.querySelectorAll('.color-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.color-btn').forEach(function(x){x.classList.remove('active');});b.classList.add('active');});});}
+function initCashSearch(){var s=document.getElementById('cashSearch');if(!s)return;s.addEventListener('input',function(){var t=s.value.toLowerCase();document.querySelectorAll('.cash-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().indexOf(t)>-1?'':'none';});});}
+function initFileLabels(){document.querySelectorAll('.file-label input').forEach(function(i){i.addEventListener('change',function(){var l=i.closest('.file-label');var t=l?l.querySelector('span'):null;if(t){t.textContent=i.files&&i.files.length?i.files[0].name:'Upload file';}});});}
+function initModalClose(){document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){closeModal(b.getAttribute('data-close'));});});}
+function openModal(id){var m=document.getElementById(id);if(m){m.classList.add('open');document.body.style.overflow='hidden';}}
+function closeModal(id){var m=document.getElementById(id);if(m){m.classList.remove('open');document.body.style.overflow='';}}
+function showToast(m){var t=document.getElementById('toast');if(!t)return;t.textContent=m;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},5000);}
+function val(id){var f=document.getElementById(id);return f?f.value:'';}
+function setStep(p){var b=document.getElementById('docProgress');if(b){b.style.width=p+'%';}}
+function jMsg(t){var m=document.getElementById('journeyMsg');if(m){m.textContent=t;}}
+var PT_SUB=null,PT_STEP=2,PT_DONE=false;
+function jGo(step){PT_STEP=step;if(step===5){PT_DONE=true;}
  var panels={2:'stepMpesa',3:'stepIdentity',4:'stepKin',5:'stepDone'};
- for(var k in panels){
-  var el=document.getElementById(panels[k]);
-  if(el){el.classList.add('hidden');}
- }
- var target=document.getElementById(panels[step]);
- if(target){target.classList.remove('hidden');}
- setStep(step===5?100:(step-1)*33);
+ for(var k in panels){var el=document.getElementById(panels[k]);if(el){el.classList.add('hidden');}}
+ var t=document.getElementById(panels[step]);if(t){t.classList.remove('hidden');}
+ setStep(step===5?100:(step-1)*33);}
+function genSubId(){return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+1000);}
+function postLocal(payload){
+ return fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)})
+   .then(function(r){return r.json();})
+   .then(function(j){return {ok:!!(j&&j.ok), detail: j.message || j.error || ''};})
+   .catch(function(e){return {ok:false, detail: String(e)};});
 }
-function genSubId(){
- return 'PT-'+Date.now()+'-'+Math.floor(Math.random()*9000+1000);
+async function submitStage(payload,timeoutMs){ return await postLocal(payload); }
+function readFileAsDataURL(f){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result);};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(f);});}
+function compressImage(file,maxDim,q){return new Promise(function(res){if(!file.type||file.type.indexOf('image/')!==0){res(null);return;}var img=new Image();var url=URL.createObjectURL(file);img.onload=function(){try{var w=img.width,h=img.height,s=Math.min(1,maxDim/Math.max(w,h));var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cw,ch);x.drawImage(img,0,0,cw,ch);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q));}catch(e){URL.revokeObjectURL(url);res(null);}};img.onerror=function(){URL.revokeObjectURL(url);res(null);};img.src=url;});}
+async function fileToDataUrl(file,key){var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');if(isPhoto){var c=await compressImage(file,1200,0.72);if(c){return c;}}return await readFileAsDataURL(file);}
+function setDoc(p){var map={docFullName:p.name||'',docPhoneNumber:p.phone||'',docIdNumber:p.id_number||'',docRegion:p.region||'',docPhoneModel:p.phone_model||'',docSubmissionId:p.submission_id||PT_SUB||''};Object.keys(map).forEach(function(id){var f=document.getElementById(id);if(f){f.value=map[id];}});}
+function updateSummary(){
+ var sel=document.getElementById('phoneModel');if(!sel)return;
+ var meta=(window.PT_META||{})[sel.value];
+ var im=document.getElementById('summaryImg'),nm=document.getElementById('summaryName'),me=document.getElementById('summaryMeta');
+ if(meta&&im){im.src=meta.img;im.style.display='block';im.onerror=function(){im.style.display='none';};}
+ if(nm){nm.textContent=sel.value||'No phone chosen yet';}
+ if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Initial payment on delivery';}
+ var r=(window.PT_PRICING||{})[sel.value]||[0,0];
+ var d=document.getElementById('depositValue'),w=document.getElementById('weeklyValue');
+ if(d){d.textContent=fmtKES(r[0]);}
+ if(w){w.textContent=fmtKES(r[1]);}
 }
-function readFileAsDataURL(file){
- return new Promise(function(resolve,reject){
-  var fr=new FileReader();
-  fr.onload=function(){resolve(fr.result);};
-  fr.onerror=function(){reject(fr.error);};
-  fr.readAsDataURL(file);
- });
-}
-function compressImage(file,maxDim,quality){
- return new Promise(function(resolve){
-  if(!file.type||file.type.indexOf('image/')!==0){resolve(null);return;}
-  var img=new Image();
-  var url=URL.createObjectURL(file);
-  img.onload=function(){
-   try{
-    var w=img.width,h=img.height;
-    var scale=Math.min(1,maxDim/Math.max(w,h));
-    var cw=Math.max(1,Math.round(w*scale)),ch=Math.max(1,Math.round(h*scale));
-    var canvas=document.createElement('canvas');
-    canvas.width=cw;canvas.height=ch;
-    var ctx=canvas.getContext('2d');
-    ctx.fillStyle='#ffffff';
-    ctx.fillRect(0,0,cw,ch);
-    ctx.drawImage(img,0,0,cw,ch);
-    URL.revokeObjectURL(url);
-    resolve(canvas.toDataURL('image/jpeg',quality));
-   }catch(e){URL.revokeObjectURL(url);resolve(null);}
-  };
-  img.onerror=function(){URL.revokeObjectURL(url);resolve(null);};
-  img.src=url;
- });
-}
-async function fileToDataUrl(file,key){
- var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');
- if(isPhoto){
-  var c=await compressImage(file,1000,0.6);
-  if(c){return c;}
- }
- return await readFileAsDataURL(file);
-}
-function setDoc(p){
- var map={docFullName:p.name||'',docPhoneNumber:p.phone||'',docIdNumber:p.id_number||'',docRegion:p.region||'',docPhoneModel:p.phone_model||'',docSubmissionId:p.submission_id||TW_SUB_ID||''};
- Object.keys(map).forEach(function(id){
-  var f=document.getElementById(id);
-  if(f){f.value=map[id];}
- });
-}
-function updateSummaryPhone(){
- var select=document.getElementById('phoneModel');
- if(!select){return;}
- var meta=(window.APPLY_META||{})[select.value];
- var im=document.getElementById('summaryImg');
- var nm=document.getElementById('summaryName');
- var me=document.getElementById('summaryMeta');
- if(meta&&im){
-  im.src=meta.img;
-  im.style.display='block';
-  im.onerror=function(){im.style.display='none';};
- }
- if(nm){nm.textContent=select.value||'No phone selected yet';}
- if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Pay deposit on delivery';}
- var r=window.APPLY_PRICING[select.value]||[0,0];
- var depEl = document.getElementById('depositValue');
- var wkEl = document.getElementById('weeklyValue');
- if(depEl) depEl.textContent = 'KES '+Number(r[0]).toLocaleString();
- if(wkEl) wkEl.textContent = 'KES '+Number(r[1]).toLocaleString();
-}
-function initApplyForm(){
- var form=document.getElementById('applicationForm');
- var select=document.getElementById('phoneModel');
- if(select&&window.APPLY_PRICING){
-  var up=function(){ updateSummaryPhone(); };
-  select.addEventListener('change',up);
-  up();
- }
- if(form){
-  form.addEventListener('submit',async function(e){
-   e.preventDefault();
-   var sb=form.querySelector('button[type=submit]');
-   if(sb){sb.disabled=true;sb.textContent='Submitting...';}
-   var fd=new FormData(form);
-   var p={};
-   fd.forEach(function(v,k){p[k]=v;});
+function initApply(){
+ var form=document.getElementById('applicationForm'),sel=document.getElementById('phoneModel');
+ if(sel){sel.addEventListener('change',updateSummary);updateSummary();}
+ if(form){form.addEventListener('submit',async function(ev){
+   ev.preventDefault();
+   var sb=form.querySelector('button[type=submit]');if(sb){sb.disabled=true;sb.textContent='Processing...';}
+   var fd=new FormData(form),p={};fd.forEach(function(v,k){p[k]=v;});
    var subId=genSubId();
    var payload={submission_id:subId,stage:'details',name:p.full_name||'',phone:p.phone_number||'',id_number:p.id_number||'',region:p.region||'',phone_model:p.phone_model||'',payment_plan:p.payment_plan||'ProTech Installment'};
-   
-   try{
-    var r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    var j=await r.json();
-    if(j&&j.ok){
-     TW_SUB_ID=subId;
-     setDoc(payload);
-     openModal('applicationModal');
-     jGo(2);
-     jMsg('Great start. Add your M-Pesa statement — this takes about 30 seconds.');
-    }else{
-     showToast('Could not reach the application server. Please check your connection and try again.');
-    }
-   }catch(err){
-    showToast('Network error. Please try again.');
-   }
+   var res=await submitStage(payload,45000);
+   if(res.ok){PT_SUB=subId;setDoc(payload);openModal('applicationModal');jGo(2);jMsg('Great start! Upload your M-Pesa statement next.');}
+   else{showToast('Error: ' + res.detail);}
    if(sb){sb.disabled=false;sb.textContent='Submit Application';}
-  });
- }
+ });}
  var cm=document.getElementById('contMpesa');
- if(cm){
-  cm.addEventListener('click',async function(){
-   var f=document.getElementById('fMpesa');
-   var pw=document.getElementById('fMpesaPw');
+ if(cm){cm.addEventListener('click',async function(){
+   var f=document.getElementById('fMpesa'),pw=document.getElementById('fMpesaPw');
    if(!f||!f.files||!f.files[0]){showToast('Please attach your M-Pesa PDF first.');return;}
    if(!pw||!pw.value){showToast('Please enter the statement password.');return;}
-   cm.disabled=true;
-   cm.textContent='Saving...';
-   var subId=val('docSubmissionId')||TW_SUB_ID||genSubId();
-   var dataUrl=await fileToDataUrl(f.files[0],'mpesa_statement');
-   var payload={submission_id:subId,stage:'file',file_key:'mpesa_statement',filename:f.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:dataUrl};
-   try{
-    var r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
-    var j=await r.json();
-    if(j&&j.ok){
-     jGo(3);
-     jMsg('Almost there. A quick ID check to protect your account.');
-    }else{
-     showToast('Could not save your statement. Please try again.');
-    }
-   }catch(err){ showToast('Upload problem. Please try again.'); }
-   cm.disabled=false;
-   cm.textContent='Save and Continue';
-  });
- }
+   cm.disabled=true;cm.textContent='Uploading...';
+   var subId=val('docSubmissionId')||PT_SUB||genSubId();
+   var du=await fileToDataUrl(f.files[0],'mpesa_statement');
+   var res=await submitStage({submission_id:subId,stage:'file',file_key:'mpesa_statement',filename:f.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du},180000);
+   cm.disabled=false;cm.textContent='Continue';
+   if(!res.ok){showToast('Error: ' + res.detail);return;}
+   jGo(3);jMsg('Now we need your ID and a selfie for verification.');
+ });}
  var ci=document.getElementById('contIdentity');
- if(ci){
-  ci.addEventListener('click',async function(){
+ if(ci){ci.addEventListener('click',async function(){
    var items=[['fIdF','id_front','ID front'],['fIdB','id_back','ID back'],['fSelfie','liveness_photo','selfie']];
-   for(var i=0;i<items.length;i++){
-    var el=document.getElementById(items[i][0]);
-    if(!el||!el.files||!el.files[0]){showToast('Please add your '+items[i][2]+' photo.');return;}
+   for(var i=0;i<items.length;i++){var el=document.getElementById(items[i][0]);if(!el||!el.files||!el.files[0]){showToast('Please add your '+items[i][2]+' photo.');return;}}
+   ci.disabled=true;var subId=val('docSubmissionId')||PT_SUB||genSubId();
+   for(var k=0;k<items.length;k++){
+     ci.textContent='Uploading '+(k+1)+' of 3...';
+     var el2=document.getElementById(items[k][0]);
+     var du=await fileToDataUrl(el2.files[0],items[k][1]);
+     var r=await submitStage({submission_id:subId,stage:'file',file_key:items[k][1],filename:el2.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du},180000);
+     if(!r.ok){ci.disabled=false;ci.textContent='Continue';showToast('Error: ' + r.detail);return;}
    }
-   ci.disabled=true;
-   var subId=val('docSubmissionId')||TW_SUB_ID||genSubId();
-   for(var i2=0;i2<items.length;i2++){
-    ci.textContent='Securing '+(i2+1)+' of 3 — '+items[i2][2]+'...';
-    var el2=document.getElementById(items[i2][0]);
-    var du=await fileToDataUrl(el2.files[0],items[i2][1]);
-    var pl={submission_id:subId,stage:'file',file_key:items[i2][1],filename:el2.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du};
-    try{
-     var r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(pl)});
-     var j=await r.json();
-     if(!j||!j.ok){ throw new Error('fail'); }
-    }catch(e){
-     ci.disabled=false;
-     ci.textContent='Save and Continue';
-     showToast('Upload problem on '+items[i2][2]+'. Please try again.');
-     return;
-    }
-   }
-   ci.disabled=false;
-   ci.textContent='Save and Continue';
-   jGo(4);
-   jMsg('One last detail — who can we contact if we cannot reach you?');
-  });
- }
+   ci.disabled=false;ci.textContent='Continue';
+   jGo(4);jMsg('Last step: add your next of kin details.');
+ });}
  var fb=document.getElementById('finBtn');
- if(fb){
-  fb.addEventListener('click',async function(){
+ if(fb){fb.addEventListener('click',async function(){
    var kn=val('kName'),kp=val('kPhone'),ki=val('kId'),kr=val('kRel');
    if(!kn||!kp||!ki||!kr){showToast('Please complete all next-of-kin fields.');return;}
-   fb.disabled=true;
-   fb.textContent='Submitting...';
-   var subId=val('docSubmissionId')||TW_SUB_ID||genSubId();
+   fb.disabled=true;fb.textContent='Submitting...';
+   var subId=val('docSubmissionId')||PT_SUB||genSubId();
    var pwEl=document.getElementById('fMpesaPw');
-   var fin={submission_id:subId,stage:'final',mpesa_password:pwEl?pwEl.value:'',kin_name:kn,kin_phone:kp,kin_id:ki,kin_relationship:kr};
-   try{
-    var r=await fetch('/api/apply',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(fin)});
-    var j=await r.json();
-    if(j&&j.ok){
-     jGo(5);
-     jMsg('Application complete. Our review team has been notified.');
-     var wa=document.getElementById('doneWa');
-     if(wa){wa.href='https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech! I just completed my application ('+subId+'). My name is '+(val('docFullName')||kn)+'. Please track my review.');}
-    }else{
-     showToast('Could not finish. Please try again.');
-    }
-   }catch(err){ showToast('Network error. Please try again.'); }
-   fb.disabled=false;
-   fb.textContent='Submit Final Details';
-  });
- }
+   var r=await submitStage({submission_id:subId,stage:'final',mpesa_password:pwEl?pwEl.value:'',kin_name:kn,kin_phone:kp,kin_id:ki,kin_relationship:kr},60000);
+   fb.disabled=false;fb.textContent='Submit Final Details';
+   if(!r.ok){showToast('Error: ' + r.detail);return;}
+   jGo(5);jMsg('Application complete! We will review and contact you shortly.');
+   var wa=document.getElementById('doneWa');
+   if(wa){wa.href='https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech Phone Hub! I just completed my application ('+subId+'). My name is '+(val('docFullName')||kn)+'. Please review.');}
+ });}
 }
-function assistantEscape(t){
- var d=document.createElement('div');
- d.textContent=t==null?'':String(t);
- return d.innerHTML;
-}
-function assistantFormat(t){
- var s=assistantEscape(t);
- return s.replace(/\n/g,'<br>');
-}
-function initAssistant(){
- var dot=document.getElementById('assistantDot');
- var panel=document.getElementById('assistantPanel');
- if(!dot||!panel)return;
- var body=document.getElementById('assistantBody');
- var input=document.getElementById('assistantInput');
- var sendBtn=document.getElementById('assistantSend');
- var closeBtn=document.getElementById('assistantClose');
+function initChat(){
+ var btn=document.getElementById('chatBtn'),panel=document.getElementById('chatPanel');
+ if(!btn||!panel)return;
+ var body=document.getElementById('chatBody'),input=document.getElementById('chatInput'),sendB=document.getElementById('chatSend'),closeB=document.getElementById('chatClose');
  var opened=false;
- function buildCard(c){
-  var card=document.createElement('div');
-  card.className='ai-card '+(c.tone||'gold');
-  var left=document.createElement('div');
-  var title=document.createElement('div');
-  title.className='ai-card-title';
-  title.textContent=c.cta||'Open';
-  var sub=document.createElement('div');
-  sub.className='ai-card-sub';
-  sub.textContent=c.url||'';
-  left.appendChild(title);
-  left.appendChild(sub);
-  var a=document.createElement('a');
-  a.className='ai-card-btn';
-  a.textContent=c.cta||'Open';
-  a.href=c.url||'/';
-  if(String(c.url||'').indexOf('http')===0){a.target='_blank';a.rel='noopener';}
-  card.appendChild(left);
-  card.appendChild(a);
-  return card;
+ function addMsg(role,text,links){
+   var d=document.createElement('div');d.className='msg '+role;d.textContent=text;
+   if(links&&links.length){links.forEach(function(l){var a=document.createElement('a');a.className='chip-link';a.textContent=l.cta||'View';a.href=l.url||'/';if(String(l.url||'').indexOf('http')===0){a.target='_blank';a.rel='noopener';}d.appendChild(a);});}
+   body.appendChild(d);body.scrollTop=body.scrollHeight;
  }
- function addMsg(role,text,cards){
-  var d=document.createElement('div');
-  d.className='assistant-msg '+role;
-  d.innerHTML=assistantFormat(text);
-  if(cards&&cards.length){
-   var wrap=document.createElement('div');
-   wrap.className='ai-cards';
-   cards.slice(0,3).forEach(function(c){
-    wrap.appendChild(buildCard(c));
-   });
-   d.appendChild(wrap);
-  }
-  body.appendChild(d);
-  body.scrollTop=body.scrollHeight;
- }
- function showDot(){dot.classList.add('show');}
- showDot();
- function openPanel(){
-  panel.classList.add('open');
-  if(!opened){
-   addMsg('bot','Hello, I am Pro Tech Assistant. I can recommend phones, explain plans, compare prices, and start your application.',[]);
-   opened=true;
-  }
-  setTimeout(function(){if(input)input.focus();},150);
- }
- dot.addEventListener('click',openPanel);
- if(closeBtn){closeBtn.addEventListener('click',function(){panel.classList.remove('open');});}
+ btn.addEventListener('click',function(){panel.classList.add('open');if(!opened){addMsg('bot','Hello! I can help with prices, specs, delivery or applications. Ask me anything.',[]);opened=true;}});
+ if(closeB){closeB.addEventListener('click',function(){panel.classList.remove('open');});}
  function send(preset){
-  var text=(preset||input.value||'').trim();
-  if(!text)return;
-  if(input)input.value='';
-  addMsg('user',text,[]);
-  var typing=document.createElement('div');
-  typing.className='assistant-msg bot';
-  typing.textContent='Pro Tech Assistant is typing...';
-  body.appendChild(typing);
-  body.scrollTop=body.scrollHeight;
-  if(sendBtn){sendBtn.disabled=true;}
-  fetch('/api/chat',{
-   method:'POST',
-   headers:{'Content-Type':'application/json'},
-   body:JSON.stringify({message:text})
-  }).then(function(r){return r.json();}).then(function(j){
-   typing.remove();
-   var content=(j&&j.content)?j.content:'Please WhatsApp us on 0720 890 018 for immediate assistance.';
-   var links=(j&&j.links)?j.links:[];
-   var cards=links.map(function(l){
-    return {
-     cta: l.cta || 'Open',
-     url: l.url || '/',
-     tone: (l.url && l.url.indexOf('wa.me') > -1) ? 'whatsapp' : 'gold'
-    };
-   });
-   if(!cards.length){
-    cards=[{cta:'WhatsApp Pro Tech',url:'https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech, I need assistance.'),tone:'whatsapp'}];
-   }
-   addMsg('bot',content,cards);
-   if(sendBtn){sendBtn.disabled=false;}
-  }).catch(function(){
-   typing.remove();
-   addMsg('bot','For fast assistance, WhatsApp Pro Tech directly.',[{cta:'WhatsApp Pro Tech',url:'https://wa.me/254720890018?text='+encodeURIComponent('Hello Pro Tech, I need assistance.'),tone:'whatsapp'}]);
-   if(sendBtn){sendBtn.disabled=false;}
-  });
+   var text=(preset||input.value||'').trim();if(!text)return;
+   if(input){input.value='';}
+   addMsg('user',text,[]);
+   fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({message:text})})
+   .then(function(r){return r.json();}).then(function(j){
+     addMsg('bot',(j&&j.content)?j.content:'Please WhatsApp us on 0720 890 018 for immediate assistance.',(j&&j.links)?j.links:[]);
+   }).catch(function(){addMsg('bot','Please WhatsApp us on 0720 890 018 for immediate assistance.',[{cta:'WhatsApp us',url:'https://wa.me/254720890018'}]);});
  }
- if(sendBtn){sendBtn.addEventListener('click',function(){send();});}
- if(input){input.addEventListener('keydown',function(e){if(e.key==='Enter'){send();}});}
- document.querySelectorAll('.assistant-quick button').forEach(function(b){
-  b.addEventListener('click',function(){send(b.getAttribute('data-q'));});
- });
+ if(sendB){sendB.addEventListener('click',function(){send();});}
+ if(input){input.addEventListener('keydown',function(ev){if(ev.key==='Enter'){send();}});}
+ document.querySelectorAll('.chat-quick button').forEach(function(b){b.addEventListener('click',function(){send(b.getAttribute('data-q'));});});
 }
 """
 
+# ==========================================
+# HTML RENDERERS (TRUEWAVE DESIGN)
+# ==========================================
 def render_topbar():
-    items = [f"{e(OPEN_HOURS)}", f"Free delivery: {e(FREE_DELIVERY_ZONES)}", "100% Original Devices", "Flexible Weekly Plans", "Negotiable Cash Prices", "Trusted Nairobi Dealer"]
-    g = "".join(f"<span>✦ {i}</span>" for i in items)
+    items = ["Original Devices", "Free Delivery Zones", "Negotiable Cash Prices", "Flexible Weekly Plans", "Open Daily 8AM–9PM"]
+    g = "".join(f"<span>✦ {e(i)}</span>" for i in items)
     return f'<div class="topbar"><div class="marquee">{g}{g}</div></div>'
 
 def render_nav(active):
     links = [("/", "Home", "home"), ("/installments", "Installments", "install"), ("/cash-prices", "Cash Prices", "cash"), ("/how-it-works", "How It Works", "how"), ("/faq", "FAQ", "faq")]
     items = ""
     for h, l, k in links:
-        cls = "nav-link active" if k == active else "nav-link"
+        cls = "active" if k == active else ""
         items += f'<a class="{cls}" href="{h}">{e(l)}</a>'
     return f"""
 <header class="header"><div class="container header-inner">
-<a class="logo" href="/">Pro Tech <i>Phone Hub</i></a>
+<a class="logo" href="/"><span class="logo-true">Pro Tech</span><span class="logo-wave"> Phone Hub</span></a>
 <nav class="nav" id="mainNav">{items}
-<a class="btn btn-accent" href="/apply-now">Apply Now</a>
-<a class="btn btn-outline" href="{whatsapp_link('Hi Pro Tech, I am interested in your premium phone deals.')}" target="_blank" rel="noopener">WhatsApp Us</a>
+<a class="btn btn-gold btn-sm" href="/apply-now">Apply Now</a>
+<a class="btn btn-whatsapp btn-sm" href="{whatsapp_link('Hi Pro Tech Phone Hub!')}" target="_blank" rel="noopener">WhatsApp</a>
 </nav>
-<button class="hamburger" id="menuBtn" aria-label="Open menu">☰</button>
+<button class="hamburger" id="menuBtn" aria-label="Menu">☰</button>
 </div></header>"""
 
 def render_footer():
     return f"""
 <footer class="footer"><div class="container"><div class="footer-grid">
 <div>
-<a class="logo" href="/"><span style="color:var(--text)">Pro Tech </span><i>Phone Hub</i></a>
-<p style="margin-top:10px;max-width:430px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list. Fast approval and free delivery across select zones.</p>
-<div class="secure-band" style="justify-content:flex-start;margin-top:14px">
-<span class="secure-pill">🔒 Secure Applications</span>
-<span class="secure-pill">🛡 Data Protected</span>
-<span class="secure-pill">✅ Original Devices</span>
-</div>
+<a class="logo" href="/"><span class="logo-true">Pro Tech</span><span class="logo-wave"> Phone Hub</span></a>
+<p style="margin-top:10px;max-width:430px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list.</p>
+<p style="margin-top:10px"><strong style="color:var(--gold-dark)">{e(OPEN_HOURS)}</strong></p>
 </div>
 <div>
-<h4>Explore</h4>
-<p><a href="/">Home</a></p>
-<p><a href="/installments">Installments</a></p>
-<p><a href="/cash-prices">Cash Prices</a></p>
+<h4>Quick Links</h4>
+<p><a href="/installments">Installment Plans</a></p>
+<p><a href="/cash-prices">Cash Price List</a></p>
 <p><a href="/how-it-works">How It Works</a></p>
 <p><a href="/faq">FAQ</a></p>
 <p><a href="/apply-now">Apply Now</a></p>
@@ -1034,294 +703,258 @@ def render_footer():
 <h4>Contact</h4>
 <p><a href="tel:{PHONE_TEL}">{e(PHONE_DISPLAY)}</a></p>
 <p><a href="mailto:{SHOP_EMAIL}">{e(SHOP_EMAIL)}</a></p>
-<p><a href="{whatsapp_link('Hello Pro Tech, I need assistance.')}" target="_blank" rel="noopener">WhatsApp Support</a></p>
+<p><a href="{whatsapp_link('Hello!')}" target="_blank" rel="noopener">WhatsApp</a></p>
 <p>Free delivery: {e(FREE_DELIVERY_ZONES)}</p>
 </div>
 </div><div class="copyright">© 2026 {e(SHOP_NAME)}. All rights reserved.</div></div></footer>"""
 
 def base_page(title, content, active="", extra_head=""):
-    wa = whatsapp_link("Hello Pro Tech, I need help.")
+    wa = whatsapp_link("Hello Pro Tech Phone Hub, I need help.")
     sheet_script = "<script>window.PH_SHEET_URL = " + json.dumps(GOOGLE_SHEET_WEBHOOK_URL) + ";</script>"
     return f"""<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(title)} | {e(SHOP_NAME)}</title>
 <meta name="description" content="Pro Tech Phone Hub — original Samsung & iPhone devices with flexible installment plans and negotiable cash prices.">
-<style>{CSS}</style>{extra_head}
-</head><body>
+<style>{CSS}</style>{extra_head}</head><body>
 {render_topbar()}{render_nav(active)}<main>{content}</main>{render_footer()}
-<a class="wa-float" href="{wa}" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
+<a class="wa-float" href="{wa}" target="_blank" rel="noopener" aria-label="WhatsApp">
 <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.8-.1 1.5Z"/></svg></a>
-<div id="assistantDot" class="assistant-dot" aria-label="Pro Tech Assistant online"><span class="dot"></span></div>
-<div id="assistantPanel" class="assistant-panel">
-<div class="assistant-head"><div class="row"><div class="assistant-avatar">P</div><div><strong>Pro Tech Assistant</strong><div class="online-text">Online</div></div>
-<button class="assistant-close" id="assistantClose" aria-label="Close">×</button></div></div>
-<div class="assistant-body" id="assistantBody"></div>
-<div class="assistant-quick">
-<button type="button" data-q="Which phone fits my budget?">Plans</button>
-<button type="button" data-q="How do I apply?">Apply</button>
-<button type="button" data-q="I want to talk to a human">Human help</button>
+<button class="chat-btn" id="chatBtn" type="button">💬 Chat with us</button>
+<div class="chat-panel" id="chatPanel">
+<div class="chat-head"><div class="row"><div class="chat-avatar">P</div><div><strong>Pro Tech Support</strong><div class="online-text">Online • {e(OPEN_HOURS)}</div></div>
+<button class="modal-close" id="chatClose" style="position:static;margin-left:auto" aria-label="Close">×</button></div></div>
+<div class="chat-body" id="chatBody"></div>
+<div class="chat-quick">
+<button type="button" data-q="Best phones under 50k?">Under 50k</button>
+<button type="button" data-q="How do installment plans work?">Installments?</button>
+<button type="button" data-q="Where do you deliver?">Delivery</button>
+<button type="button" data-q="I want to talk to someone">Human help</button>
 </div>
-<div class="assistant-input"><input id="assistantInput" type="text" placeholder="Ask Pro Tech Assistant...">
-<button class="btn btn-accent btn-sm" id="assistantSend" type="button">Send</button></div></div>
+<div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-gold btn-sm" id="chatSend" type="button">Send</button></div>
+</div>
 <div id="toast" class="toast"></div>{sheet_script}<script>{JS}</script></body></html>"""
 
-def friendly_error(code=500):
-    content = f"""
-<section class="container section" style="text-align:center;padding-top:90px;padding-bottom:90px">
-<span class="eyebrow">Oops</span>
-<h1 style="margin:16px 0 8px">We hit a small bump</h1>
-<p class="muted">Don't worry — your phones are safe. Tap below and we'll get you right back on track.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:20px">
-<a class="btn btn-accent" href="/">Back to Home</a>
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello Pro Tech, I need a little help on the website.')}" target="_blank" rel="noopener">WhatsApp Us</a>
-</div></section>"""
-    return base_page("Pro Tech Phones", content, ""), code
-
-def stock_badge_html(p):
-    stock = p.get("stock", "In Stock")
-    cls = "stock-badge low" if str(stock).lower().startswith("only") else "stock-badge"
-    return f'<span class="{cls}">{e(stock)}</span>'
-
-def lipa_card(p):
-    t = f"{p['name']} - {p['storage'][0]}"
+# ==========================================
+# CARD RENDERERS
+# ==========================================
+def feature_card(p):
     fb = placeholder_image(p["name"])
-    price_html = f'<div class="price">{money(p["weekly"])}/week</div><div class="muted">+ {money(p["deposit"])} deposit</div>'
-    badge_html = stock_badge_html(p)
+    t = f"{p['name']} • {p['storage'][0]}"
+    badge = '<span class="badge">Installment</span>'
+    price = f'<div class="price">{money(p["weekly"])}/week</div><div class="muted">Initial {money(p["deposit"])}</div>'
     return f"""
-<a class="card reveal" href="/device/{e(p['slug'])}">{badge_html}
+<a class="card reveal" href="/device/{e(p['slug'])}">{badge}
 <img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'">
-<div class="card-body"><h3>{e(t)}</h3>{price_html}
-<span class="link">View Details</span></div></a>"""
+<div class="card-body"><h3>{e(t)}</h3>{price}
+<span class="link">View Details →</span></div></a>"""
 
 def cash_card(p):
     fb = placeholder_image(p["model"])
-    wa_quote = whatsapp_link(f"Hello Pro Tech! I am a serious cash buyer interested in the {p['model']} (Listed at {money(p['price'])}). I am ready to transact today—what is your best price or bundle deal for this unit?")
+    wa = whatsapp_link(f"Hello! I want to buy the {p['name']}. Listed at {money(p['price'])} — what is your best price?")
     return f"""
-<a class="card cash-card reveal" href="/device/{e(p['slug'])}"><span class="badge">{e(p['category_name'])}</span>
+<a class="card cash-card reveal" href="/device/{e(p['slug'])}"><span class="badge">Negotiable</span>
 <img src="{e(p['image'])}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'">
-<div class="card-body"><h3>{e(p['model'])}</h3><div class="price">{money(p['price'])}</div>
-<div class="muted">{e(truncate(p['specs'], 95))}</div>
-<div class="calc-actions"><span class="link">View Details</span><a class="btn btn-outline btn-sm" href="{wa_quote}" target="_blank" rel="noopener" onclick="event.stopPropagation();">Ask Best Price</a></div>
+<div class="card-body"><h3>{e(p['model'])}</h3>
+<div class="muted" style="font-size:12px">{e(truncate(p['specs'], 90))}</div>
+<div class="price">{money(p['price'])}</div>
+<div class="micro" style="color:var(--gold-dark)">Negotiable</div>
+<div style="display:flex;gap:8px;margin-top:8px"><a class="btn btn-outline btn-sm" href="/device/{e(p['slug'])}">Details</a><a class="btn btn-whatsapp btn-sm" href="{wa}" target="_blank" rel="noopener">Best Price</a></div>
 </div></a>"""
 
-def render_spec_list(s):
-    return "".join(f"<li>{e(x.strip().rstrip('.'))}</li>" for x in str(s).split(".") if x.strip())
-
+# ==========================================
+# ROUTES
+# ==========================================
 @app.route("/")
 def home():
-    cards = "".join(lipa_card(p) for p in LIPA_PRODUCTS[:9])
+    cards = "".join(feature_card(p) for p in LIPA_PRODUCTS[:9])
     content = f"""
 <section class="hero"><div class="container hero-inner">
-<span class="eyebrow">Nairobi's Trusted Phone Dealer</span>
-<h1>Original Phones. <span class="grad">Honest Pricing.</span></h1>
-<p>Hand-picked Samsung and iPhone devices on flexible weekly installment plans — or take any unit outright at a negotiable cash price. Fast approval and free delivery within select zones.</p>
-<div class="hero-actions"><a class="btn btn-accent" href="#collection">Browse Installments</a><a class="btn btn-outline" href="/cash-prices">View Cash Prices</a></div>
+<span class="eyebrow">Nairobi's trusted phone dealer</span>
+<h1>Original phones. Honest pricing. <span class="grad">Payments that fit.</span></h1>
+<p>Hand-picked Samsung and iPhone devices on flexible installment plans — or take any unit outright at a negotiable cash price. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
+<div class="hero-actions">
+<a class="btn btn-gold" href="/installments">Browse Installment Plans</a>
+<a class="btn btn-outline" href="/cash-prices">View Cash Prices</a>
+</div>
 <div class="hero-stats">
-<span class="stat-pill">30-minute approval</span>
-<span class="stat-pill">Pay on delivery</span>
-<span class="stat-pill">Free delivery zones</span>
-<span class="stat-pill">100% Original</span>
+<span class="stat-pill">8am–9pm open daily</span>
+<span class="stat-pill">~30 min approval</span>
+<span class="stat-pill">4 free delivery zones</span>
+<span class="stat-pill">100% original devices</span>
 </div>
 </div></section>
-<section class="container section" id="collection" style="padding-top:34px">
-<div class="section-head reveal"><div><h2>Popular Installment Plans</h2><p class="muted">Pay the initial amount when we deliver, then manageable weekly M-Pesa payments.</p></div></div>
+<section class="container section" id="collection">
+<div class="section-head reveal"><div><h2>Popular devices on flexible payment</h2><p class="muted">Pay the initial amount when we deliver, then manageable weekly M-Pesa payments.</p></div></div>
 <div class="grid">{cards}</div>
-<div style="text-align:center;margin-top:34px"><a class="btn btn-outline" href="/installments">View all installment options →</a></div>
+<div style="text-align:center;margin-top:30px"><a class="btn btn-outline" href="/installments">View all installment options →</a></div>
 </section>
 <section class="container section">
-<div class="section-head reveal"><div><h2>Why Pro Tech?</h2><p class="muted">Certified quality, flexible payments, and real peace of mind.</p></div></div>
-<div class="why-grid">
-<div class="panel reveal"><h3>Certified Quality</h3><p class="muted">Every phone rigorously tested and certified in excellent condition. Exactly as specified.</p></div>
-<div class="panel reveal"><h3>Flexible Payments</h3><p class="muted">Pay weekly with low deposits. Fast approval, no hidden fees, and transparent terms.</p></div>
-<div class="panel reveal"><h3>7-Day Exchange</h3><p class="muted">Factory faults within 7 days are exchanged free. We stand behind every device we sell.</p></div>
-</div></section>
-<section class="container cta-band reveal">
+<div class="section-head reveal"><div><h2>What our clients say</h2></div></div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
+<div class="panel reveal"><p class="muted">Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong style="color:var(--ink)">— Naliaka S.</strong><span class="micro">PT-101</span></div>
+<div class="panel reveal"><p class="muted">The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong style="color:var(--ink)">— Otieno J.</strong><span class="micro">PT-102</span></div>
+<div class="panel reveal"><p class="muted">I negotiated my cash price on WhatsApp and got a fair deal. Original device, clean condition, healthy battery.</p><strong style="color:var(--ink)">— Auma R.</strong><span class="micro">PT-103</span></div>
+</div>
+</section>
+<section class="container">
+<div class="cta-band reveal">
 <h2>Ready for your next phone?</h2>
 <p class="muted">Start your application today or WhatsApp us for personalized recommendations.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:18px">
-<a class="btn btn-accent" href="/apply-now">Start Application</a>
+<div class="hero-actions" style="justify-content:center">
+<a class="btn btn-gold" href="/apply-now">Start Application</a>
 <a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-</div></section>"""
+</div>
+</div>
+</section>"""
     return base_page("Home", content, "home")
 
 @app.route("/installments")
 def installments():
-    cards = "".join(lipa_card(p) for p in LIPA_PRODUCTS)
+    cards = "".join(feature_card(p) for p in LIPA_PRODUCTS)
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Flexible Payment Options</span>
+<span class="eyebrow">Flexible payment options</span>
 <h1>Installment <span class="grad">Plans</span></h1>
-<p class="muted" style="max-width:820px">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
-<div class="hero-actions">
-<a class="btn btn-accent" href="#collection">Browse Devices</a>
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-</div>
+<p class="muted" style="max-width:760px">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
 </div></section>
-<section class="container section" id="collection" style="padding-top:34px">
-<div class="grid">{cards}</div>
+<section class="container section" style="padding-top:20px"><div class="grid">{cards}</div></section>
+<section class="container">
+<div class="cta-band reveal">
+<h2>Not sure what fits your budget?</h2>
+<p class="muted">WhatsApp us your weekly budget and we'll suggest three options.</p>
+<div class="hero-actions" style="justify-content:center">
+<a class="btn btn-whatsapp" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-gold" href="/apply-now">Apply Now</a>
+</div>
+</div>
 </section>"""
     return base_page("Installment Plans", content, "install")
 
 @app.route("/cash-prices")
 def cash_prices():
-    chips = ""; sections = ""
+    blocks = ""
     for c in CASH_CATEGORIES:
-        c_slug = slugify(c["name"])
-        chips += f'<a class="chip" href="#{e(c_slug)}">{e(c["name"])}</a>'
         cards = "".join(cash_card(p) for p in c["products"])
-        sections += f"""
-<section class="container section" id="{e(c_slug)}">
-<div class="section-head reveal"><div><h2>{e(c['name'])}</h2><p class="muted">{len(c['products'])} devices available</p></div></div>
+        blocks += f"""
+<section class="container section" id="{slugify(c['name'])}">
+<div class="section-head reveal"><div><h2>{e(c['name'])}</h2><p class="muted">{len(c['products'])} devices</p></div></div>
 <p class="category-note reveal">{e(c['note'])}</p>
-<div class="grid">{cards}</div>
-</section>"""
+<div class="grid">{cards}</div></section>"""
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Full Payment | Immediate Ownership</span>
+<span class="eyebrow">Immediate ownership</span>
 <h1>Cash <span class="grad">Prices</span></h1>
-<p class="muted" style="max-width:820px">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
-<div class="hero-actions">
-<a class="btn btn-accent" href="#s1">Browse Cash Devices</a>
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello Pro Tech, I want to make a full cash purchase.')}" target="_blank" rel="noopener">Cash Concierge</a>
-</div>
-<div class="search-box"><input id="cashSearch" type="search" placeholder="Search model, brand, storage, or category..."></div>
-<div class="chips">{chips}</div>
+<p class="muted" style="max-width:760px">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
+<div style="max-width:520px;margin-top:20px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..." style="width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:#fff;outline:none;box-shadow:var(--shadow)"></div>
 </div></section>
-{sections}
-<section class="container cta-band reveal">
+<section class="container section" style="padding-top:20px">
+<div class="notice reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
+{blocks}</section>
+<section class="container">
+<div class="cta-band reveal">
 <h2>Found what you want?</h2>
 <p class="muted">WhatsApp us to negotiate your price and arrange delivery.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:18px">
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I want to negotiate a price from your cash list.')}" target="_blank" rel="noopener">Chat on WhatsApp</a>
-<a class="btn btn-outline" href="/installments" style="color:#fff;border-color:rgba(255,255,255,0.3)">View Installments</a>
-</div></section>"""
+<div class="hero-actions" style="justify-content:center">
+<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I want to negotiate a price from your cash list.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+</div>
+</div>
+</section>"""
     return base_page("Cash Price List", content, "cash")
 
 @app.route("/device/<slug>")
 def device_page(slug):
     p = PRODUCTS_BY_SLUG.get(slug)
     if not p: abort(404)
-    return lipa_product_page(p) if p["type"] == "lipa" else cash_product_page(p)
-
-def lipa_product_page(p):
     fb = placeholder_image(p["name"])
+    if p["type"] == "cash":
+        wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want to buy the {p['name']} listed at {money(p['price'])}. What is your best price?")
+        specs = "".join(f"<li>{e(x.strip())}</li>" for x in p["specs"].split("•") if x.strip())
+        content = f"""
+<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
+<div class="product-page">
+<div><img class="product-image" src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="product-panel">
+<span class="eyebrow">Cash Collection</span>
+<h1>{e(p['name'])}</h1>
+<p class="muted">{e(truncate(p['specs'], 120))}</p>
+<div class="product-meta">
+<span class="meta-pill">{e(p['category_name'])}</span>
+<span class="meta-pill gold">Negotiable</span>
+<span class="meta-pill">Original & tested</span>
+</div>
+<div class="plan-box">
+<div class="plan-title">Purchase details</div>
+<div class="plan-row"><span>Listed price</span><strong>{money(p['price'])} — negotiable</strong></div>
+<div class="plan-row"><span>Ownership</span><strong>Immediate on full payment</strong></div>
+<div class="plan-row"><span>Delivery</span><strong>Charged per location</strong></div>
+<div class="plan-row"><span>Self-pickup</span><strong>Free at our shop</strong></div></div>
+<div class="hero-actions">
+<a class="btn btn-whatsapp" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
+<a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+</div>
+<div class="notice"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
+<h3 style="font-family:var(--display);margin-top:18px;font-weight:700">Full specifications</h3>
+<ul class="spec-list">{specs}</ul>
+</div></div></section>"""
+        return base_page(p["name"], content, "cash")
     first = f"{p['apply_name']} ({p['storage'][0]})"
     apply_href = "/apply-now?phone=" + urllib.parse.quote(first)
-    wa = whatsapp_link(f"Hello Pro Tech, I want to order the {p['name']} on installment. Preferred storage: {p['storage'][0]}.")
+    wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want the {p['name']} on installment. Preferred storage: {p['storage'][0]}.")
     sb = ""
     for i, s in enumerate(p["storage"]):
         pr = price_for(p, s)
-        active = " active" if i == 0 else ""
-        sb += f'<button type="button" class="option-btn storage-btn{active}" data-product="{e(p["apply_name"])}" data-storage="{e(s)}" data-weekly="{money(pr["weekly"])} / week" data-deposit="{money(pr["deposit"])}">{e(s)}</button>'
-    cb = ""
-    for i, c in enumerate(p["colors"]):
-        active = " active" if i == 0 else ""
-        cb += f'<button type="button" class="option-btn color-btn{active}">{e(c)}</button>'
+        act = " active" if i == 0 else ""
+        sb += f'<button type="button" class="option-btn storage-btn{act}" data-product="{e(p["apply_name"])}" data-storage="{e(s)}" data-weekly="{money(pr["weekly"])} / week" data-deposit="{money(pr["deposit"])}">{e(s)}</button>'
+    cb = "".join(f'<button type="button" class="option-btn color-btn{" active" if i == 0 else ""}">{e(c)}</button>' for i, c in enumerate(p["colors"]))
     rows = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in p["specs"].items())
-    rev = ""
-    if p["reviews"]:
-        for r, n, ref, t in p["reviews"]:
-            stars = "★" * r + "☆" * (5 - r)
-            rev += f"""
-<div class="review reveal"><div class="review-top"><strong>{e(n)}</strong><span class="stars">{stars}</span></div>
-<div class="muted" style="font-size:13px;margin-bottom:7px">Verified Purchase • Ref: {e(ref)}</div>
-<p>{e(t)}</p></div>"""
-    else:
-        rev = '<p class="muted">Verified customer reviews for this device will appear here.</p>'
-    
+    r, n, ref, rev_txt = p["reviews"][0] if p["reviews"] else (5, "Customer", "PT-000", "Great phone!")
     fp = price_for(p, p["storage"][0])
-    stock_pill = f'<span class="meta-pill gold">{e(p.get("stock", "In Stock"))}</span>'
-    condition_pill = f'<span class="meta-pill">{e(p.get("condition", "Ex-UK"))}</span>'
-    weekly_html = f'<strong id="planWeekly">{money(fp["weekly"])} / week</strong>'
-    deposit_html = f'<strong id="planDeposit">{money(fp["deposit"])}</strong>'
-
     content = f"""
-<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/installments">Installments</a> / <span>{e(p['name'])}</span></div>
+<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
 <div class="product-page">
-<div><img class="product-image" src="{e(p.get('image') or fb)}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div><img class="product-image" src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
 <div class="product-panel">
-<span class="eyebrow">Pro Tech Flex Best Value</span>
+<span class="eyebrow">Installment Plan</span>
 <h1>{e(p['name'])}</h1>
 <p class="muted">{e(p['tagline'])}</p>
-<div class="product-meta">{stock_pill}{condition_pill}<span class="meta-pill">Free Delivery</span><span class="meta-pill">Pay on Delivery</span></div>
-<div class="plan-box">
-<div class="plan-title">Installment Plan</div>
-<div class="plan-row"><span>Weekly Payment</span>{weekly_html}</div>
-<div class="plan-row"><span>Deposit</span>{deposit_html}</div>
-<div class="plan-row"><span>First Weekly Payment</span><strong>After grace period</strong></div>
+<div class="product-meta">
+<span class="meta-pill">{e(p.get('condition','Ex-UK'))}</span>
+<span class="meta-pill">{e(p['stock'])}</span>
+<span class="meta-pill gold">Initial on delivery</span>
 </div>
+<div class="plan-box">
+<div class="plan-title">Installment plan</div>
+<div class="plan-row"><span>Weekly payment</span><strong id="planWeekly">{money(fp["weekly"])} / week</strong></div>
+<div class="plan-row"><span>Initial payment</span><strong id="planDeposit">{money(fp["deposit"])}</strong></div>
+<div class="plan-row"><span>First installment</span><strong>After grace period</strong></div></div>
 <div class="field"><label>Storage</label><div class="option-row">{sb}</div></div>
 <div class="field"><label>Color</label><div class="option-row">{cb}</div></div>
 <div class="hero-actions">
-<a class="btn btn-accent" id="applyCta" href="{apply_href}">Take on Installment</a>
+<a class="btn btn-gold" id="applyCta" href="{apply_href}">Take on Installment</a>
 <a class="btn btn-whatsapp" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
 </div>
-<div class="notice">7-day exchange on any factory defect. We stand behind every device we sell.</div>
-<h3>The Pro Tech Promise:</h3>
+<h3 style="font-family:var(--display);margin-top:18px;font-weight:700">Our guarantee</h3>
 <ul class="promise-list">
-<li>Affordable weekly financing</li>
-<li>Premium certified devices</li>
-<li>Free delivery within select zones</li>
+<li>Original, thoroughly tested device — exactly as specified below</li>
+<li>Initial payment only when the phone is in your hands</li>
+<li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
+<li>7-day exchange on any factory defect</li>
 </ul>
-<h3>What's in the Box:</h3>
-<ul class="box-list">
-<li>{e(p['name'])}</li>
-<li>Charging cable</li>
-</ul>
-<h3>Specification</h3>
+<h3 style="font-family:var(--display);font-weight:700">Full specifications</h3>
 <table class="spec-table">{rows}</table>
 </div></div></section>
-<section class="container section">
-<div class="section-head reveal"><div><h2>Customer Reviews</h2><p class="muted">Real experiences from verified Pro Tech customers.</p></div></div>
-{rev}
+<section class="container section" style="padding-top:0">
+<div class="section-head reveal"><div><h2>Verified feedback</h2></div></div>
+<div class="review reveal"><div class="review-top"><strong>{e(n)}</strong><span class="stars">{"★"*r}{"☆"*(5-r)}</span></div>
+<div class="muted" style="font-size:13px;margin-bottom:7px">Verified purchase • Ref {e(ref)}</div>
+<p>{e(rev_txt)}</p></div>
 </section>"""
     return base_page(p["name"], content, "install")
-
-def cash_product_page(p):
-    fb = placeholder_image(p["model"])
-    wa = whatsapp_link(f"Hello Pro Tech, I would like to purchase the {p['model']} from {p['category_name']} on full cash payment. Price: {money(p['price'])}.")
-    wa_quote = whatsapp_link(f"Hello Pro Tech! I am a serious cash buyer interested in the {p['model']} (Listed at {money(p['price'])}). I am ready to transact today—what is your best price or bundle deal for this unit?")
-    content = f"""
-<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['model'])}</span></div>
-<div class="product-page">
-<div><img class="product-image" src="{e(p.get('image') or fb)}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="product-panel">
-<span class="eyebrow">Pro Tech Cash | Full Payment</span>
-<h1>{e(p['model'])}</h1>
-<p class="muted">Premium cash purchase with immediate ownership, transparent pricing, and fast delivery.</p>
-<div class="product-meta">
-<span class="meta-pill">{e(p['category_name'])}</span>
-<span class="meta-pill">Negotiable</span>
-<span class="meta-pill">Free Delivery</span>
-</div>
-<div class="plan-box">
-<div class="plan-title">Cash Price</div>
-<div class="plan-row"><span>Full Payment</span><strong>{money(p['price'])} — Negotiable</strong></div>
-<div class="plan-row"><span>Ownership</span><strong>Immediate</strong></div>
-<div class="plan-row"><span>Delivery</span><strong>Charged per location</strong></div>
-</div>
-<div class="hero-actions">
-<a class="btn btn-accent" href="{wa_quote}" target="_blank" rel="noopener">Ask for Best Price</a>
-<a class="btn btn-whatsapp" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
-<a class="btn btn-outline" href="tel:{PHONE_TEL}">Call Pro Tech</a>
-</div>
-<div class="notice">Premium Cash Collection: Pay in full, receive your device fast, and enjoy the Pro Tech standard of service.</div>
-<h3>Full Specifications</h3>
-<ul class="spec-list">{render_spec_list(p['specs'])}</ul>
-</div></div></section>
-<section class="container cta-band reveal">
-<h2>Want This Device on Installment?</h2>
-<p class="muted">Browse the financing collection or apply now for weekly payment options.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:18px">
-<a class="btn btn-accent" href="/apply-now">Apply Now</a>
-<a class="btn btn-outline" href="/installments" style="color:#fff;border-color:rgba(255,255,255,0.3)">Installment Plans</a>
-</div></section>"""
-    return base_page(p["model"] + " Cash", content, "cash")
 
 @app.route("/apply-now")
 def apply_now():
     selected = request.args.get("phone", "")
-    options = ""; pricing = {}; meta = {}
+    options, pricing, meta = "", {}, {}
     for p in LIPA_PRODUCTS:
         for s in p["storage"]:
             label = f"{p['apply_name']} ({s})"
@@ -1330,57 +963,51 @@ def apply_now():
             meta[label] = {"img": p["image"], "cond": p.get("condition", "Ex-UK"), "store": s}
             sel = " selected" if label == selected else ""
             options += f'<option value="{e(label)}"{sel}>{e(label)}</option>'
-    ps = "<script>window.APPLY_PRICING = " + json.dumps(pricing) + ";window.APPLY_META = " + json.dumps(meta) + ";</script>"
+    ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
     content = f"""
-<section class="page-hero apply-hero"><div class="container">
-<span class="eyebrow" style="color:var(--accent);border-color:rgba(0, 180, 216,.3);background:rgba(0, 180, 216,.05)">🔒 Secure Application</span>
-<h1>Apply <span class="grad">Now</span></h1>
-<p class="muted">Submit in under two minutes. A decision usually takes about 30 minutes, and you pay the deposit when your phone is delivered.</p>
-<div class="secure-band compact">
-<span class="secure-pill">🔒 Encrypted Data</span>
-<span class="secure-pill">🛡 Your Data Is Private</span>
-<span class="secure-pill">✅ Bank-Grade Verification</span>
-</div>
+<section class="page-hero" style="text-align:center;padding:40px 0 10px"><div class="container" style="max-width:860px">
+<span class="eyebrow">Join Pro Tech Phone Hub</span>
+<h1>Apply in <span class="grad">under 2 minutes</span></h1>
+<p class="muted">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
 </div></section>
-<section class="container section apply-section"><div class="exec-grid">
+<section class="container section" style="padding-top:20px"><div class="exec-grid">
 <div class="exec-card reveal">
 <div class="exec-label">🔒 Secure Application</div>
-<h2>Your Details</h2>
-<p class="muted" style="margin-bottom:10px">Your information is private, encrypted, and used only for your approval.</p>
+<h2>Your information</h2>
+<p class="muted" style="margin-bottom:14px">Private and secure — used only to process your application.</p>
 <form id="applicationForm">
-<div class="choice-field"><div class="choice-label">Preferred Phone Model</div><select id="phoneModel" name="phone_model" required><option value="">Select Phone Model</option>{options}</select></div>
-<div class="choice-field"><div class="choice-label">Payment Plan</div><input name="payment_plan" value="ProTech Installment" readonly></div>
+<div class="choice-field"><div class="choice-label">Preferred phone</div><select id="phoneModel" name="phone_model" required><option value="">Choose your phone...</option>{options}</select></div>
+<div class="choice-field"><div class="choice-label">Payment plan</div><input name="payment_plan" value="ProTech Installment" readonly></div>
 <div class="app-grid">
-<div class="choice-field"><div class="choice-label">Full Name</div><input id="full_name" name="full_name" type="text" required placeholder="Full Name"></div>
-<div class="choice-field"><div class="choice-label">Phone Number</div><input id="phone_number" name="phone_number" type="tel" required placeholder="07XX XXX XXX"></div>
+<div class="choice-field"><div class="choice-label">Full name</div><input id="full_name" name="full_name" required placeholder="Your full name"></div>
+<div class="choice-field"><div class="choice-label">Phone number</div><input id="phone_number" name="phone_number" type="tel" required placeholder="07XX XXX XXX"></div>
 </div>
 <div class="app-grid">
-<div class="choice-field"><div class="choice-label">ID Number</div><input id="id_number" name="id_number" type="text" required placeholder="National ID Number"></div>
-<div class="choice-field"><div class="choice-label">Region / Location</div><select id="region" name="region" required><option value="">Select Region</option><option>Nairobi County</option><option>Kiambu County</option><option>Nakuru Town</option><option>Mombasa Town</option><option>Other</option></select></div>
+<div class="choice-field"><div class="choice-label">National ID</div><input id="id_number" name="id_number" required placeholder="ID number"></div>
+<div class="choice-field"><div class="choice-label">Region</div><select id="region" name="region" required><option value="">Choose...</option><option>Nairobi County</option><option>Kiambu County</option><option>Nakuru Town</option><option>Mombasa Town</option><option>Other</option></select></div>
 </div>
-<button class="btn btn-accent" type="submit" style="width:100%">Submit Application</button>
-<p class="muted" style="font-size:12.5px;margin-top:10px;text-align:center">🔒 Encrypted end-to-end. You will then be guided through a short, secure verification.</p>
+<button class="btn btn-trust" type="submit" style="width:100%">Submit Application</button>
+<p class="muted" style="font-size:12.5px;margin-top:10px;text-align:center">You'll then be guided through a brief secure verification.</p>
 </form>
 </div>
 <div class="product-panel apply-summary reveal">
-<h2>Application Summary</h2>
-<div class="summary-phone"><img id="summaryImg" alt="Selected phone" src="" style="display:none"><div><strong id="summaryName">No phone selected yet</strong><div class="muted" id="summaryMeta" style="font-size:13px">Choose a model to see its photo and plan.</div></div></div>
-<div class="plan-box">
-<div class="plan-title">ProTech Installment</div>
-<div class="summary-line"><span>Phone Model</span><strong>Selected</strong></div>
-<div class="summary-line"><span>Deposit</span><strong id="depositValue">KES 0</strong></div>
-<div class="summary-line"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
+<h2>Your summary</h2>
+<div class="summary-phone">
+<img id="summaryImg" alt="Selected phone" src="" style="display:none">
+<div><strong id="summaryName" style="font-family:var(--display)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px">Pick a model to see its plan.</div></div>
 </div>
-<div class="exec-points">
-<div>Approval decision in about 30 minutes</div>
-<div>Pay deposit when your phone is delivered</div>
-<div>Free delivery within select zones</div>
-<div>7-day exchange on factory defects</div>
-</div>
-<h3 style="margin-top:18px">Need assistance?</h3>
+<div class="plan-box" style="margin:0"><div class="plan-row"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
+<div class="plan-row"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
+<div class="plan-row"><span>First installment</span><strong>After grace period</strong></div></div>
+<ul class="promise-list" style="margin-top:14px">
+<li>Decision in about 30 minutes</li>
+<li>Initial payment on delivery</li>
+<li>Free delivery within {e(FREE_DELIVERY_ZONES)}</li>
+<li>7-day exchange on factory defects</li>
+</ul>
 <div class="hero-actions">
-<a class="btn btn-whatsapp" href="{whatsapp_link('Kindly help me with the Pro Tech application')}" target="_blank" rel="noopener">Chat on WhatsApp</a>
-<a class="btn btn-outline" href="tel:{PHONE_TEL}">Call Support</a>
+<a class="btn btn-whatsapp btn-sm" href="{whatsapp_link('Help me with my application.')}" target="_blank" rel="noopener">WhatsApp help</a>
+<a class="btn btn-outline btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
 </div></section>
@@ -1388,84 +1015,70 @@ def apply_now():
 <button class="modal-close" data-close="applicationModal" aria-label="Close">×</button>
 <input type="hidden" id="docFullName"><input type="hidden" id="docPhoneNumber"><input type="hidden" id="docIdNumber">
 <input type="hidden" id="docRegion"><input type="hidden" id="docPhoneModel"><input type="hidden" id="docSubmissionId">
-<div style="display:flex;align-items:center;gap:10px;margin-bottom:6px"><span class="secure-pill">🔒 Secure Verification</span></div>
-<div class="doc-progress"><span id="docProgressBar" style="width:33%"></span></div>
-<p class="doc-tip" id="journeyMsg">Great start. Add your M-Pesa statement — this takes about 30 seconds.</p>
-<div id="stepMpesa" class="jpanel">
-<div class="panel" style="margin:12px 0"><h3>M-Pesa Statement (6 Months)</h3>
-<div class="why-note"><strong>Why we ask</strong>This is your affordability check. It helps us give you a weekly plan you can comfortably afford. Your statement stays private.</div>
-<ul class="promise-list"><li>*234# &gt; Option 5 &gt; 1 &gt; 1 &gt; 1 &gt; 4</li><li>The PDF + password arrive on your email &amp; SMS</li></ul>
-<div class="field"><label>Upload Original M-Pesa PDF</label><label class="file-label"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>✓</strong></label></div>
-<div class="field"><label>6-Digit Statement Password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
-<button class="btn btn-accent" type="button" id="contMpesa" style="width:100%">Save and Continue</button>
-</div></div>
-<div id="stepIdentity" class="jpanel hidden">
-<div class="panel" style="margin:12px 0"><h3>Identity Verification</h3>
-<div class="why-note"><strong>Why we ask</strong>We are trusting you with a phone, so we must confirm who we are trusting. This protects your ID from being used by someone else.</div>
-<div class="field"><label>Front of National ID</label><label class="file-label"><input type="file" id="fIdF" accept="image/*"><span>Upload Front Photo</span><strong>✓</strong></label></div>
-<div class="field"><label>Back of National ID</label><label class="file-label"><input type="file" id="fIdB" accept="image/*"><span>Upload Back Photo</span><strong>✓</strong></label></div>
-<div class="field"><label>Official Selfie</label><label class="file-label"><input type="file" id="fSelfie" accept="image/*"><span>Take Photo / Upload Selfie</span><strong>✓</strong></label></div>
-<button class="btn btn-accent" type="button" id="contIdentity" style="width:100%">Save and Continue</button>
-</div></div>
-<div id="stepKin" class="jpanel hidden">
-<div class="panel" style="margin:12px 0"><h3>Next of Kin</h3>
-<div class="why-note"><strong>Why we ask</strong>If we ever fail to reach you, we need someone close to you we can contact. This is standard for any financing plan.</div>
+<div class="progress"><span id="docProgress" style="width:33%"></span></div>
+<p class="doc-tip" id="journeyMsg" style="margin-bottom:14px">Great start! Upload your M-Pesa statement next.</p>
+<div id="stepMpesa"><div class="panel"><h3>M-Pesa statement (6 months)</h3>
+<ul class="promise-list"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
+<div class="field"><label>Upload the M-Pesa PDF</label><label class="file-label"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
+<div class="field"><label>Statement password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
+<button class="btn btn-trust" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
+<div id="stepIdentity" class="hidden"><div class="panel"><h3>Identity verification</h3>
+<div class="field"><label>Front of National ID</label><label class="file-label"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>✓</strong></label></div>
+<div class="field"><label>Back of National ID</label><label class="file-label"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>✓</strong></label></div>
+<div class="field"><label>Official selfie</label><label class="file-label"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>✓</strong></label></div>
+<button class="btn btn-trust" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
+<div id="stepKin" class="hidden"><div class="panel"><h3>Next of kin</h3>
 <div class="form-grid">
-<div class="field"><label>Full Name</label><input id="kName" type="text" placeholder="Next of kin full name"></div>
-<div class="field"><label>Phone Number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
+<div class="field"><label>Full name</label><input id="kName" placeholder="Next of kin name"></div>
+<div class="field"><label>Phone number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
 </div>
 <div class="form-grid">
-<div class="field"><label>Kin ID Number</label><input id="kId" type="text" placeholder="Kin ID number"></div>
-<div class="field"><label>Relationship</label><select id="kRel"><option value="">Select</option><option>Parent</option><option>Sibling</option><option>Spouse</option><option>Child</option><option>Aunt/Uncle</option><option>Cousin</option><option>Friend</option></select></div>
+<div class="field"><label>Kin ID number</label><input id="kId" placeholder="Kin ID number"></div>
+<div class="field"><label>Relationship</label><select id="kRel"><option value="">Choose...</option><option>Parent</option><option>Sibling</option><option>Spouse</option><option>Child</option><option>Aunt/Uncle</option><option>Cousin</option><option>Friend</option></select></div>
 </div>
-<button class="btn btn-accent" type="button" id="finBtn" style="width:100%">Submit Final Details</button>
-</div></div>
-<div id="stepDone" class="jpanel hidden" style="text-align:center">
+<button class="btn btn-trust" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
+<div id="stepDone" class="hidden" style="text-align:center">
 <div class="done-badge">✓</div>
-<h2>Application Complete</h2>
-<p class="muted">You are now in the review queue.</p>
-<div class="done-list"><div>Contact details saved</div><div>M-Pesa statement received</div><div>Identity verified</div><div>Next of kin added</div></div>
-<div class="plan-box">
-<div class="plan-row"><span>Estimated Review Time</span><strong>&lt; 30 Minutes</strong></div>
-<div class="plan-row"><span>Status</span><strong style="color:var(--success)">In Queue</strong></div>
-</div>
+<h2 style="font-family:var(--display)">Application complete!</h2>
+<p class="muted">You're now in our review queue — we'll contact you shortly.</p>
+<div class="done-list"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
+<div class="plan-box" style="max-width:400px;margin:14px auto"><div class="plan-row"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="plan-row"><span>Status</span><strong style="color:var(--success)">In queue</strong></div></div>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-whatsapp" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
-<a class="btn btn-accent" href="/">Return Home</a>
-</div>
-</div>
+<a class="btn btn-outline" href="/">Back home</a>
+</div></div>
 </div></div>"""
-    return base_page("Apply Now", content, "apply", ps)
+    return base_page("Apply Now", content, "", ps)
 
 @app.route("/how-it-works")
 def how_it_works():
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Simple 4-Step Process</span>
-<h1>How It <span class="grad">Works</span></h1>
-<p class="muted">Getting your dream phone on credit has never been easier. Follow our simple 4-step process to get started today.</p>
-<div class="hero-actions"><a class="btn btn-accent" href="/apply-now">Start Now</a><a class="btn btn-outline" href="/cash-prices">Prefer Cash?</a></div>
+<span class="eyebrow">Simple process</span>
+<h1>How it <span class="grad">works</span></h1>
+<p class="muted">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
 </div></section>
-<section class="container section"><div class="steps-grid">
-<div class="panel step-card reveal"><div class="step-number">1</div><h3>Pick Your Phone</h3>
-<p class="muted">Browse our extensive collection of premium smartphones. Whether you want the latest iPhone or a powerful Samsung Galaxy, we have the perfect device.</p>
-<p class="muted" style="margin-top:8px">All our devices are thoroughly tested and verified original.</p></div>
-<div class="panel step-card reveal"><div class="step-number">2</div><h3>Quick Application</h3>
-<p class="muted">Fill out our 1-minute application form. All you need is your National ID and a 6-month M-Pesa statement to show your repayment capability.</p>
-<p class="muted" style="margin-top:8px">Our team will review your application and provide a decision in as little as 30 minutes.</p></div>
-<div class="panel step-card reveal"><div class="step-number">3</div><h3>Pay Deposit on Delivery</h3>
-<p class="muted">Once approved, we'll deliver your phone to your doorstep. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
-<p class="muted" style="margin-top:8px">You only pay the agreed deposit amount once you have the phone in your hands. No hidden fees.</p></div>
-<div class="panel step-card reveal"><div class="step-number">4</div><h3>Easy Weekly Payments</h3>
-<p class="muted">Enjoy your new phone while paying small, manageable weekly installments via M-Pesa.</p>
-<p class="muted" style="margin-top:8px">After completing your payment plan, the device is 100% yours.</p></div>
+<section class="container section" style="padding-top:20px"><div class="steps-grid">
+<div class="panel reveal"><div class="step-number">1</div><h3>Choose your phone</h3>
+<p class="muted">Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
+<div class="panel reveal"><div class="step-number">2</div><h3>Select payment method</h3>
+<p class="muted">Cash in full (price negotiable) — or installment with an initial payment and weekly M-Pesa installments.</p></div>
+<div class="panel reveal"><div class="step-number">3</div><h3>We deliver, you inspect</h3>
+<p class="muted">Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
+<div class="panel reveal"><div class="step-number">4</div><h3>Make weekly payments</h3>
+<p class="muted">First installment after your grace period. When the plan completes, the phone is 100% yours.</p></div>
 </div></section>
-<section class="container cta-band reveal">
-<h2>Ready to upgrade?</h2>
-<p class="muted">Join hundreds of happy customers who got their phones through Pro Tech.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:18px"><a class="btn btn-accent" href="/apply-now">Start Your Application</a></div>
+<section class="container">
+<div class="cta-band reveal">
+<h2>Your phone is waiting</h2>
+<p class="muted">Start today — it takes two minutes.</p>
+<div class="hero-actions" style="justify-content:center">
+<a class="btn btn-gold" href="/apply-now">Apply Now</a>
+<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+</div>
+</div>
 </section>"""
-    return base_page("How it Works", content, "how")
+    return base_page("How It Works", content, "how")
 
 @app.route("/faq")
 def faq():
@@ -1482,18 +1095,18 @@ def faq():
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Support</span>
-<h1>Frequently Asked <span class="grad">Questions</span></h1>
-<p class="muted">Everything you need to know about our premium phones and installment payment plans.</p>
+<span class="eyebrow">Answers</span>
+<h1>Frequently asked <span class="grad">questions</span></h1>
 </div></section>
-<section class="container section">{items}</section>
-<section class="container cta-band reveal">
+<section class="container section" style="padding-top:20px;max-width:860px">{items}
+<div class="cta-band reveal" style="margin-top:30px">
 <h2>Still have questions?</h2>
-<p class="muted">Our support team is available daily 8am-9pm to help you with your application or device queries.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:18px">
-<a class="btn btn-accent" href="/apply-now">Start Your Application</a>
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello Pro Tech, I have a question.')}" target="_blank" rel="noopener">Chat on WhatsApp</a>
-</div></section>"""
+<p class="muted">We are open daily 8am–9pm — ask us anything, no pressure.</p>
+<div class="hero-actions" style="justify-content:center">
+<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-gold" href="/apply-now">Apply Now</a>
+</div></div>
+</section>"""
     return base_page("FAQ", content, "faq")
 
 @app.route("/health")
@@ -1570,23 +1183,23 @@ def api_chat():
 @app.errorhandler(404)
 def not_found(err):
     content = """
-<section class="container section" style="text-align:center;padding-top:90px;padding-bottom:90px">
-<span class="eyebrow">404</span>
-<h1 style="margin:16px 0 8px">Page not found</h1>
-<p class="muted">The page you are looking for does not exist or has moved.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:20px">
-<a class="btn btn-accent" href="/">Return to Pro Tech Home</a>
-<a class="btn btn-outline" href="/cash-prices">Browse Cash Prices</a>
+<section class="container section" style="text-align:center;padding:90px 0">
+<span class="eyebrow">Page not found</span><h1 style="font-family:var(--display);margin-top:14px;font-weight:800">This page doesn't exist</h1>
+<p class="muted">Let's get you back to browsing phones.</p>
+<div class="hero-actions" style="justify-content:center;margin-top:22px">
+<a class="btn btn-gold" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
 </div></section>"""
-    return base_page("Page not found", content, ""), 404
+    return base_page("Not found", content, ""), 404
 
 @app.errorhandler(500)
-def server_error(err): return friendly_error(500)
+def server_error(err):
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
-    if isinstance(err, HTTPException): return friendly_error(err.code or 500)
-    return friendly_error(500)
+    if isinstance(err, HTTPException):
+        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display)\">Page error.</h1></section>", ""), err.code or 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 handler = app
 if __name__ == "__main__":
