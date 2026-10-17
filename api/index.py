@@ -791,6 +791,7 @@ def cash_card(p):
 @app.route("/")
 def home():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS[:9])
+    cash_cards = "".join(cash_card(p) for p in list(CASH_PRODUCTS.values())[:4])
     content = f"""
 <section class="hero"><div class="container hero-inner">
 <span class="kicker">Nairobi's trusted phone dealer</span>
@@ -798,7 +799,7 @@ def home():
 <p class="lead">Hand-picked Samsung and iPhone devices on flexible installment plans — or take any unit outright at a negotiable cash price. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
 <div class="hero-actions">
 <a class="btn btn-primary" href="/installments">Browse Installment Plans</a>
-<a class="btn btn-outline" style="color:#fff;border-color:rgba(255,255,255,.3)" href="/cash-prices">View Cash Prices</a>
+<a class="btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)" href="/cash-prices">View Cash Prices</a>
 </div>
 <div class="hero-stats">
 <div class="hstat"><b>8am–9pm</b><span>open daily</span></div>
@@ -817,6 +818,11 @@ def home():
 <div class="sec-head reveal"><span class="over">Installment plans</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
+</section>
+<section class="container section">
+<div class="sec-head reveal"><span class="over">Cash deals</span><h2>Buy outright & save</h2><p>Original devices at fully negotiable cash prices. Pay in full and own your phone immediately.</p></div>
+<div class="grid">{cash_cards}</div>
+<div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/cash-prices">View full cash price list</a></div>
 </section>
 <section class="container section">
 <div class="sec-head reveal"><span class="over">Customer stories</span><h2>What our clients say</h2></div>
