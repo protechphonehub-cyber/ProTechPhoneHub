@@ -35,10 +35,10 @@ def placeholder_image(text):
     clean = re.sub(r"[^A-Za-z0-9 ]+", "", str(text))[:18].strip() or "ProTech"
     clean = escape(clean, quote=True)
     svg = ("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'>"
-           "<rect width='100%' height='100%' fill='#f8fafc'/>"
-           "<rect x='18' y='18' width='864' height='864' rx='24' fill='#e2e8f0'/>"
-           f"<text x='50%' y='54%' fill='#0f172a' font-family='Inter, sans-serif' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
-           "<text x='50%' y='64%' fill='#64748b' font-family='Inter, sans-serif' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
+           "<rect width='100%' height='100%' fill='#f8f5ef'/>"
+           "<rect x='18' y='18' width='864' height='864' rx='24' fill='#efe8dc'/>"
+           f"<text x='50%' y='54%' fill='#171410' font-family='Georgia, serif' font-size='42' font-weight='500' text-anchor='middle'>{clean}</text>"
+           "<text x='50%' y='64%' fill='#7b7163' font-family='Arial, sans-serif' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
            "</svg>")
     return "data:image/svg+xml;utf8," + urllib.parse.quote(svg, safe="")
 
@@ -84,7 +84,7 @@ def save_application_local(payload):
     except Exception: return False
 
 # ==========================================
-# PRO TECH PRODUCT DATA
+# PRODUCT DATA
 # ==========================================
 def L(slug, name, apply_name, image, tagline, weekly, deposit, storage, colors, specs, reviews, storage_pricing=None, condition=None):
     d = {"slug": slug, "name": name, "apply_name": apply_name, "image": image, "tagline": tagline,
@@ -317,21 +317,14 @@ def search_items(query, limit=6):
     return [item for _, item in scored[:limit]]
 
 # ==========================================
-# NEW EDITORIAL TECH DESIGN SYSTEM
+# PREMIUM PRIVATE-DESK DESIGN
 # ==========================================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
-:root{--bg:#f5f6f2;--panel:#fff;--surface:#fbfcf9;--ink:#101312;--muted:#5f6a66;--line:#dfe4de;--accent:#b8ff2f;--accent-ink:#0b1200;--accent-soft:#ecffd2;--shadow:0 18px 50px rgba(16,19,18,.08);--display:'Syne',sans-serif;--body:'Manrope',sans-serif}
-body.general{--accent:#b8ff2f;--accent-ink:#0b1200;--accent-soft:#ecffd2}
-body.home{--accent:#b8ff2f;--accent-ink:#0b1200;--accent-soft:#ecffd2}
-body.install{--accent:#7a5cff;--accent-ink:#fff;--accent-soft:#e9e4ff}
-body.cash{--accent:#ff8a3d;--accent-ink:#221000;--accent-soft:#ffe8d7}
-body.apply{--accent:#2fb6ff;--accent-ink:#04222f;--accent-soft:#dcf3ff}
-body.how{--accent:#1fc3a4;--accent-ink:#04231d;--accent-soft:#d9f8f1}
-body.faq{--accent:#ff5d7d;--accent-ink:#2f050d;--accent-soft:#ffe2e8}
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Manrope:wght@400;500;600;700&display=swap');
+:root{--bg:#f6f3ee;--panel:#fffdf9;--surface:#f4efe7;--ink:#171410;--ink-soft:#2d261d;--muted:#7b7163;--line:#e6ddcf;--gold:#b48a4a;--gold-soft:#d6b98c;--gold-faint:#f0e5d3;--dark:#12100d;--shadow:0 24px 60px rgba(23,20,16,.09);--display:'Fraunces',serif;--body:'Manrope',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.65;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 button,input,select,textarea{font:inherit}
@@ -339,205 +332,206 @@ button,input,select,textarea{font:inherit}
 .section{padding:72px 0}
 .muted{color:var(--muted)}
 .hidden{display:none!important}
-.topbar{background:#090d0c;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
-.ticker{display:flex;width:max-content;animation:tickerMove 30s linear infinite}
-.ticker-group{display:flex;align-items:center;gap:42px;padding:8px 21px 8px 0;color:#aebbb4;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
-.ticker-group span{display:inline-flex;align-items:center;gap:12px}
-.ticker-group span:after{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
-@keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.header{position:sticky;top:0;z-index:1100;background:rgba(245,246,242,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 0}
-.logo{font-family:var(--display);font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.04em;display:inline-flex;align-items:center;gap:10px}
-.logo:before{content:"";width:11px;height:26px;border-radius:6px;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
-.logo i{font-style:normal;color:var(--accent-ink);background:var(--accent);padding:2px 8px;border-radius:8px}
-.nav{display:flex;align-items:center;gap:20px}
-.nav a{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.topbar{background:var(--dark);border-bottom:1px solid rgba(214,185,140,.12);color:#a99c87;font-size:11px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+.topbar .container{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:9px 0;flex-wrap:wrap}
+.top-left{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.top-right{display:flex;align-items:center;gap:14px}
+.topbar a{color:#e7dbc6;transition:.2s}
+.topbar a:hover{color:var(--gold-soft)}
+.sep{color:var(--gold)}
+.header{position:sticky;top:0;z-index:1100;background:rgba(246,243,238,.94);backdrop-filter:blur(12px);border-bottom:1px solid rgba(230,221,207,.9)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:16px 0}
+.logo{font-family:var(--display);font-size:27px;font-weight:500;letter-spacing:-.02em;color:var(--ink)}
+.logo i{font-style:italic;color:var(--gold)}
+.nav{display:flex;align-items:center;gap:22px}
+.nav a{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .nav a:hover,.nav a.active{color:var(--ink)}
-.nav a.active{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:8px}
-.hamburger{display:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;font-size:20px;color:var(--ink);cursor:pointer}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;border:1px solid transparent;font-weight:800;font-size:13.5px;cursor:pointer;transition:.2s;white-space:nowrap}
-.btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 24px rgba(0,0,0,.08)}
-.btn-primary:hover{transform:translateY(-1px)}
-.btn-ghost{color:#fff;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
-.btn-ghost:hover{background:rgba(255,255,255,.1)}
-.btn-outline{color:var(--ink);border-color:var(--line);background:#fff}
-.btn-outline:hover{border-color:var(--ink)}
-.btn-light{background:#fff;color:var(--ink);border-color:#fff}
-.btn-light:hover{transform:translateY(-1px)}
-.btn-wa{background:#25d366;color:#fff}
+.nav a.active{border-bottom:1px solid var(--gold);padding-bottom:4px}
+.hamburger{display:none;width:42px;height:42px;border-radius:10px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-size:20px;cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:10px;border:1px solid transparent;font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--ink);color:#f6efe2;border-color:var(--ink)}
+.btn-primary:hover{background:var(--ink-soft)}
+.btn-gold{background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#19140b;border-color:rgba(180,138,74,.65);box-shadow:0 12px 28px rgba(180,138,74,.18)}
+.btn-gold:hover{transform:translateY(-1px)}
+.btn-ghost{color:#f3ead9;border-color:rgba(243,234,217,.3);background:rgba(255,255,255,.03)}
+.btn-ghost:hover{border-color:rgba(214,185,140,.6);color:#f8f1e3}
+.btn-outline{color:var(--ink);border-color:var(--line);background:var(--panel)}
+.btn-outline:hover{border-color:var(--gold)}
+.btn-wa{background:#25d366;color:#fff;border-color:rgba(18,16,13,.06)}
 .btn-wa:hover{background:#1eb857}
-.btn-sm{padding:9px 14px;font-size:12px;border-radius:10px}
-.home-hero{background:radial-gradient(circle at top right, rgba(184,255,47,.14), transparent 28%), linear-gradient(180deg,#0b100f,#121816);color:#fff;padding:72px 0 62px;border-bottom:1px solid rgba(255,255,255,.08)}
-.hero-shell{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
-.eyebrow,.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#d8e2dc;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
-.home-hero h1{font-family:var(--display);font-size:clamp(2.7rem,5vw,4.6rem);line-height:.98;font-weight:800;margin:18px 0 14px;letter-spacing:-.05em}
-.home-hero h1 span{display:block;color:var(--accent)}
-.lead{color:#b7c2bd;font-size:1.05rem;line-height:1.7}
-.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
-.hero-points{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
-.hero-points span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#dfe7e1;font-size:12px;font-weight:700}
-.hero-side{position:relative}
-.hero-panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:24px;backdrop-filter:blur(8px)}
-.hero-panel h3{font-family:var(--display);font-size:18px;color:#fff;margin-bottom:12px}
-.hero-panel ul{display:grid;gap:10px;list-style:none;color:#b7c2bd;font-size:14px;line-height:1.5}
-.hero-panel li{padding-left:18px;position:relative}
-.hero-panel li:before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.hero-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
-.hero-mini div{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px;text-align:center}
-.hero-mini b{display:block;font-family:var(--display);font-size:18px;color:var(--accent)}
-.hero-mini span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#94a39d;font-weight:800}
-.proof-grid{margin-top:-24px;position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.proof-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 16px 40px rgba(16,20,18,.06)}
-.proof-card b{display:block;font-family:var(--display);font-size:16px;color:var(--ink);margin-bottom:4px}
-.proof-card span{color:var(--muted);font-size:13px}
-.page-hero{background:radial-gradient(circle at top right, rgba(255,255,255,.06), transparent 20%), linear-gradient(180deg,#0b100f,#131917);color:#fff;padding:62px 0 46px;border-bottom:1px solid rgba(255,255,255,.08)}
-.page-hero h1{font-family:var(--display);font-size:clamp(2.2rem,4vw,3.5rem);line-height:1.02;letter-spacing:-.05em;margin:14px 0 10px}
-.page-hero h1 span{color:var(--accent)}
-.page-hero p{color:#b7c2bd;max-width:760px;line-height:1.65}
-.search-shell{max-width:620px;margin-top:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:10px;border-radius:18px;display:flex;align-items:center;gap:10px}
-.search-shell input{flex:1;border:none;outline:none;border-radius:12px;background:#fff;padding:13px 16px;font-weight:600;color:var(--ink)}
-.search-badge{padding:9px 12px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.sec-head{margin-bottom:30px}
-.sec-head .over{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:var(--accent-soft);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
-.sec-head h2{font-family:var(--display);font-size:clamp(1.9rem,3vw,2.7rem);color:var(--ink);letter-spacing:-.04em;margin-top:12px}
-.sec-head p{color:var(--muted);margin-top:10px;max-width:700px;font-size:15px}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
-.pcard,.ccard{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:.25s;box-shadow:0 6px 20px rgba(16,20,18,.03)}
-.pcard:hover,.ccard:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--accent)}
-.pcard .imgwrap,.ccard .imgwrap{background:linear-gradient(180deg,#fff,#f8f9f5);height:230px;padding:22px;display:grid;place-items:center;border-bottom:1px solid var(--line)}
-.pcard .imgwrap img,.ccard .imgwrap img{max-height:180px;width:auto;object-fit:contain}
-.pcard .tag,.ccard .neg{position:absolute;top:14px;left:14px;background:var(--ink);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px}
-.pcard .tag.deal{background:var(--accent);color:var(--accent-ink)}
-.ccard .neg{left:auto;right:14px;background:var(--accent);color:var(--accent-ink)}
-.pcard .body,.ccard .body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
-.pcard h3,.ccard h4{font-family:var(--display);font-weight:700;font-size:17px;color:var(--ink);line-height:1.35;letter-spacing:-.02em}
-.pcard .price,.ccard .price{font-weight:800;font-size:18px;color:var(--ink);margin-top:6px}
-.pcard .sub{font-size:13px;color:var(--muted);font-weight:600}
-.pcard .go{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
-.ccard .spec{font-size:12.5px;color:var(--muted);line-height:1.55}
-.ccard .price small{font-size:10px;color:var(--accent-ink);background:var(--accent);padding:3px 6px;border-radius:6px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-left:8px}
-.ccard .cta-row{display:flex;gap:8px;margin-top:12px}
-.ccard .cta-row a{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.crumb{color:var(--muted);font-size:13px;margin-bottom:16px}
-.crumb a{font-weight:700;color:var(--muted)}
+.btn-sm{padding:9px 14px;font-size:11.5px}
+.home-hero{position:relative;background:radial-gradient(circle at 85% 15%, rgba(214,185,140,.14), transparent 28%), linear-gradient(160deg,#15120e 0%, #221b12 58%, #2b2012 100%);color:#f3ead9;padding:98px 0 84px;overflow:hidden}
+.home-hero:before{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(214,185,140,.4),transparent)}
+.hero-shell{display:grid;grid-template-columns:1.15fr .85fr;gap:34px;align-items:center}
+.eyebrow,.hero-eyebrow{display:inline-flex;align-items:center;gap:12px;color:var(--gold-soft);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.eyebrow:before,.hero-eyebrow:before{content:"";width:30px;height:1px;background:var(--gold)}
+.home-hero h1{font-family:var(--display);font-size:clamp(3rem,5.4vw,5.1rem);line-height:1.02;font-weight:500;letter-spacing:-.03em;margin:20px 0 18px}
+.home-hero h1 span,.page-hero h1 span{color:var(--gold-soft);font-style:italic}
+.lead{color:#cbbfa9;font-size:1.05rem;max-width:660px;line-height:1.75}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-points{display:flex;flex-wrap:wrap;gap:18px;margin-top:28px;color:#ab9d85;font-size:11px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.hero-points span{display:inline-flex;align-items:center;gap:8px}
+.hero-points span:before{content:"";width:5px;height:5px;background:var(--gold);transform:rotate(45deg)}
+.concierge-card{background:linear-gradient(180deg,rgba(255,253,249,.06),rgba(255,253,249,.03));border:1px solid rgba(214,185,140,.24);border-radius:24px;padding:30px;backdrop-filter:blur(6px)}
+.concierge-card .card-label{display:block;color:var(--gold-soft);font-size:10.5px;font-weight:700;letter-spacing:.24em;text-transform:uppercase;margin-bottom:10px}
+.concierge-card h3{font-family:var(--display);font-size:28px;font-weight:500;color:#f8f1e3;margin-bottom:16px}
+.concierge-card ul{display:grid;gap:0;list-style:none;border-top:1px solid rgba(214,185,140,.16)}
+.concierge-card li{padding:12px 0;border-bottom:1px solid rgba(214,185,140,.16);color:#d4c7b1;font-size:14px}
+.concierge-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.concierge-stats div{background:rgba(255,255,255,.04);border:1px solid rgba(214,185,140,.14);border-radius:14px;padding:13px;text-align:center}
+.concierge-stats b{display:block;font-family:var(--display);font-size:21px;font-weight:500;color:var(--gold-soft)}
+.concierge-stats span{font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#9b8f7c;font-weight:700}
+.assurances{background:var(--panel);border-bottom:1px solid var(--line);padding:28px 0}
+.assurances .container{display:grid;grid-template-columns:repeat(4,1fr);gap:24px}
+.assurance{padding-left:18px;border-left:1px solid var(--line)}
+.assurance .num{display:block;color:var(--gold);font-size:10.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:6px}
+.assurance b{display:block;font-family:var(--display);font-size:18px;font-weight:500;color:var(--ink);margin-bottom:3px}
+.assurance span{color:var(--muted);font-size:13px}
+.page-hero{position:relative;background:radial-gradient(circle at 82% 18%, rgba(214,185,140,.12), transparent 25%), linear-gradient(160deg,#15120e,#241b11);color:#f3ead9;padding:78px 0 56px;overflow:hidden}
+.page-hero:before{content:"";position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,transparent,rgba(214,185,140,.4),transparent)}
+.page-hero h1{font-family:var(--display);font-size:clamp(2.4rem,4.4vw,3.9rem);line-height:1.05;font-weight:500;letter-spacing:-.03em;margin:16px 0 12px}
+.page-hero p{max-width:760px;color:#cbbfa9}
+.search-shell{max-width:640px;margin-top:26px;background:rgba(255,253,249,.05);border:1px solid rgba(214,185,140,.28);border-radius:16px;padding:10px;display:flex;align-items:center;gap:10px}
+.search-shell input{flex:1;border:none;outline:none;border-radius:10px;background:#fffdf9;padding:13px 16px;color:var(--ink);font-weight:600}
+.search-badge{padding:0 12px;color:var(--gold-soft);font-size:10px;font-weight:700;letter-spacing:.2em;text-transform:uppercase}
+.sec-head{margin-bottom:34px}
+.sec-head .over{display:inline-flex;align-items:center;gap:12px;color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
+.sec-head .over:before{content:"";width:28px;height:1px;background:var(--gold)}
+.sec-head h2{font-family:var(--display);font-size:clamp(2rem,3.4vw,3rem);font-weight:500;color:var(--ink);letter-spacing:-.02em;margin-top:12px}
+.sec-head p{color:var(--muted);max-width:720px;margin-top:12px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(272px,1fr));gap:22px}
+.pcard,.ccard{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:.3s;box-shadow:0 1px 2px rgba(23,20,16,.03)}
+.pcard:hover,.ccard:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:rgba(180,138,74,.45)}
+.pcard .imgwrap,.ccard .imgwrap{height:240px;background:radial-gradient(circle at 50% 18%, #fffdf9 0%, #f3eee5 100%);display:grid;place-items:center;padding:26px;border-bottom:1px solid var(--line)}
+.pcard .imgwrap img,.ccard .imgwrap img{max-height:186px;width:auto;object-fit:contain}
+.pcard .tag,.ccard .neg{position:absolute;top:16px;left:16px;background:rgba(23,20,16,.88);color:#f3ead9;border:1px solid rgba(214,185,140,.28);padding:6px 10px;border-radius:999px;font-size:9.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.ccard .neg{left:auto;right:16px;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#19140b;border:none}
+.pcard .body,.ccard .body{padding:20px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pcard h3,.ccard h4{font-family:var(--display);font-size:20px;font-weight:500;color:var(--ink);line-height:1.25;letter-spacing:-.01em}
+.pcard .price,.ccard .price{font-family:var(--display);font-size:19px;color:var(--ink);margin-top:6px}
+.pcard .sub{color:var(--muted);font-size:13px}
+.pcard .go{margin-top:auto;padding-top:14px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;color:var(--gold);font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.ccard .spec{color:var(--muted);font-size:12.5px;line-height:1.6}
+.ccard .price small{font-size:10px;color:var(--gold);letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-left:8px}
+.ccard .cta-row{display:flex;gap:8px;margin-top:14px}
+.ccard .cta-row a{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.crumb{color:var(--muted);font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:22px}
+.crumb a{color:var(--muted)}
 .crumb a:hover{color:var(--ink)}
-.product-detail{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start}
-.product-img{position:relative;background:#fff;border:1px solid var(--line);border-radius:28px;padding:38px;display:grid;place-items:center;min-height:460px;overflow:hidden}
-.product-img:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:var(--accent-soft);right:-50px;top:-50px}
-.product-img img{position:relative;max-width:100%;max-height:390px;width:auto;object-fit:contain}
-.product-info h1{font-family:var(--display);font-size:clamp(1.8rem,3vw,2.6rem);color:var(--ink);letter-spacing:-.04em;margin-bottom:8px}
-.product-info .tagline{color:var(--muted);font-size:14.5px;margin-bottom:16px}
-.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
-.pill{padding:7px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
-.pill.gold{background:var(--accent-soft);border-color:transparent;color:var(--ink)}
-.pill.wine{background:#ffe1e1;color:#8f1d1d;border-color:#ffc9c9}
-.planbox{background:#0d1211;color:#fff;border-radius:24px;padding:22px;margin:18px 0;position:relative;overflow:hidden}
-.planbox:before{content:"";position:absolute;right:-36px;top:-36px;width:130px;height:130px;border-radius:50%;background:var(--accent);opacity:.2}
-.planbox h3{font-family:var(--display);font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
-.prow{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:14.5px;font-weight:600}
+.product-detail{display:grid;grid-template-columns:1.02fr .98fr;gap:36px;align-items:start}
+.product-img{position:relative;background:radial-gradient(circle at 50% 18%, #fffdf9 0%, #f2ece1 100%);border:1px solid var(--line);border-radius:30px;padding:42px;display:grid;place-items:center;min-height:500px;overflow:hidden}
+.product-img:before{content:"";position:absolute;width:240px;height:240px;border:1px solid rgba(180,138,74,.28);border-radius:50%;right:-58px;top:-58px}
+.product-img:after{content:"";position:absolute;width:120px;height:120px;border:1px solid rgba(180,138,74,.18);border-radius:50%;left:-32px;bottom:-32px}
+.product-img img{position:relative;max-width:100%;max-height:410px;width:auto;object-fit:contain}
+.product-info h1{font-family:var(--display);font-size:clamp(2.2rem,3.4vw,3.2rem);line-height:1.05;font-weight:500;letter-spacing:-.03em;margin-bottom:10px}
+.product-info .tagline{color:var(--muted);font-size:15px;margin-bottom:18px}
+.pills{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.pill{padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:#fffdf9;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase}
+.pill.gold{border-color:rgba(180,138,74,.45);color:var(--gold)}
+.pill.wine{border-color:#eec9c9;background:#fff7f7;color:#8f4141}
+.planbox{background:linear-gradient(160deg,#171410,#251c11);color:#f3ead9;border:1px solid rgba(214,185,140,.18);border-radius:24px;padding:24px;margin:20px 0;position:relative;overflow:hidden}
+.planbox:before{content:"";position:absolute;right:-48px;top:-48px;width:160px;height:160px;border-radius:50%;border:1px solid rgba(214,185,140,.18)}
+.planbox h3{color:var(--gold-soft);font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px}
+.prow{display:flex;justify-content:space-between;gap:14px;padding:11px 0;border-bottom:1px solid rgba(214,185,140,.14);font-size:15px}
 .prow:last-child{border-bottom:none}
-.prow strong{color:#fff;text-align:right}
-.optgroup{margin:18px 0}
-.optgroup label{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
+.prow strong{color:#fff;font-weight:600}
+.optgroup{margin:20px 0}
+.optgroup label{display:block;font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
 .optrow{display:flex;flex-wrap:wrap;gap:8px}
-.optbtn{padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-weight:700;font-size:13.5px;transition:.2s}
-.optbtn.active,.optbtn:hover{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
-.bullets{display:grid;gap:10px;margin:18px 0;list-style:none}
-.bullets li{padding-left:20px;position:relative;color:var(--muted);font-size:14.5px}
-.bullets li:before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--accent)}
-.spec-table{width:100%;border-collapse:collapse;margin:18px 0;background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
-.spec-table th,.spec-table td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:13.5px;vertical-align:top}
+.optbtn{padding:10px 18px;border-radius:10px;border:1px solid var(--line);background:#fffdf9;color:var(--ink);font-weight:600;font-size:13.5px;cursor:pointer;transition:.2s}
+.optbtn.active,.optbtn:hover{border-color:var(--ink);background:var(--ink);color:#f6efe2}
+.bullets{display:grid;gap:11px;list-style:none;margin:20px 0}
+.bullets li{padding-left:22px;position:relative;color:var(--muted);font-size:14.5px}
+.bullets li:before{content:"";position:absolute;left:0;top:.56em;width:7px;height:7px;background:var(--gold);transform:rotate(45deg)}
+.spec-table{width:100%;border-collapse:separate;border-spacing:0;background:#fffdf9;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin:20px 0}
+.spec-table th,.spec-table td{padding:14px;border-bottom:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
 .spec-table tr:last-child th,.spec-table tr:last-child td{border-bottom:none}
-.spec-table th{width:150px;background:var(--accent-soft);color:var(--ink);font-weight:800}
-.reviewbox{background:#fff;border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:20px;padding:24px;box-shadow:0 10px 26px rgba(16,20,18,.04)}
-.reviewbox .stars{color:var(--accent);letter-spacing:2px;font-size:18px;margin-bottom:8px}
-.reviewbox strong{color:var(--ink)}
-.reviewbox .ref{display:block;font-size:12px;color:var(--muted);margin:4px 0 10px}
-.device-note{margin-top:18px;padding:14px 16px;background:var(--accent-soft);border-radius:16px;color:var(--ink);font-size:13.5px;line-height:1.6}
-.formcard{background:#fff;border:1px solid var(--line);border-radius:26px;padding:30px;box-shadow:0 18px 50px rgba(16,20,18,.05)}
-.formcard h2{font-family:var(--display);font-size:21px;color:var(--ink);letter-spacing:-.02em;margin-bottom:6px}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-.field{display:grid;gap:7px;margin-bottom:14px}
-.field label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
-input,select,textarea{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);outline:none;font-weight:600;transition:.2s;color:var(--ink)}
-input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);background:#fff}
-.filelabel{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px dashed var(--line);background:var(--surface);padding:13px 14px;border-radius:14px;cursor:pointer;transition:.2s}
-.filelabel:hover{border-color:var(--accent);background:var(--accent-soft)}
+.spec-table th{width:160px;background:var(--surface);color:var(--ink);font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
+.reviewbox{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:20px;padding:28px}
+.reviewbox .stars{color:var(--gold);letter-spacing:3px;font-size:17px;margin-bottom:10px}
+.reviewbox strong{font-family:var(--display);font-size:18px;font-weight:500}
+.reviewbox .ref{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:5px 0 10px}
+.device-note{margin-top:20px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;color:var(--ink);font-size:14px;line-height:1.65}
+.formcard{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:34px;box-shadow:0 14px 40px rgba(23,20,16,.04)}
+.formcard h2{font-family:var(--display);font-size:26px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.field{display:grid;gap:8px;margin-bottom:16px}
+.field label{font-size:10.5px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+input,select,textarea{width:100%;padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:#fbf8f3;color:var(--ink);outline:none;transition:.2s;font-weight:500}
+input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 0 4px rgba(180,138,74,.12);background:#fffdf9}
+.filelabel{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px dashed rgba(180,138,74,.5);background:#fbf8f3;padding:14px 16px;border-radius:14px;cursor:pointer;transition:.2s}
+.filelabel:hover{background:var(--gold-faint)}
 .filelabel input{display:none}
-.filelabel span{color:var(--muted);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
-.progress{height:7px;border-radius:99px;background:var(--surface);border:1px solid var(--line);overflow:hidden;margin:14px 0}
-.progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .4s;border-radius:99px}
-.donecheck{width:76px;height:76px;margin:8px auto 14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:34px;font-weight:800}
-.donelist{display:grid;gap:8px;margin:14px auto;max-width:400px}
-.donelist div{padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-weight:700;font-size:13.5px}
-.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(9,13,12,.55);backdrop-filter:blur(8px);padding:18px}
+.filelabel span{color:var(--muted);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:230px}
+.progress{height:6px;border-radius:99px;background:var(--surface);overflow:hidden;margin:16px 0}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold),var(--gold-soft));border-radius:99px;transition:width .4s}
+.donecheck{width:74px;height:74px;margin:10px auto 16px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#171410;display:grid;place-items:center;font-size:32px;font-weight:700}
+.donelist{display:grid;gap:10px;max-width:400px;margin:18px auto}
+.donelist div{background:#fffdf9;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(18,16,13,.6);backdrop-filter:blur(8px);padding:20px}
 .modal.open{display:grid}
-.modalbox{width:min(680px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:26px;padding:30px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.2)}
-.modalclose{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;font-size:18px;color:var(--ink)}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 18px;border-radius:12px;display:none;z-index:3000;box-shadow:0 10px 30px rgba(0,0,0,.18);font-weight:700}
+.modalbox{width:min(700px,100%);max-height:88vh;overflow:auto;background:var(--panel);border-radius:28px;padding:34px;position:relative;box-shadow:0 40px 100px rgba(0,0,0,.25)}
+.modalclose{position:absolute;top:16px;right:16px;width:40px;height:40px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;font-size:20px;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#f6efe2;padding:13px 20px;border-radius:12px;display:none;z-index:3000;box-shadow:0 16px 40px rgba(0,0,0,.2);font-weight:600}
 .toast.show{display:block}
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
-.step{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(16,20,18,.03)}
-.step:before{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:var(--accent)}
-.step .n{width:46px;height:46px;border-radius:14px;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-size:20px;display:grid;place-items:center;margin-bottom:12px;font-weight:800}
-.step h3{font-family:var(--display);font-size:16px;color:var(--ink);margin-bottom:6px}
-.step p{color:var(--muted);font-size:13.5px;line-height:1.55}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:28px;position:relative}
+.step .n{font-family:var(--display);font-size:36px;color:var(--gold);margin-bottom:12px;font-weight:400}
+.step h3{font-family:var(--display);font-size:20px;font-weight:500;margin-bottom:8px}
+.step p{color:var(--muted);font-size:14px;line-height:1.6}
 .faq-wrap{max-width:860px}
-.faq-item{border:1px solid var(--line);border-radius:18px;background:#fff;padding:20px 22px;margin-bottom:12px;transition:.2s}
-.faq-item:hover{border-color:var(--accent)}
-.faq-item summary{cursor:pointer;font-weight:800;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:14.5px}
+.faq-item{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:22px 24px;margin-bottom:12px}
+.faq-item summary{cursor:pointer;font-family:var(--display);font-size:18px;font-weight:500;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
 .faq-item summary::-webkit-details-marker{display:none}
-.faq-item summary:after{content:"+";font-size:24px;color:var(--muted);font-weight:400}
-.faq-item[open]{border-color:var(--accent);box-shadow:0 10px 26px rgba(16,20,18,.05)}
-.faq-item[open] summary:after{content:"−";color:var(--accent-ink)}
-.faq-item p{margin-top:12px;color:var(--muted);padding-top:12px;border-top:1px dashed var(--line);font-size:14px;line-height:1.65}
-.footer{background:#0b0f0e;color:#93a09a;padding:54px 0 20px;margin-top:80px}
-.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:28px;margin-bottom:28px}
-.footer h4{font-family:var(--display);color:#fff;margin-bottom:12px;font-size:15px}
-.footer a,.footer p{color:#93a09a;font-size:14px;line-height:1.8}
-.footer a:hover{color:#fff}
-.footer .logo{color:#fff}
-.footer .logo:before{background:var(--accent);box-shadow:none}
-.footer .logo i{color:var(--accent-ink)}
-.copyright{border-top:1px solid rgba(255,255,255,.08);padding-top:16px;text-align:center;font-size:12px;color:#67756e}
-.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 12px 30px rgba(37,211,102,.28)}
-.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:13px 20px;border-radius:999px;background:var(--ink);color:#fff;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.16);border:none}
-.chat-panel{position:fixed;left:22px;bottom:84px;z-index:1700;width:min(380px,calc(100vw - 44px));height:530px;background:#fff;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.18);display:none;flex-direction:column;overflow:hidden;border:1px solid var(--line)}
+.faq-item summary:after{content:"+";font-size:26px;color:var(--gold);font-weight:300;line-height:1}
+.faq-item[open]{border-color:rgba(180,138,74,.45)}
+.faq-item[open] summary:after{content:"−"}
+.faq-item p{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);color:var(--muted);font-size:14.5px;line-height:1.7}
+.footer{background:var(--dark);color:#9d9180;padding:64px 0 24px;margin-top:90px}
+.footer-grid{display:grid;grid-template-columns:1.45fr 1fr 1fr;gap:32px;margin-bottom:34px}
+.footer h4{color:#e9dfcd;font-size:11px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:14px}
+.footer a,.footer p{color:#9d9180;font-size:14px;line-height:1.9}
+.footer a:hover{color:var(--gold-soft)}
+.footer .logo{color:#f6efe2}
+.footer .logo i{color:var(--gold-soft)}
+.copyright{border-top:1px solid rgba(214,185,140,.1);padding-top:20px;text-align:center;color:#6d6355;font-size:12px}
+.wa-float{position:fixed;right:24px;bottom:24px;z-index:1500;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 18px 34px rgba(37,211,102,.25)}
+.chat-btn{position:fixed;left:24px;bottom:24px;z-index:1600;padding:13px 22px;border-radius:999px;background:var(--ink);color:#f3ead9;border:1px solid rgba(214,185,140,.24);font-weight:700;font-size:13px;letter-spacing:.04em;cursor:pointer;box-shadow:0 18px 34px rgba(23,20,16,.18)}
+.chat-panel{position:fixed;left:24px;bottom:88px;z-index:1700;width:min(390px,calc(100vw - 48px));height:540px;background:var(--panel);border-radius:26px;border:1px solid var(--line);box-shadow:0 40px 100px rgba(23,20,16,.22);display:none;flex-direction:column;overflow:hidden}
 .chat-panel.open{display:flex;animation:fadeUp .25s ease}
 @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
-.chat-head{padding:15px 16px;background:var(--ink);color:#fff;display:flex;align-items:center;gap:12px}
-.chat-head .av{width:38px;height:38px;border-radius:12px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-size:16px;font-weight:800}
-.chat-body{flex:1;overflow:auto;padding:14px;background:var(--surface)}
-.msg{max-width:86%;margin-bottom:10px;padding:12px 14px;border-radius:16px;font-size:13.5px;line-height:1.6}
-.msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px;color:var(--ink)}
-.msg.user{margin-left:auto;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px;font-weight:600}
-.msg a.chip{display:inline-block;margin:8px 6px 0 0;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:800;font-size:12px}
-.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
-.chat-input input{flex:1;border-radius:999px;padding:11px 15px;border:1px solid var(--line);background:var(--surface)}
-.chat-quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:var(--surface)}
-.quick-btn{padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:800;color:var(--muted);cursor:pointer}
-.quick-btn:hover{border-color:var(--accent);color:var(--ink)}
+.chat-head{padding:16px;background:var(--ink);color:#f3ead9;display:flex;align-items:center;gap:12px}
+.chat-head .av{width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#171410;display:grid;place-items:center;font-family:var(--display);font-size:17px}
+.chat-body{flex:1;overflow:auto;padding:16px;background:var(--surface)}
+.msg{max-width:85%;margin-bottom:12px;padding:13px 16px;border-radius:18px;font-size:14px;line-height:1.65}
+.msg.bot{background:#fffdf9;border:1px solid var(--line);border-bottom-left-radius:6px;color:var(--ink)}
+.msg.user{margin-left:auto;background:var(--ink);color:#f3ead9;border-bottom-right-radius:6px}
+.msg a.chip{display:inline-block;margin:8px 6px 0 0;padding:7px 12px;border-radius:999px;background:#fffdf9;border:1px solid rgba(180,138,74,.35);color:var(--ink);font-weight:700;font-size:12px}
+.chat-input{display:flex;gap:8px;padding:14px;border-top:1px solid var(--line);background:#fffdf9}
+.chat-input input{flex:1;border-radius:999px;padding:12px 16px;border:1px solid var(--line);background:var(--surface)}
+.chat-quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 14px;background:var(--surface)}
+.quick-btn{padding:8px 12px;border-radius:999px;border:1px solid var(--line);background:#fffdf9;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}
+.quick-btn:hover{border-color:var(--gold);color:var(--ink)}
 .reveal{transition:opacity .6s ease,transform .6s ease}
 .reveal-init{opacity:0;transform:translateY(18px)}
 .reveal.visible{opacity:1;transform:none}
-.cat-section{margin-bottom:48px}
-.cat-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:18px}
-.cat-head h3{font-family:var(--display);font-size:clamp(1.3rem,2.5vw,1.9rem);color:var(--ink);letter-spacing:-.03em}
-.cat-head .count{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
-.policy-note{padding:16px 18px;border-radius:18px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--accent);color:var(--ink);font-size:14px;line-height:1.6;margin-bottom:24px}
-.cta-band{background:#0b100f;border-radius:30px;padding:54px;text-align:center;color:#fff;position:relative;overflow:hidden}
-.cta-band:before{content:"";position:absolute;right:-70px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:var(--accent);opacity:.16}
-.cta-band h2{font-family:var(--display);font-size:clamp(1.8rem,3vw,2.5rem);color:#fff;letter-spacing:-.04em;margin-bottom:10px}
-.cta-band p{color:#b7c2bd;margin-bottom:24px;max-width:640px;margin-left:auto;margin-right:auto}
-.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
-.testi{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;position:relative;box-shadow:0 8px 24px rgba(16,20,18,.03)}
-.testi:before{content:"“";font-family:var(--display);font-size:52px;line-height:1;color:var(--accent);position:absolute;top:10px;left:16px;opacity:.9}
-.testi p{color:var(--muted);font-size:14px;margin:34px 0 14px;line-height:1.65}
-.testi strong{color:var(--ink);font-size:13.5px}
-.testi .ref{display:block;font-size:11px;color:var(--muted);margin-top:4px}
-@media(max-width:1000px){.hero-shell,.product-detail{grid-template-columns:1fr}.proof-grid,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img{min-height:380px}}
-@media(max-width:820px){.nav{position:fixed;top:78px;left:4%;right:4%;z-index:1200;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.fgrid{grid-template-columns:1fr}.ticker-group{gap:26px}}
-@media(max-width:640px){.proof-grid,.steps,.testi-grid{grid-template-columns:1fr}.home-hero h1{font-size:2.6rem}.search-shell{flex-direction:column}.search-badge{display:none}.hero-mini{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
+.cat-section{margin-bottom:56px}
+.cat-head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding-bottom:14px;border-bottom:1px solid var(--line);margin-bottom:22px}
+.cat-head h3{font-family:var(--display);font-size:clamp(1.6rem,2.8vw,2.4rem);font-weight:500;letter-spacing:-.02em}
+.cat-head .count{font-size:10.5px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:var(--gold)}
+.policy-note{background:var(--panel);border:1px solid var(--line);border-left:3px solid var(--gold);border-radius:18px;padding:18px 20px;color:var(--ink);font-size:14px;line-height:1.7;margin-bottom:28px}
+.cta-band{position:relative;background:radial-gradient(circle at 85% 15%, rgba(214,185,140,.16), transparent 24%), linear-gradient(160deg,#171410,#241b11);border:1px solid rgba(214,185,140,.18);border-radius:32px;padding:64px;text-align:center;color:#f3ead9;overflow:hidden}
+.cta-band h2{font-family:var(--display);font-size:clamp(2rem,3.4vw,3.2rem);font-weight:500;letter-spacing:-.02em;margin-bottom:12px}
+.cta-band p{color:#cbbfa9;max-width:640px;margin:0 auto 26px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testi{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:30px 26px 26px;position:relative}
+.testi:before{content:"“";font-family:var(--display);font-size:64px;line-height:1;color:var(--gold);position:absolute;top:8px;left:18px;opacity:.85}
+.testi p{color:var(--muted);font-size:14.5px;line-height:1.7;margin:42px 0 16px}
+.testi strong{font-family:var(--display);font-size:16px;font-weight:500;color:var(--ink)}
+.testi .ref{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px}
+@media(max-width:1000px){.hero-shell,.product-detail{grid-template-columns:1fr}.assurances .container,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img{min-height:400px}}
+@media(max-width:820px){.nav{position:fixed;top:80px;left:4%;right:4%;z-index:1200;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:20px;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.fgrid{grid-template-columns:1fr}.topbar .top-left span:not(:first-child),.topbar .sep{display:none}}
+@media(max-width:640px){.assurances .container,.steps,.testi-grid{grid-template-columns:1fr}.home-hero{padding:76px 0 64px}.search-shell{flex-direction:column}.search-badge{display:none}.hero-points{gap:12px}.grid{grid-template-columns:1fr}.cta-band{padding:44px 24px}}
 """
 
 JS = r"""
@@ -686,17 +680,17 @@ function initChat(){
 
 # HTML RENDERERS
 def render_topbar():
-    items = [
-        "Genuine phones only",
-        "Flexible weekly plans",
-        "Cash deals open to offers",
-        "Fast response on WhatsApp",
-        "Delivery arranged countrywide",
-        "Original devices, clear pricing"
-    ]
-    group = "".join(f"<span>{e(x)}</span>" for x in items)
-    return f"""<div class="topbar" aria-hidden="true"><div class="ticker">
-<div class="ticker-group">{group}</div><div class="ticker-group">{group}</div>
+    return f"""<div class="topbar"><div class="container">
+<div class="top-left">
+<span>Original devices</span><span class="sep">•</span>
+<span>Considered installment plans</span><span class="sep">•</span>
+<span>Cash offers welcome</span>
+</div>
+<div class="top-right">
+<a href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a href="mailto:{SHOP_EMAIL}">Email</a>
+<a href="{whatsapp_link('Hello!')}" target="_blank" rel="noopener">WhatsApp</a>
+</div>
 </div></div>"""
 
 def render_nav(active):
@@ -721,7 +715,7 @@ def render_footer():
 <div>
 <a class="logo" href="/">Pro Tech <i>Phone Hub</i></a>
 <p style="margin-top:12px;max-width:420px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list.</p>
-<p style="margin-top:10px"><strong style="color:var(--accent)">Fast replies every day</strong></p>
+<p style="margin-top:10px"><strong style="color:var(--gold-soft)">Fast replies every day</strong></p>
 </div>
 <div>
 <h4>Quick Links</h4>
@@ -754,7 +748,7 @@ def base_page(title, content, active="", extra_head=""):
 <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.8-.1 1.5Z"/></svg></a>
 <button class="chat-btn" id="chatBtn" type="button">Chat with us</button>
 <div class="chat-panel" id="chatPanel">
-<div class="chat-head"><div class="av">PT</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.7)">Online • Fast replies</div></div>
+<div class="chat-head"><div class="av">PT</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.72)">Online • Concierge support</div></div>
 <button class="modalclose" id="chatClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.1);border:none;color:#fff" aria-label="Close">×</button></div>
 <div class="chat-body" id="chatBody"></div>
 <div class="chat-quick">
@@ -798,52 +792,53 @@ def home():
     content = f"""
 <section class="home-hero"><div class="container hero-shell">
 <div class="hero-copy">
-<span class="hero-eyebrow">Upgrade smarter</span>
-<h1>The right phone. <span>The right payment rhythm.</span></h1>
-<p class="lead">Pick a genuine Samsung or iPhone, choose a weekly installment plan or a negotiable cash deal, and get clear terms from the start.</p>
+<span class="hero-eyebrow">Pro Tech Phone Hub</span>
+<h1>Exceptional phones. <span>Considered ownership.</span></h1>
+<p class="lead">Curated Samsung and iPhone devices, available on structured weekly plans or outright cash terms — with clear pricing, genuine stock, and personal assistance.</p>
 <div class="hero-actions">
-<a class="btn btn-primary" href="/installments">Browse Installment Plans</a>
+<a class="btn btn-gold" href="/installments">Explore Installments</a>
 <a class="btn btn-ghost" href="/cash-prices">View Cash Prices</a>
 </div>
 <div class="hero-points">
-<span>Original stock</span><span>Weekly M-Pesa plans</span><span>Cash offers welcome</span><span>Fast WhatsApp help</span>
+<span>Genuine stock</span><span>Initial on delivery</span><span>Weekly plans</span><span>Negotiable cash</span>
 </div>
 </div>
 <aside class="hero-side">
-<div class="hero-panel">
-<h3>Why buyers start here</h3>
+<div class="concierge-card">
+<span class="card-label">Private buying desk</span>
+<h3>A calmer way to buy</h3>
 <ul>
-<li>Every device is checked before it is listed</li>
-<li>Initial payment is made when the phone reaches you</li>
-<li>Plans are structured around simple weekly amounts</li>
-<li>Straight answers on cash and installment options</li>
+<li>Each device is inspected before dispatch</li>
+<li>Initial payment is completed on delivery</li>
+<li>Weekly plan terms are shown upfront</li>
+<li>Cash prices remain open to discussion</li>
 </ul>
-<div class="hero-mini">
-<div><b>Quick</b><span>review</span></div>
-<div><b>Clear</b><span>pricing</span></div>
+<div class="concierge-stats">
+<div><b>Fast</b><span>review</span></div>
+<div><b>Clear</b><span>terms</span></div>
 <div><b>Direct</b><span>support</span></div>
 </div>
 </div>
 </aside>
 </div></section>
-<div class="container proof-grid reveal">
-<div class="proof-card"><b>Genuine devices</b><span>tested before delivery</span></div>
-<div class="proof-card"><b>Flexible plans</b><span>weekly payment structure</span></div>
-<div class="proof-card"><b>Cash deals</b><span>prices open to discussion</span></div>
-<div class="proof-card"><b>Local support</b><span>call or WhatsApp easily</span></div>
-</div>
+<div class="assurances"><div class="container">
+<div class="assurance"><span class="num">01</span><b>Genuine inventory</b><span>inspected individually</span></div>
+<div class="assurance"><span class="num">02</span><b>Structured plans</b><span>weekly payment clarity</span></div>
+<div class="assurance"><span class="num">03</span><b>Cash discretion</b><span>prices open to discussion</span></div>
+<div class="assurance"><span class="num">04</span><b>Direct assistance</b><span>call or WhatsApp easily</span></div>
+</div></div>
 <section class="container section">
 <div class="sec-head reveal"><span class="over">Installment picks</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
 </section>
 <section class="container section">
-<div class="sec-head reveal"><span class="over">Cash deals</span><h2>Buy outright & save</h2><p>Original devices at fully negotiable cash prices. Pay in full and own your phone immediately.</p></div>
+<div class="sec-head reveal"><span class="over">Cash purchases</span><h2>Buy outright, with room to discuss</h2><p>Original devices at fully negotiable cash prices. Pay in full and own your phone immediately.</p></div>
 <div class="grid">{cash_cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/cash-prices">View full cash price list</a></div>
 </section>
 <section class="container section">
-<div class="sec-head reveal"><span class="over">Customer stories</span><h2>What our clients say</h2></div>
+<div class="sec-head reveal"><span class="over">Client notes</span><h2>What our clients say</h2></div>
 <div class="testi-grid">
 <div class="testi reveal"><p>Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong>— Naliaka S.</strong><span class="ref">PT-101</span></div>
 <div class="testi reveal"><p>The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong>— Otieno J.</strong><span class="ref">PT-102</span></div>
@@ -855,7 +850,7 @@ def home():
 <h2>Ready for your next phone?</h2>
 <p>Start your application today or WhatsApp us for personalized recommendations.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-light" href="/apply-now">Start Application</a>
+<a class="btn btn-gold" href="/apply-now">Start Application</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
@@ -867,21 +862,21 @@ def installments():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS)
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Plan catalog</span>
-<h1>Installment <span>plans</span></h1>
+<span class="eyebrow">Payment plans</span>
+<h1>Installments, <span>structured properly.</span></h1>
 <p class="lead">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
 <div class="hero-points">
 <span>Initial on delivery</span><span>Weekly M-Pesa</span><span>Grace period</span><span>Original devices</span>
 </div>
 </div></section>
-<section class="container section" style="padding-top:34px"><div class="grid">{cards}</div></section>
+<section class="container section" style="padding-top:36px"><div class="grid">{cards}</div></section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Not sure what fits your budget?</h2>
 <p>WhatsApp us your weekly budget and we'll suggest three options.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn btn-light" href="/apply-now">Apply Now</a>
+<a class="btn btn-gold" href="/apply-now">Apply Now</a>
 </div>
 </div>
 </section>"""
@@ -899,12 +894,12 @@ def cash_prices():
 <div class="grid">{cards}</div></section>"""
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Cash marketplace</span>
-<h1>Cash <span>prices</span></h1>
+<span class="eyebrow">Cash purchases</span>
+<h1>The cash list, <span>open to discussion.</span></h1>
 <p class="lead">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
 <div class="search-shell"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..."><span class="search-badge">Live list</span></div>
 </div></section>
-<section class="container section" style="padding-top:34px">
+<section class="container section" style="padding-top:36px">
 <div class="policy-note reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
 {blocks}</section>
 <section class="container">
@@ -948,7 +943,7 @@ def device_page(slug):
 <a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
 <div class="device-note"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
-<h3 style="font-family:var(--display);color:var(--ink);margin-top:20px;font-weight:700">Full specifications</h3>
+<h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Full specifications</h3>
 <ul class="bullets">{specs}</ul>
 </div></div></section>"""
         return base_page(p["name"], content, "cash")
@@ -985,21 +980,21 @@ def device_page(slug):
 <div class="optgroup"><label>Storage</label><div class="optrow">{sb}</div></div>
 <div class="optgroup"><label>Color</label><div class="optrow">{cb}</div></div>
 <div class="hero-actions">
-<a class="btn btn-primary" id="applyCta" href="{apply_href}">Take on Installment</a>
+<a class="btn btn-gold" id="applyCta" href="{apply_href}">Take on Installment</a>
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
 </div>
-<h3 style="font-family:var(--display);color:var(--ink);margin-top:20px;font-weight:700">Our guarantee</h3>
+<h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Our guarantee</h3>
 <ul class="bullets">
 <li>Original, thoroughly tested device — exactly as specified below</li>
 <li>Initial payment only when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
 <li>7-day exchange on any factory defect</li>
 </ul>
-<h3 style="font-family:var(--display);color:var(--ink);font-weight:700">Full specifications</h3>
+<h3 style="font-family:var(--display);color:var(--ink);font-weight:500;font-size:22px">Full specifications</h3>
 <table class="spec-table">{rows}</table>
 </div></div></section>
 <section class="container section" style="padding-top:0">
-<div class="sec-head reveal"><span class="over">Customer review</span><h2>Verified feedback</h2></div>
+<div class="sec-head reveal"><span class="over">Client note</span><h2>Verified feedback</h2></div>
 <div class="reviewbox reveal"><div class="stars">{"★"*r}{"☆"*(5-r)}</div><strong>{e(n)}</strong><span class="ref">Verified purchase • Ref {e(ref)}</span><p style="color:var(--muted)">{e(rev_txt)}</p></div>
 </section>"""
     return base_page(p["name"], content, "install")
@@ -1019,11 +1014,11 @@ def apply_now():
     ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
     content = f"""
 <section class="page-hero"><div class="container" style="max-width:840px">
-<span class="eyebrow">Application</span>
-<h1>Apply in <span>under 2 minutes</span></h1>
+<span class="eyebrow">Private application</span>
+<h1>Apply with <span>confidence.</span></h1>
 <p class="lead" style="margin:auto">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
 </div></section>
-<section class="container section" style="padding-top:36px"><div class="product-detail">
+<section class="container section" style="padding-top:38px"><div class="product-detail">
 <div class="formcard">
 <h2>Your information</h2>
 <p class="muted" style="margin-bottom:24px">Private and secure — used only to process your application.</p>
@@ -1046,7 +1041,7 @@ def apply_now():
 <h2>Your summary</h2>
 <div style="display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);margin:16px 0 24px">
 <img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:12px">
-<div><strong id="summaryName" style="color:var(--ink);font-size:16px">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px;margin-top:4px">Pick a model to see its plan.</div></div>
+<div><strong id="summaryName" style="color:var(--ink);font-size:16px;font-family:var(--display)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px;margin-top:4px">Pick a model to see its plan.</div></div>
 </div>
 <div class="planbox" style="margin:0"><div class="prow"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
 <div class="prow"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
@@ -1069,17 +1064,17 @@ def apply_now():
 <input type="hidden" id="docRegion"><input type="hidden" id="docPhoneModel"><input type="hidden" id="docSubmissionId">
 <div class="progress"><span id="docProgress" style="width:33%"></span></div>
 <p style="padding:14px 18px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-size:14px;font-weight:600;margin:0 0 20px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
-<div id="stepMpesa"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:800;font-size:18px;margin-bottom:16px">M-Pesa statement (6 months)</h3>
+<div id="stepMpesa"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">M-Pesa statement (6 months)</h3>
 <ul class="bullets"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
 <div class="field"><label>Upload the M-Pesa PDF</label><label class="filelabel"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
 <div class="field"><label>Statement password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
 <button class="btn btn-primary" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
-<div id="stepIdentity" class="hidden"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:800;font-size:18px;margin-bottom:16px">Identity verification</h3>
+<div id="stepIdentity" class="hidden"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">Identity verification</h3>
 <div class="field"><label>Front of National ID</label><label class="filelabel"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>↑</strong></label></div>
 <div class="field"><label>Back of National ID</label><label class="filelabel"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>↑</strong></label></div>
 <div class="field"><label>Official selfie</label><label class="filelabel"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>↑</strong></label></div>
 <button class="btn btn-primary" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
-<div id="stepKin" class="hidden"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:800;font-size:18px;margin-bottom:16px">Next of kin</h3>
+<div id="stepKin" class="hidden"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">Next of kin</h3>
 <div class="fgrid">
 <div class="field"><label>Full name</label><input id="kName" placeholder="Next of kin name"></div>
 <div class="field"><label>Phone number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
@@ -1091,12 +1086,12 @@ def apply_now():
 <button class="btn btn-primary" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
 <div id="stepDone" class="hidden" style="text-align:center">
 <div class="donecheck">✓</div>
-<h2 style="color:var(--ink);font-weight:800;font-size:24px">Application complete!</h2>
+<h2 style="color:var(--ink);font-weight:600;font-size:26px;font-family:var(--display)">Application complete!</h2>
 <p class="muted" style="margin-top:8px">You're now in our review queue — we'll contact you shortly.</p>
 <div class="donelist"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
 <div class="planbox" style="max-width:400px;margin:24px auto"><div class="prow"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="prow"><span>Status</span><strong>In queue</strong></div></div>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-wa" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
+<a class="btn btn-gold" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
 <a class="btn btn-outline" href="/">Back home</a>
 </div></div>
 </div></div>"""
@@ -1106,11 +1101,11 @@ def apply_now():
 def how_it_works():
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Process</span>
-<h1>How it <span>works</span></h1>
+<span class="eyebrow">The process</span>
+<h1>A clear path to <span>ownership.</span></h1>
 <p class="lead">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
 </div></section>
-<section class="container section" style="padding-top:36px"><div class="steps">
+<section class="container section" style="padding-top:38px"><div class="steps">
 <div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
 <div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) — or installment with an initial payment and weekly M-Pesa installments.</p></div>
 <div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
@@ -1121,7 +1116,7 @@ def how_it_works():
 <h2>Your phone is waiting</h2>
 <p>Start today — it takes two minutes.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-light" href="/apply-now">Apply Now</a>
+<a class="btn btn-gold" href="/apply-now">Apply Now</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
 </div>
 </div>
@@ -1143,16 +1138,16 @@ def faq():
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Support</span>
-<h1>Frequently asked <span>questions</span></h1>
+<span class="eyebrow">Answers</span>
+<h1>Questions, <span>answered.</span></h1>
 </div></section>
-<section class="container section faq-wrap" style="padding-top:36px">{items}
+<section class="container section faq-wrap" style="padding-top:38px">{items}
 <div class="cta-band reveal" style="margin-top:30px">
 <h2>Still have questions?</h2>
 <p>We are open daily 8am–9pm — ask us anything, no pressure.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn btn-light" href="/apply-now">Apply Now</a>
+<a class="btn btn-gold" href="/apply-now">Apply Now</a>
 </div></div>
 </section>"""
     return base_page("FAQ", content, "faq")
@@ -1232,7 +1227,7 @@ def api_chat():
 def not_found(err):
     content = """
 <section class="container section" style="text-align:center;padding:90px 0">
-<span class="eyebrow">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:800">This page doesn't exist</h1>
+<span class="eyebrow">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:500;font-family:var(--display)">This page doesn't exist</h1>
 <p class="muted">Let's get you back to browsing phones.</p>
 <div class="hero-actions" style="justify-content:center;margin-top:20px">
 <a class="btn btn-primary" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
@@ -1241,13 +1236,13 @@ def not_found(err):
 
 @app.errorhandler(500)
 def server_error(err):
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", "general"), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Something went wrong — please try again.</h1></section>", "general"), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
     if isinstance(err, HTTPException):
-        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Page error.</h1></section>", "general"), err.code or 500
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", "general"), 500
+        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Page error.</h1></section>", "general"), err.code or 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink);font-family:var(--display);font-weight:500\">Something went wrong — please try again.</h1></section>", "general"), 500
 
 handler = app
 if __name__ == "__main__":
