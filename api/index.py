@@ -317,233 +317,227 @@ def search_items(query, limit=6):
     return [item for _, item in scored[:limit]]
 
 # ==========================================
-# PREMIUM TECH RETAIL CSS
+# NEW EDITORIAL TECH DESIGN SYSTEM
 # ==========================================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-:root {
-  --bg: #ffffff;
-  --surface: #f8fafc;
-  --surface-2: #f1f5f9;
-  --ink: #0f172a;
-  --muted: #64748b;
-  --border: #e2e8f0;
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --accent: #f59e0b;
-  --success: #16a34a;
-  --danger: #ef4444;
-  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  --radius: 8px;
-  --radius-lg: 12px;
-  --font: 'Inter', system-ui, -apple-system, sans-serif;
-}
-* { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
-body { font-family: var(--font); color: var(--ink); background: var(--bg); line-height: 1.6; -webkit-font-smoothing: antialiased; }
-a { color: inherit; text-decoration: none; }
-img { max-width: 100%; display: block; }
-button, input, select, textarea { font: inherit; }
-.container { width: min(1200px, 92%); margin: auto; }
-.section { padding: 80px 0; }
-.muted { color: var(--muted); }
-.hidden { display: none !important; }
-
-.topbar { background: #0f172a; color: #f8fafc; font-size: 13px; font-weight: 500; letter-spacing: 0.01em; }
-.topbar .container { display: flex; justify-content: space-between; padding: 10px 0; flex-wrap: wrap; gap: 8px; }
-.topbar b { color: #38bdf8; font-weight: 600; }
-
-.header { position: sticky; top: 0; z-index: 1100; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
-.header-inner { display: flex; align-items: center; justify-content: space-between; padding: 16px 0; gap: 16px; }
-.logo { font-size: 22px; font-weight: 800; color: var(--ink); letter-spacing: -0.02em; }
-.logo i { font-style: normal; color: var(--primary); }
-.nav { display: flex; align-items: center; gap: 24px; }
-.nav a { font-weight: 500; font-size: 14px; color: var(--muted); transition: color 0.2s; }
-.nav a:hover, .nav a.active { color: var(--ink); }
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 20px; border-radius: var(--radius); border: none; font-weight: 600; font-size: 14px; cursor: pointer; transition: all 0.2s; white-space: nowrap; }
-.btn-primary { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
-.btn-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: var(--shadow); }
-.btn-outline { color: var(--ink); border: 1px solid var(--border); background: #fff; }
-.btn-outline:hover { border-color: var(--ink); background: var(--surface); }
-.btn-accent { background: var(--accent); color: #fff; }
-.btn-accent:hover { filter: brightness(1.1); }
-.btn-wa { color: #fff; background: #25D366; }
-.btn-wa:hover { background: #1DA851; }
-.btn-sm { padding: 8px 16px; font-size: 13px; }
-.hamburger { display: none; width: 40px; height: 40px; border-radius: var(--radius); border: 1px solid var(--border); background: #fff; font-size: 20px; cursor: pointer; color: var(--ink); }
-
-.hero { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: #fff; padding: 100px 0 80px; position: relative; overflow: hidden; }
-.hero:before { content: ""; position: absolute; top: -50%; right: -10%; width: 800px; height: 800px; border-radius: 50%; background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, transparent 70%); }
-.hero-inner { max-width: 800px; position: relative; z-index: 1; }
-.kicker { display: inline-block; padding: 6px 12px; border: 1px solid rgba(255,255,255,0.2); border-radius: 999px; color: #94a3b8; font-size: 12px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px; }
-.hero h1 { font-weight: 800; font-size: clamp(2.5rem, 5vw, 3.5rem); line-height: 1.1; color: #fff; margin-bottom: 20px; letter-spacing: -0.03em; }
-.hero h1 em { font-style: normal; color: #38bdf8; }
-.hero p.lead { color: #cbd5e1; max-width: 600px; font-size: 1.125rem; line-height: 1.6; }
-.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 32px; }
-.hero-stats { display: flex; gap: 40px; margin-top: 48px; flex-wrap: wrap; }
-.hstat { border-left: 2px solid var(--primary); padding-left: 16px; }
-.hstat b { display: block; font-size: 24px; color: #fff; font-weight: 700; }
-.hstat span { font-size: 13px; text-transform: uppercase; color: #94a3b8; font-weight: 500; letter-spacing: 0.05em; }
-
-.trust-strip { background: #f8fafc; border-bottom: 1px solid var(--border); padding: 24px 0; }
-.trust-strip .container { display: grid; grid-template-columns: repeat(4, 1fr); text-align: center; gap: 20px; }
-.trust-item { font-weight: 600; font-size: 14px; color: var(--ink); }
-.trust-item span { display: block; font-weight: 400; font-size: 13px; color: var(--muted); margin-top: 4px; }
-
-.sec-head { margin-bottom: 40px; }
-.sec-head .over { display: block; font-size: 13px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--primary); margin-bottom: 12px; }
-.sec-head h2 { font-weight: 800; font-size: clamp(1.8rem, 3vw, 2.5rem); color: var(--ink); letter-spacing: -0.02em; }
-.sec-head p { color: var(--muted); margin-top: 12px; max-width: 600px; font-size: 16px; }
-
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 24px; }
-.pcard, .ccard { position: relative; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; display: flex; flex-direction: column; transition: all 0.2s; box-shadow: var(--shadow-sm); }
-.pcard:hover, .ccard:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); border-color: #cbd5e1; }
-.pcard .imgwrap, .ccard .imgwrap { background: var(--surface); padding: 24px; height: 240px; display: grid; place-items: center; }
-.pcard .imgwrap img, .ccard .imgwrap img { max-height: 190px; width: auto; object-fit: contain; }
-.pcard .tag, .ccard .neg { position: absolute; top: 16px; left: 16px; background: var(--ink); color: #fff; font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; padding: 4px 10px; border-radius: 4px; }
-.pcard .tag.deal { background: var(--accent); }
-.ccard .neg { left: auto; right: 16px; background: #ea580c; }
-.pcard .body, .ccard .body { padding: 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
-.pcard h3, .ccard h4 { font-weight: 700; font-size: 16px; color: var(--ink); line-height: 1.4; }
-.pcard .price, .ccard .price { font-weight: 700; font-size: 18px; color: var(--ink); margin-top: 8px; }
-.pcard .price .strike { text-decoration: line-through; color: var(--muted); font-weight: 400; font-size: 14px; margin-right: 6px; }
-.pcard .sub { font-size: 13px; color: var(--muted); font-weight: 500; }
-.pcard .go { margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 600; color: var(--primary); }
-.ccard .spec { font-size: 13px; color: var(--muted); line-height: 1.5; margin: 4px 0; }
-.ccard .price small { font-size: 11px; color: #ea580c; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase; margin-left: 8px; }
-.ccard .cta-row { display: flex; gap: 8px; margin-top: 16px; }
-.ccard .cta-row a { flex: 1; text-align: center; padding: 10px; border-radius: var(--radius); font-size: 13px; font-weight: 600; }
-
-.product-detail { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
-.product-img { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 40px; display: grid; place-items: center; min-height: 480px; }
-.product-img img { max-width: 100%; max-height: 400px; width: auto; object-fit: contain; }
-.product-info h1 { font-weight: 800; font-size: 2rem; color: var(--ink); margin-bottom: 12px; letter-spacing: -0.02em; }
-.product-info .tagline { color: var(--muted); font-size: 15px; margin-bottom: 24px; }
-.pills { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px; }
-.pill { padding: 6px 12px; border-radius: 999px; background: var(--surface-2); font-size: 12px; font-weight: 600; color: var(--ink); border: 1px solid var(--border); }
-.pill.gold { background: #fef3c7; color: #92400e; border-color: #fde68a; }
-.pill.wine { background: #fee2e2; color: #991b1b; border-color: #fecaca; }
-.planbox { background: #0f172a; color: #fff; border-radius: var(--radius-lg); padding: 24px; margin: 20px 0; }
-.planbox h3 { font-weight: 700; font-size: 16px; color: #94a3b8; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 0.05em; font-size: 13px; }
-.prow { display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); font-weight: 500; font-size: 15px; }
-.prow:last-child { border-bottom: none; }
-.prow strong { color: #fff; font-weight: 600; text-align: right; }
-.optgroup { margin: 24px 0; }
-.optgroup label { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 12px; }
-.optrow { display: flex; flex-wrap: wrap; gap: 8px; }
-.optbtn { padding: 10px 18px; border-radius: var(--radius); border: 1px solid var(--border); background: #fff; color: var(--ink); cursor: pointer; font-weight: 500; font-size: 14px; transition: all 0.2s; }
-.optbtn.active, .optbtn:hover { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
-.bullets { display: grid; gap: 12px; margin: 20px 0; }
-.bullets li { list-style: none; padding-left: 28px; position: relative; color: var(--muted); font-size: 15px; }
-.bullets li:before { content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
-.spec-table { width: 100%; border-collapse: collapse; margin: 20px 0; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
-.spec-table th, .spec-table td { padding: 14px 16px; border-bottom: 1px solid var(--border); text-align: left; font-size: 14px; vertical-align: top; }
-.spec-table tr:last-child th, .spec-table tr:last-child td { border-bottom: none; }
-.spec-table th { width: 160px; background: var(--surface); color: var(--ink); font-weight: 600; }
-.reviewbox { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; box-shadow: var(--shadow-sm); }
-.reviewbox .stars { color: var(--accent); letter-spacing: 2px; font-size: 18px; margin-bottom: 12px; }
-.reviewbox strong { color: var(--ink); }
-.reviewbox .ref { display: block; font-size: 12px; color: var(--muted); margin: 4px 0 12px; }
-
-.formcard { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px; box-shadow: var(--shadow-sm); }
-.formcard h2 { font-weight: 700; font-size: 20px; color: var(--ink); margin-bottom: 8px; }
-.fgrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.field { display: grid; gap: 8px; margin-bottom: 16px; }
-.field label { font-size: 13px; font-weight: 600; color: var(--ink); }
-input, select, textarea { width: 100%; padding: 12px 16px; border-radius: var(--radius); border: 1px solid var(--border); background: #fff; outline: none; font-weight: 400; transition: all 0.2s; color: var(--ink); }
-input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-.filelabel { display: flex; align-items: center; justify-content: space-between; gap: 10px; border: 1px dashed var(--border); background: var(--surface); padding: 14px 16px; border-radius: var(--radius); cursor: pointer; transition: all 0.2s; }
-.filelabel:hover { border-color: var(--primary); background: #eff6ff; }
-.filelabel input { display: none; }
-.filelabel span { color: var(--muted); font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; }
-.progress { height: 6px; border-radius: 99px; background: var(--surface-2); overflow: hidden; margin: 16px 0; }
-.progress span { display: block; height: 100%; width: 0; background: var(--primary); transition: width 0.4s; border-radius: 99px; }
-.donecheck { width: 72px; height: 72px; margin: 12px auto 20px; border-radius: 50%; background: #dcfce7; color: var(--success); display: grid; place-items: center; font-size: 32px; font-weight: 700; }
-.donelist { display: grid; gap: 10px; margin: 16px auto; max-width: 400px; }
-.donelist div { padding: 12px 16px; border-radius: var(--radius); background: var(--surface); border: 1px solid var(--border); color: var(--ink); font-weight: 500; font-size: 14px; }
-
-.modal { position: fixed; inset: 0; z-index: 2000; display: none; place-items: center; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); padding: 20px; }
-.modal.open { display: grid; }
-.modalbox { width: min(640px, 100%); max-height: 90vh; overflow: auto; background: #fff; border-radius: var(--radius-lg); padding: 32px; position: relative; box-shadow: var(--shadow-lg); }
-.modalclose { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: var(--surface); border: 1px solid var(--border); cursor: pointer; font-size: 18px; color: var(--muted); }
-.toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--ink); color: #fff; padding: 14px 24px; border-radius: var(--radius); display: none; z-index: 3000; box-shadow: var(--shadow-lg); font-weight: 500; }
-.toast.show { display: block; }
-
-.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-.step { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; text-align: center; box-shadow: var(--shadow-sm); }
-.step .n { width: 48px; height: 48px; border-radius: 50%; background: var(--primary); color: #fff; font-size: 20px; display: grid; place-items: center; margin: 0 auto 16px; font-weight: 700; }
-.step h3 { font-weight: 700; font-size: 16px; color: var(--ink); margin-bottom: 8px; }
-.step p { color: var(--muted); font-size: 14px; line-height: 1.5; }
-.faq-item { border: 1px solid var(--border); border-radius: var(--radius); background: #fff; padding: 20px 24px; margin-bottom: 12px; transition: all 0.2s; }
-.faq-item:hover { border-color: #cbd5e1; }
-.faq-item summary { cursor: pointer; font-weight: 600; color: var(--ink); list-style: none; display: flex; justify-content: space-between; align-items: center; font-size: 15px; }
-.faq-item summary::-webkit-details-marker { display: none; }
-.faq-item summary:after { content: "+"; font-size: 24px; color: var(--muted); font-weight: 400; line-height: 1; }
-.faq-item[open] summary:after { content: "−"; }
-.faq-item p { margin-top: 16px; color: var(--muted); padding-top: 16px; border-top: 1px solid var(--border); font-size: 14px; line-height: 1.6; }
-
-.footer { background: #0f172a; color: #94a3b8; padding: 60px 0 24px; margin-top: 80px; }
-.footer-grid { display: grid; grid-template-columns: 1.5fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-.footer h4 { color: #fff; margin-bottom: 16px; font-weight: 600; font-size: 15px; }
-.footer a, .footer p { color: #94a3b8; font-size: 14px; line-height: 1.8; }
-.footer a:hover { color: #fff; }
-.copyright { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; font-size: 13px; color: #64748b; }
-
-.wa-float { position: fixed; right: 24px; bottom: 24px; z-index: 1500; width: 56px; height: 56px; border-radius: 50%; background: #25D366; display: grid; place-items: center; box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3); }
-.chat-btn { position: fixed; left: 24px; bottom: 24px; z-index: 1600; padding: 12px 24px; border-radius: var(--radius); background: var(--ink); color: #fff; font-weight: 600; font-size: 14px; cursor: pointer; box-shadow: var(--shadow-lg); border: none; }
-.chat-panel { position: fixed; left: 24px; bottom: 84px; z-index: 1700; width: min(380px, calc(100vw - 48px)); height: 540px; background: #fff; border-radius: var(--radius-lg); box-shadow: var(--shadow-lg); display: none; flex-direction: column; overflow: hidden; border: 1px solid var(--border); }
-.chat-panel.open { display: flex; animation: fadeUp 0.3s ease; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-.chat-head { padding: 16px; background: var(--ink); color: #fff; display: flex; align-items: center; gap: 12px; }
-.chat-head .av { width: 40px; height: 40px; border-radius: 50%; background: var(--primary); display: grid; place-items: center; font-weight: 700; color: #fff; }
-.chat-body { flex: 1; overflow: auto; padding: 16px; background: var(--surface); }
-.msg { max-width: 85%; margin-bottom: 12px; padding: 12px 16px; border-radius: 12px; font-size: 14px; line-height: 1.5; }
-.msg.bot { background: #fff; border: 1px solid var(--border); border-bottom-left-radius: 4px; color: var(--ink); }
-.msg.user { margin-left: auto; background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
-.msg a.chip { display: inline-block; margin: 8px 6px 0 0; padding: 6px 12px; border-radius: 999px; background: var(--surface); border: 1px solid var(--border); color: var(--primary); font-weight: 600; font-size: 13px; }
-.chat-input { display: flex; gap: 8px; padding: 12px; border-top: 1px solid var(--border); background: #fff; }
-.chat-input input { flex: 1; border-radius: var(--radius); padding: 10px 14px; border: 1px solid var(--border); background: var(--surface); }
-
-.reveal { transition: opacity 0.6s ease, transform 0.6s ease; }
-.reveal-init { opacity: 0; transform: translateY(20px); }
-.reveal.visible { opacity: 1; transform: none; }
-.cat-section { margin-bottom: 60px; }
-.cat-head { display: flex; align-items: baseline; gap: 16px; padding-bottom: 16px; border-bottom: 2px solid var(--ink); margin-bottom: 24px; }
-.cat-head h3 { font-weight: 800; font-size: 1.5rem; color: var(--ink); letter-spacing: -0.01em; }
-.cat-head .count { font-size: 13px; font-weight: 500; color: var(--muted); }
-.policy-note { padding: 16px 20px; border-radius: var(--radius); background: #eff6ff; border-left: 4px solid var(--primary); color: var(--ink); font-size: 14px; font-weight: 500; margin-bottom: 24px; }
-.cta-band { background: linear-gradient(135deg, #1e3a8a, #2563eb); border-radius: var(--radius-lg); padding: 60px 40px; text-align: center; color: #fff; box-shadow: var(--shadow-lg); }
-.cta-band h2 { font-weight: 800; font-size: 2rem; color: #fff; margin-bottom: 12px; letter-spacing: -0.02em; }
-.cta-band p { color: rgba(255,255,255,0.8); margin-bottom: 28px; font-size: 16px; }
-.cta-band .btn-outline { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
-.cta-band .btn-outline:hover { background: rgba(255,255,255,0.1); border-color: #fff; }
-.testi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-.testi { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 28px; position: relative; box-shadow: var(--shadow-sm); }
-.testi:before { content: "“"; font-family: serif; font-size: 48px; color: var(--primary); position: absolute; top: 12px; left: 20px; line-height: 1; opacity: 0.2; }
-.testi p { color: var(--muted); font-size: 14px; margin: 24px 0 16px; line-height: 1.6; }
-.testi strong { color: var(--ink); font-size: 14px; }
-.testi .ref { display: block; font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-@media (max-width: 1000px) {
-  .product-detail { grid-template-columns: 1fr; }
-  .steps, .testi-grid { grid-template-columns: 1fr 1fr; }
-  .trust-strip .container { grid-template-columns: 1fr 1fr; }
-  .footer-grid { grid-template-columns: 1fr; }
-}
-@media (max-width: 820px) {
-  .nav { position: fixed; top: 70px; left: 4%; right: 4%; z-index: 1200; flex-direction: column; background: #fff; border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 20px; display: none; box-shadow: var(--shadow-lg); }
-  .nav.open { display: flex; }
-  .hamburger { display: block; }
-  .fgrid { grid-template-columns: 1fr; }
-}
-@media (max-width: 560px) {
-  .grid { grid-template-columns: 1fr; }
-  .steps { grid-template-columns: 1fr; }
-  .trust-strip .container { grid-template-columns: 1fr; }
-  .hero-stats { gap: 24px; }
-}
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Syne:wght@600;700;800&display=swap');
+:root{--bg:#f5f6f2;--panel:#fff;--surface:#fbfcf9;--ink:#101312;--muted:#5f6a66;--line:#dfe4de;--accent:#b8ff2f;--accent-ink:#0b1200;--accent-soft:#ecffd2;--shadow:0 18px 50px rgba(16,19,18,.08);--display:'Syne',sans-serif;--body:'Manrope',sans-serif}
+body.general{--accent:#b8ff2f;--accent-ink:#0b1200;--accent-soft:#ecffd2}
+body.home{--accent:#b8ff2f;--accent-ink:#0b1200;--accent-soft:#ecffd2}
+body.install{--accent:#7a5cff;--accent-ink:#fff;--accent-soft:#e9e4ff}
+body.cash{--accent:#ff8a3d;--accent-ink:#221000;--accent-soft:#ffe8d7}
+body.apply{--accent:#2fb6ff;--accent-ink:#04222f;--accent-soft:#dcf3ff}
+body.how{--accent:#1fc3a4;--accent-ink:#04231d;--accent-soft:#d9f8f1}
+body.faq{--accent:#ff5d7d;--accent-ink:#2f050d;--accent-soft:#ffe2e8}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:var(--bg);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+button,input,select,textarea{font:inherit}
+.container{width:min(1180px,92%);margin:auto}
+.section{padding:72px 0}
+.muted{color:var(--muted)}
+.hidden{display:none!important}
+.topbar{background:#090d0c;border-bottom:1px solid rgba(255,255,255,.08);overflow:hidden}
+.ticker{display:flex;width:max-content;animation:tickerMove 30s linear infinite}
+.ticker-group{display:flex;align-items:center;gap:42px;padding:8px 21px 8px 0;color:#aebbb4;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap}
+.ticker-group span{display:inline-flex;align-items:center;gap:12px}
+.ticker-group span:after{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent)}
+@keyframes tickerMove{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.header{position:sticky;top:0;z-index:1100;background:rgba(245,246,242,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 0}
+.logo{font-family:var(--display);font-size:24px;font-weight:800;color:var(--ink);letter-spacing:-.04em;display:inline-flex;align-items:center;gap:10px}
+.logo:before{content:"";width:11px;height:26px;border-radius:6px;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.logo i{font-style:normal;color:var(--accent-ink);background:var(--accent);padding:2px 8px;border-radius:8px}
+.nav{display:flex;align-items:center;gap:20px}
+.nav a{font-size:12.5px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.nav a:hover,.nav a.active{color:var(--ink)}
+.nav a.active{text-decoration:underline;text-decoration-color:var(--accent);text-decoration-thickness:3px;text-underline-offset:8px}
+.hamburger{display:none;width:42px;height:42px;border-radius:12px;border:1px solid var(--line);background:#fff;font-size:20px;color:var(--ink);cursor:pointer}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;border:1px solid transparent;font-weight:800;font-size:13.5px;cursor:pointer;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--accent);color:var(--accent-ink);box-shadow:0 10px 24px rgba(0,0,0,.08)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{color:#fff;border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.05)}
+.btn-ghost:hover{background:rgba(255,255,255,.1)}
+.btn-outline{color:var(--ink);border-color:var(--line);background:#fff}
+.btn-outline:hover{border-color:var(--ink)}
+.btn-light{background:#fff;color:var(--ink);border-color:#fff}
+.btn-light:hover{transform:translateY(-1px)}
+.btn-wa{background:#25d366;color:#fff}
+.btn-wa:hover{background:#1eb857}
+.btn-sm{padding:9px 14px;font-size:12px;border-radius:10px}
+.home-hero{background:radial-gradient(circle at top right, rgba(184,255,47,.14), transparent 28%), linear-gradient(180deg,#0b100f,#121816);color:#fff;padding:72px 0 62px;border-bottom:1px solid rgba(255,255,255,.08)}
+.hero-shell{display:grid;grid-template-columns:1.2fr .8fr;gap:28px;align-items:center}
+.eyebrow,.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:#d8e2dc;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase}
+.home-hero h1{font-family:var(--display);font-size:clamp(2.7rem,5vw,4.6rem);line-height:.98;font-weight:800;margin:18px 0 14px;letter-spacing:-.05em}
+.home-hero h1 span{display:block;color:var(--accent)}
+.lead{color:#b7c2bd;font-size:1.05rem;line-height:1.7}
+.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+.hero-points{display:flex;flex-wrap:wrap;gap:8px;margin-top:22px}
+.hero-points span{padding:7px 10px;border-radius:999px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);color:#dfe7e1;font-size:12px;font-weight:700}
+.hero-side{position:relative}
+.hero-panel{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:26px;padding:24px;backdrop-filter:blur(8px)}
+.hero-panel h3{font-family:var(--display);font-size:18px;color:#fff;margin-bottom:12px}
+.hero-panel ul{display:grid;gap:10px;list-style:none;color:#b7c2bd;font-size:14px;line-height:1.5}
+.hero-panel li{padding-left:18px;position:relative}
+.hero-panel li:before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.hero-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.hero-mini div{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:12px;text-align:center}
+.hero-mini b{display:block;font-family:var(--display);font-size:18px;color:var(--accent)}
+.hero-mini span{font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:#94a39d;font-weight:800}
+.proof-grid{margin-top:-24px;position:relative;z-index:2;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.proof-card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 16px 40px rgba(16,20,18,.06)}
+.proof-card b{display:block;font-family:var(--display);font-size:16px;color:var(--ink);margin-bottom:4px}
+.proof-card span{color:var(--muted);font-size:13px}
+.page-hero{background:radial-gradient(circle at top right, rgba(255,255,255,.06), transparent 20%), linear-gradient(180deg,#0b100f,#131917);color:#fff;padding:62px 0 46px;border-bottom:1px solid rgba(255,255,255,.08)}
+.page-hero h1{font-family:var(--display);font-size:clamp(2.2rem,4vw,3.5rem);line-height:1.02;letter-spacing:-.05em;margin:14px 0 10px}
+.page-hero h1 span{color:var(--accent)}
+.page-hero p{color:#b7c2bd;max-width:760px;line-height:1.65}
+.search-shell{max-width:620px;margin-top:22px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);padding:10px;border-radius:18px;display:flex;align-items:center;gap:10px}
+.search-shell input{flex:1;border:none;outline:none;border-radius:12px;background:#fff;padding:13px 16px;font-weight:600;color:var(--ink)}
+.search-badge{padding:9px 12px;border-radius:12px;background:var(--accent);color:var(--accent-ink);font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.sec-head{margin-bottom:30px}
+.sec-head .over{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;background:var(--accent-soft);color:var(--ink);font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase}
+.sec-head h2{font-family:var(--display);font-size:clamp(1.9rem,3vw,2.7rem);color:var(--ink);letter-spacing:-.04em;margin-top:12px}
+.sec-head p{color:var(--muted);margin-top:10px;max-width:700px;font-size:15px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.pcard,.ccard{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:.25s;box-shadow:0 6px 20px rgba(16,20,18,.03)}
+.pcard:hover,.ccard:hover{transform:translateY(-5px);box-shadow:var(--shadow);border-color:var(--accent)}
+.pcard .imgwrap,.ccard .imgwrap{background:linear-gradient(180deg,#fff,#f8f9f5);height:230px;padding:22px;display:grid;place-items:center;border-bottom:1px solid var(--line)}
+.pcard .imgwrap img,.ccard .imgwrap img{max-height:180px;width:auto;object-fit:contain}
+.pcard .tag,.ccard .neg{position:absolute;top:14px;left:14px;background:var(--ink);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 10px;border-radius:999px}
+.pcard .tag.deal{background:var(--accent);color:var(--accent-ink)}
+.ccard .neg{left:auto;right:14px;background:var(--accent);color:var(--accent-ink)}
+.pcard .body,.ccard .body{padding:18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pcard h3,.ccard h4{font-family:var(--display);font-weight:700;font-size:17px;color:var(--ink);line-height:1.35;letter-spacing:-.02em}
+.pcard .price,.ccard .price{font-weight:800;font-size:18px;color:var(--ink);margin-top:6px}
+.pcard .sub{font-size:13px;color:var(--muted);font-weight:600}
+.pcard .go{margin-top:auto;padding-top:12px;border-top:1px dashed var(--line);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ccard .spec{font-size:12.5px;color:var(--muted);line-height:1.55}
+.ccard .price small{font-size:10px;color:var(--accent-ink);background:var(--accent);padding:3px 6px;border-radius:6px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;margin-left:8px}
+.ccard .cta-row{display:flex;gap:8px;margin-top:12px}
+.ccard .cta-row a{flex:1;text-align:center;padding:10px;border-radius:10px;font-size:12px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.crumb{color:var(--muted);font-size:13px;margin-bottom:16px}
+.crumb a{font-weight:700;color:var(--muted)}
+.crumb a:hover{color:var(--ink)}
+.product-detail{display:grid;grid-template-columns:1.05fr .95fr;gap:34px;align-items:start}
+.product-img{position:relative;background:#fff;border:1px solid var(--line);border-radius:28px;padding:38px;display:grid;place-items:center;min-height:460px;overflow:hidden}
+.product-img:before{content:"";position:absolute;width:220px;height:220px;border-radius:50%;background:var(--accent-soft);right:-50px;top:-50px}
+.product-img img{position:relative;max-width:100%;max-height:390px;width:auto;object-fit:contain}
+.product-info h1{font-family:var(--display);font-size:clamp(1.8rem,3vw,2.6rem);color:var(--ink);letter-spacing:-.04em;margin-bottom:8px}
+.product-info .tagline{color:var(--muted);font-size:14.5px;margin-bottom:16px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.pill{padding:7px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)}
+.pill.gold{background:var(--accent-soft);border-color:transparent;color:var(--ink)}
+.pill.wine{background:#ffe1e1;color:#8f1d1d;border-color:#ffc9c9}
+.planbox{background:#0d1211;color:#fff;border-radius:24px;padding:22px;margin:18px 0;position:relative;overflow:hidden}
+.planbox:before{content:"";position:absolute;right:-36px;top:-36px;width:130px;height:130px;border-radius:50%;background:var(--accent);opacity:.2}
+.planbox h3{font-family:var(--display);font-size:13px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.prow{display:flex;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.12);font-size:14.5px;font-weight:600}
+.prow:last-child{border-bottom:none}
+.prow strong{color:#fff;text-align:right}
+.optgroup{margin:18px 0}
+.optgroup label{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink);margin-bottom:8px}
+.optrow{display:flex;flex-wrap:wrap;gap:8px}
+.optbtn{padding:10px 16px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;font-weight:700;font-size:13.5px;transition:.2s}
+.optbtn.active,.optbtn:hover{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.bullets{display:grid;gap:10px;margin:18px 0;list-style:none}
+.bullets li{padding-left:20px;position:relative;color:var(--muted);font-size:14.5px}
+.bullets li:before{content:"";position:absolute;left:0;top:.55em;width:8px;height:8px;border-radius:50%;background:var(--accent)}
+.spec-table{width:100%;border-collapse:collapse;margin:18px 0;background:#fff;border-radius:18px;overflow:hidden;border:1px solid var(--line)}
+.spec-table th,.spec-table td{padding:13px 14px;border-bottom:1px solid var(--line);text-align:left;font-size:13.5px;vertical-align:top}
+.spec-table tr:last-child th,.spec-table tr:last-child td{border-bottom:none}
+.spec-table th{width:150px;background:var(--accent-soft);color:var(--ink);font-weight:800}
+.reviewbox{background:#fff;border:1px solid var(--line);border-left:5px solid var(--accent);border-radius:20px;padding:24px;box-shadow:0 10px 26px rgba(16,20,18,.04)}
+.reviewbox .stars{color:var(--accent);letter-spacing:2px;font-size:18px;margin-bottom:8px}
+.reviewbox strong{color:var(--ink)}
+.reviewbox .ref{display:block;font-size:12px;color:var(--muted);margin:4px 0 10px}
+.device-note{margin-top:18px;padding:14px 16px;background:var(--accent-soft);border-radius:16px;color:var(--ink);font-size:13.5px;line-height:1.6}
+.formcard{background:#fff;border:1px solid var(--line);border-radius:26px;padding:30px;box-shadow:0 18px 50px rgba(16,20,18,.05)}
+.formcard h2{font-family:var(--display);font-size:21px;color:var(--ink);letter-spacing:-.02em;margin-bottom:6px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field{display:grid;gap:7px;margin-bottom:14px}
+.field label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--ink)}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:14px;border:1px solid var(--line);background:var(--surface);outline:none;font-weight:600;transition:.2s;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--accent);box-shadow:0 0 0 4px var(--accent-soft);background:#fff}
+.filelabel{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px dashed var(--line);background:var(--surface);padding:13px 14px;border-radius:14px;cursor:pointer;transition:.2s}
+.filelabel:hover{border-color:var(--accent);background:var(--accent-soft)}
+.filelabel input{display:none}
+.filelabel span{color:var(--muted);font-size:13.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
+.progress{height:7px;border-radius:99px;background:var(--surface);border:1px solid var(--line);overflow:hidden;margin:14px 0}
+.progress span{display:block;height:100%;width:0;background:var(--accent);transition:width .4s;border-radius:99px}
+.donecheck{width:76px;height:76px;margin:8px auto 14px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-size:34px;font-weight:800}
+.donelist{display:grid;gap:8px;margin:14px auto;max-width:400px}
+.donelist div{padding:12px 14px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-weight:700;font-size:13.5px}
+.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(9,13,12,.55);backdrop-filter:blur(8px);padding:18px}
+.modal.open{display:grid}
+.modalbox{width:min(680px,100%);max-height:88vh;overflow:auto;background:#fff;border-radius:26px;padding:30px;position:relative;box-shadow:0 30px 80px rgba(0,0,0,.2)}
+.modalclose{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--line);cursor:pointer;font-size:18px;color:var(--ink)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 18px;border-radius:12px;display:none;z-index:3000;box-shadow:0 10px 30px rgba(0,0,0,.18);font-weight:700}
+.toast.show{display:block}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.step{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;position:relative;overflow:hidden;box-shadow:0 8px 24px rgba(16,20,18,.03)}
+.step:before{content:"";position:absolute;left:0;top:0;width:100%;height:4px;background:var(--accent)}
+.step .n{width:46px;height:46px;border-radius:14px;background:var(--accent);color:var(--accent-ink);font-family:var(--display);font-size:20px;display:grid;place-items:center;margin-bottom:12px;font-weight:800}
+.step h3{font-family:var(--display);font-size:16px;color:var(--ink);margin-bottom:6px}
+.step p{color:var(--muted);font-size:13.5px;line-height:1.55}
+.faq-wrap{max-width:860px}
+.faq-item{border:1px solid var(--line);border-radius:18px;background:#fff;padding:20px 22px;margin-bottom:12px;transition:.2s}
+.faq-item:hover{border-color:var(--accent)}
+.faq-item summary{cursor:pointer;font-weight:800;color:var(--ink);list-style:none;display:flex;justify-content:space-between;align-items:center;gap:14px;font-size:14.5px}
+.faq-item summary::-webkit-details-marker{display:none}
+.faq-item summary:after{content:"+";font-size:24px;color:var(--muted);font-weight:400}
+.faq-item[open]{border-color:var(--accent);box-shadow:0 10px 26px rgba(16,20,18,.05)}
+.faq-item[open] summary:after{content:"−";color:var(--accent-ink)}
+.faq-item p{margin-top:12px;color:var(--muted);padding-top:12px;border-top:1px dashed var(--line);font-size:14px;line-height:1.65}
+.footer{background:#0b0f0e;color:#93a09a;padding:54px 0 20px;margin-top:80px}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:28px;margin-bottom:28px}
+.footer h4{font-family:var(--display);color:#fff;margin-bottom:12px;font-size:15px}
+.footer a,.footer p{color:#93a09a;font-size:14px;line-height:1.8}
+.footer a:hover{color:#fff}
+.footer .logo{color:#fff}
+.footer .logo:before{background:var(--accent);box-shadow:none}
+.footer .logo i{color:var(--accent-ink)}
+.copyright{border-top:1px solid rgba(255,255,255,.08);padding-top:16px;text-align:center;font-size:12px;color:#67756e}
+.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:56px;height:56px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 12px 30px rgba(37,211,102,.28)}
+.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:13px 20px;border-radius:999px;background:var(--ink);color:#fff;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 12px 30px rgba(0,0,0,.16);border:none}
+.chat-panel{position:fixed;left:22px;bottom:84px;z-index:1700;width:min(380px,calc(100vw - 44px));height:530px;background:#fff;border-radius:24px;box-shadow:0 30px 80px rgba(0,0,0,.18);display:none;flex-direction:column;overflow:hidden;border:1px solid var(--line)}
+.chat-panel.open{display:flex;animation:fadeUp .25s ease}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.chat-head{padding:15px 16px;background:var(--ink);color:#fff;display:flex;align-items:center;gap:12px}
+.chat-head .av{width:38px;height:38px;border-radius:12px;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;font-family:var(--display);font-size:16px;font-weight:800}
+.chat-body{flex:1;overflow:auto;padding:14px;background:var(--surface)}
+.msg{max-width:86%;margin-bottom:10px;padding:12px 14px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:4px;color:var(--ink)}
+.msg.user{margin-left:auto;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px;font-weight:600}
+.msg a.chip{display:inline-block;margin:8px 6px 0 0;padding:7px 11px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--ink);font-weight:800;font-size:12px}
+.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
+.chat-input input{flex:1;border-radius:999px;padding:11px 15px;border:1px solid var(--line);background:var(--surface)}
+.chat-quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:var(--surface)}
+.quick-btn{padding:8px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:800;color:var(--muted);cursor:pointer}
+.quick-btn:hover{border-color:var(--accent);color:var(--ink)}
+.reveal{transition:opacity .6s ease,transform .6s ease}
+.reveal-init{opacity:0;transform:translateY(18px)}
+.reveal.visible{opacity:1;transform:none}
+.cat-section{margin-bottom:48px}
+.cat-head{display:flex;align-items:baseline;justify-content:space-between;gap:14px;padding-bottom:12px;border-bottom:2px solid var(--ink);margin-bottom:18px}
+.cat-head h3{font-family:var(--display);font-size:clamp(1.3rem,2.5vw,1.9rem);color:var(--ink);letter-spacing:-.03em}
+.cat-head .count{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.policy-note{padding:16px 18px;border-radius:18px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--accent);color:var(--ink);font-size:14px;line-height:1.6;margin-bottom:24px}
+.cta-band{background:#0b100f;border-radius:30px;padding:54px;text-align:center;color:#fff;position:relative;overflow:hidden}
+.cta-band:before{content:"";position:absolute;right:-70px;bottom:-70px;width:230px;height:230px;border-radius:50%;background:var(--accent);opacity:.16}
+.cta-band h2{font-family:var(--display);font-size:clamp(1.8rem,3vw,2.5rem);color:#fff;letter-spacing:-.04em;margin-bottom:10px}
+.cta-band p{color:#b7c2bd;margin-bottom:24px;max-width:640px;margin-left:auto;margin-right:auto}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.testi{background:#fff;border:1px solid var(--line);border-radius:22px;padding:24px;position:relative;box-shadow:0 8px 24px rgba(16,20,18,.03)}
+.testi:before{content:"“";font-family:var(--display);font-size:52px;line-height:1;color:var(--accent);position:absolute;top:10px;left:16px;opacity:.9}
+.testi p{color:var(--muted);font-size:14px;margin:34px 0 14px;line-height:1.65}
+.testi strong{color:var(--ink);font-size:13.5px}
+.testi .ref{display:block;font-size:11px;color:var(--muted);margin-top:4px}
+@media(max-width:1000px){.hero-shell,.product-detail{grid-template-columns:1fr}.proof-grid,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img{min-height:380px}}
+@media(max-width:820px){.nav{position:fixed;top:78px;left:4%;right:4%;z-index:1200;flex-direction:column;background:#fff;border:1px solid var(--line);border-radius:20px;padding:18px;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.fgrid{grid-template-columns:1fr}.ticker-group{gap:26px}}
+@media(max-width:640px){.proof-grid,.steps,.testi-grid{grid-template-columns:1fr}.home-hero h1{font-size:2.6rem}.search-shell{flex-direction:column}.search-badge{display:none}.hero-mini{grid-template-columns:1fr 1fr}.grid{grid-template-columns:1fr}}
 """
 
 JS = r"""
@@ -692,9 +686,17 @@ function initChat(){
 
 # HTML RENDERERS
 def render_topbar():
-    return f"""<div class="topbar"><div class="container">
-<span><b>{e(OPEN_HOURS)}</b> • {e(PHONE_DISPLAY)} • {e(SHOP_EMAIL)}</span>
-<span>Free delivery: {e(FREE_DELIVERY_ZONES)}</span>
+    items = [
+        "Genuine phones only",
+        "Flexible weekly plans",
+        "Cash deals open to offers",
+        "Fast response on WhatsApp",
+        "Delivery arranged countrywide",
+        "Original devices, clear pricing"
+    ]
+    group = "".join(f"<span>{e(x)}</span>" for x in items)
+    return f"""<div class="topbar" aria-hidden="true"><div class="ticker">
+<div class="ticker-group">{group}</div><div class="ticker-group">{group}</div>
 </div></div>"""
 
 def render_nav(active):
@@ -717,9 +719,9 @@ def render_footer():
     return f"""
 <footer class="footer"><div class="container"><div class="footer-grid">
 <div>
-<a class="logo" style="color:#fff" href="/">Pro Tech <i>Phone Hub</i></a>
+<a class="logo" href="/">Pro Tech <i>Phone Hub</i></a>
 <p style="margin-top:12px;max-width:420px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list.</p>
-<p style="margin-top:10px"><strong style="color:#38bdf8">{e(OPEN_HOURS)}</strong></p>
+<p style="margin-top:10px"><strong style="color:var(--accent)">Fast replies every day</strong></p>
 </div>
 <div>
 <h4>Quick Links</h4>
@@ -741,24 +743,25 @@ def render_footer():
 def base_page(title, content, active="", extra_head=""):
     wa = whatsapp_link("Hello Pro Tech Phone Hub, I need help.")
     sheet_script = "<script>window.PH_SHEET_URL = " + json.dumps(GOOGLE_SHEET_WEBHOOK_URL) + ";</script>"
+    body_class = active if active else "general"
     return f"""<!doctype html><html lang="en"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{e(title)} | {e(SHOP_NAME)}</title>
 <meta name="description" content="Pro Tech Phone Hub — original Samsung & iPhone devices with flexible installment plans and negotiable cash prices.">
-<style>{CSS}</style>{extra_head}</head><body>
+<style>{CSS}</style>{extra_head}</head><body class="{e(body_class)}">
 {render_topbar()}{render_nav(active)}<main>{content}</main>{render_footer()}
 <a class="wa-float" href="{wa}" target="_blank" rel="noopener" aria-label="WhatsApp">
 <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.8-.1 1.5Z"/></svg></a>
 <button class="chat-btn" id="chatBtn" type="button">Chat with us</button>
 <div class="chat-panel" id="chatPanel">
-<div class="chat-head"><div class="av">PT</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.7)">Online • {e(OPEN_HOURS)}</div></div>
+<div class="chat-head"><div class="av">PT</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.7)">Online • Fast replies</div></div>
 <button class="modalclose" id="chatClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.1);border:none;color:#fff" aria-label="Close">×</button></div>
 <div class="chat-body" id="chatBody"></div>
-<div class="chat-quick" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 12px;background:var(--surface)">
-<button type="button" data-q="Best phones under 50k?" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Under 50k</button>
-<button type="button" data-q="How do installment plans work?" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Installments?</button>
-<button type="button" data-q="Where do you deliver?" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Delivery</button>
-<button type="button" data-q="I want to talk to someone" style="padding:8px 12px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer">Human help</button>
+<div class="chat-quick">
+<button type="button" class="quick-btn" data-q="Best phones under 50k?">Under 50k</button>
+<button type="button" class="quick-btn" data-q="How do installment plans work?">Installments?</button>
+<button type="button" class="quick-btn" data-q="Where do you deliver?">Delivery</button>
+<button type="button" class="quick-btn" data-q="I want to talk to someone">Human help</button>
 </div>
 <div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-primary btn-sm" id="chatSend" type="button">Send</button></div>
 </div>
@@ -793,26 +796,44 @@ def home():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS[:9])
     cash_cards = "".join(cash_card(p) for p in list(CASH_PRODUCTS.values())[:4])
     content = f"""
-<section class="hero"><div class="container hero-inner">
+<section class="home-hero"><div class="container hero-shell">
+<div class="hero-copy">
+<span class="hero-eyebrow">Upgrade smarter</span>
+<h1>The right phone. <span>The right payment rhythm.</span></h1>
+<p class="lead">Pick a genuine Samsung or iPhone, choose a weekly installment plan or a negotiable cash deal, and get clear terms from the start.</p>
 <div class="hero-actions">
 <a class="btn btn-primary" href="/installments">Browse Installment Plans</a>
-<a class="btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)" href="/cash-prices">View Cash Prices</a>
+<a class="btn btn-ghost" href="/cash-prices">View Cash Prices</a>
 </div>
-<div class="hero-stats">
-<div class="hstat"><b>8am–9pm</b><span>open daily</span></div>
-<div class="hstat"><b>~30 min</b><span>approval time</span></div>
-<div class="hstat"><b>4 zones</b><span>free delivery</span></div>
-<div class="hstat"><b>100%</b><span>original devices</span></div>
+<div class="hero-points">
+<span>Original stock</span><span>Weekly M-Pesa plans</span><span>Cash offers welcome</span><span>Fast WhatsApp help</span>
 </div>
+</div>
+<aside class="hero-side">
+<div class="hero-panel">
+<h3>Why buyers start here</h3>
+<ul>
+<li>Every device is checked before it is listed</li>
+<li>Initial payment is made when the phone reaches you</li>
+<li>Plans are structured around simple weekly amounts</li>
+<li>Straight answers on cash and installment options</li>
+</ul>
+<div class="hero-mini">
+<div><b>Quick</b><span>review</span></div>
+<div><b>Clear</b><span>pricing</span></div>
+<div><b>Direct</b><span>support</span></div>
+</div>
+</div>
+</aside>
 </div></section>
-<div class="trust-strip"><div class="container">
-<div class="trust-item">Original Devices<span>tested & verified</span></div>
-<div class="trust-item">Free Delivery<span>Nairobi & Kiambu, Nakuru & Mombasa</span></div>
-<div class="trust-item">Negotiable Cash<span>call for your best price</span></div>
-<div class="trust-item">Flexible Plans<span>weekly M-Pesa installments</span></div>
-</div></div>
+<div class="container proof-grid reveal">
+<div class="proof-card"><b>Genuine devices</b><span>tested before delivery</span></div>
+<div class="proof-card"><b>Flexible plans</b><span>weekly payment structure</span></div>
+<div class="proof-card"><b>Cash deals</b><span>prices open to discussion</span></div>
+<div class="proof-card"><b>Local support</b><span>call or WhatsApp easily</span></div>
+</div>
 <section class="container section">
-<div class="sec-head reveal"><span class="over">Installment plans</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
+<div class="sec-head reveal"><span class="over">Installment picks</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
 </section>
@@ -834,7 +855,7 @@ def home():
 <h2>Ready for your next phone?</h2>
 <p>Start your application today or WhatsApp us for personalized recommendations.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn" style="background:#fff;color:var(--primary);font-weight:700" href="/apply-now">Start Application</a>
+<a class="btn btn-light" href="/apply-now">Start Application</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
@@ -845,19 +866,22 @@ def home():
 def installments():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS)
     content = f"""
-<section class="hero" style="padding:60px 0 40px"><div class="container">
-<span class="kicker">Flexible payment options</span>
-<h1 style="margin-top:16px">Installment <em>plans</em></h1>
-<p class="lead" style="max-width:740px">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
+<section class="page-hero"><div class="container">
+<span class="eyebrow">Plan catalog</span>
+<h1>Installment <span>plans</span></h1>
+<p class="lead">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
+<div class="hero-points">
+<span>Initial on delivery</span><span>Weekly M-Pesa</span><span>Grace period</span><span>Original devices</span>
+</div>
 </div></section>
-<section class="container section" style="padding-top:30px"><div class="grid">{cards}</div></section>
+<section class="container section" style="padding-top:34px"><div class="grid">{cards}</div></section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Not sure what fits your budget?</h2>
 <p>WhatsApp us your weekly budget and we'll suggest three options.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn" style="background:#fff;color:var(--primary);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn btn-light" href="/apply-now">Apply Now</a>
 </div>
 </div>
 </section>"""
@@ -874,13 +898,13 @@ def cash_prices():
 <p class="muted reveal" style="margin-bottom:16px">{e(c['note'])}</p>
 <div class="grid">{cards}</div></section>"""
     content = f"""
-<section class="hero" style="padding:60px 0 40px"><div class="container">
-<span class="kicker">Immediate ownership</span>
-<h1 style="margin-top:16px">Cash <em>prices</em></h1>
-<p class="lead" style="max-width:740px">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
-<div style="max-width:500px;margin-top:20px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..." style="width:100%;padding:13px 18px;border-radius:var(--radius);border:1px solid var(--border);background:#fff;outline:none"></div>
+<section class="page-hero"><div class="container">
+<span class="eyebrow">Cash marketplace</span>
+<h1>Cash <span>prices</span></h1>
+<p class="lead">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
+<div class="search-shell"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..."><span class="search-badge">Live list</span></div>
 </div></section>
-<section class="container section" style="padding-top:30px">
+<section class="container section" style="padding-top:34px">
 <div class="policy-note reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
 {blocks}</section>
 <section class="container">
@@ -903,7 +927,7 @@ def device_page(slug):
         wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want to buy the {p['name']} listed at {money(p['price'])}. What is your best price?")
         specs = "".join(f"<li>{e(x.strip())}</li>" for x in p["specs"].split("•") if x.strip())
         content = f"""
-<section class="container section"><div style="color:var(--muted);font-size:13px;margin-bottom:12px"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
+<section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
 <div class="product-detail">
 <div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
 <div class="product-info">
@@ -923,8 +947,8 @@ def device_page(slug):
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
 <a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-<div style="margin-top:18px;padding:14px 16px;background:var(--surface);border-left:4px solid var(--primary);border-radius:var(--radius);color:var(--ink);font-size:13.5px"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
-<h3 style="color:var(--ink);margin-top:20px;font-weight:700">Full specifications</h3>
+<div class="device-note"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
+<h3 style="font-family:var(--display);color:var(--ink);margin-top:20px;font-weight:700">Full specifications</h3>
 <ul class="bullets">{specs}</ul>
 </div></div></section>"""
         return base_page(p["name"], content, "cash")
@@ -943,7 +967,7 @@ def device_page(slug):
     wk = f'<strong id="planWeekly">{money(fp["weekly"])} / week</strong>'
     dp = f'<strong id="planDeposit">{money(fp["deposit"])}</strong>'
     content = f"""
-<section class="container section"><div style="color:var(--muted);font-size:13px;margin-bottom:12px"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
+<section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
 <div class="product-detail">
 <div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
 <div class="product-info">
@@ -964,14 +988,14 @@ def device_page(slug):
 <a class="btn btn-primary" id="applyCta" href="{apply_href}">Take on Installment</a>
 <a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
 </div>
-<h3 style="color:var(--ink);margin-top:20px;font-weight:700">Our guarantee</h3>
+<h3 style="font-family:var(--display);color:var(--ink);margin-top:20px;font-weight:700">Our guarantee</h3>
 <ul class="bullets">
 <li>Original, thoroughly tested device — exactly as specified below</li>
 <li>Initial payment only when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
 <li>7-day exchange on any factory defect</li>
 </ul>
-<h3 style="color:var(--ink);font-weight:700">Full specifications</h3>
+<h3 style="font-family:var(--display);color:var(--ink);font-weight:700">Full specifications</h3>
 <table class="spec-table">{rows}</table>
 </div></div></section>
 <section class="container section" style="padding-top:0">
@@ -994,12 +1018,12 @@ def apply_now():
             options += f'<option value="{e(label)}"{sel}>{e(label)}</option>'
     ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
     content = f"""
-<section class="hero" style="padding:60px 0 40px;text-align:center"><div class="container" style="max-width:840px">
-<span class="kicker">Join Pro Tech Phone Hub</span>
-<h1 style="margin-top:16px">Apply in <em>under 2 minutes</em></h1>
+<section class="page-hero"><div class="container" style="max-width:840px">
+<span class="eyebrow">Application</span>
+<h1>Apply in <span>under 2 minutes</span></h1>
 <p class="lead" style="margin:auto">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
 </div></section>
-<section class="container section" style="padding-top:40px"><div class="product-detail">
+<section class="container section" style="padding-top:36px"><div class="product-detail">
 <div class="formcard">
 <h2>Your information</h2>
 <p class="muted" style="margin-bottom:24px">Private and secure — used only to process your application.</p>
@@ -1020,8 +1044,8 @@ def apply_now():
 </div>
 <div class="formcard" style="position:sticky;top:96px">
 <h2>Your summary</h2>
-<div style="display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);margin:16px 0 24px">
-<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:var(--radius)">
+<div style="display:flex;align-items:center;gap:16px;padding:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);margin:16px 0 24px">
+<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:12px">
 <div><strong id="summaryName" style="color:var(--ink);font-size:16px">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px;margin-top:4px">Pick a model to see its plan.</div></div>
 </div>
 <div class="planbox" style="margin:0"><div class="prow"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
@@ -1044,18 +1068,18 @@ def apply_now():
 <input type="hidden" id="docFullName"><input type="hidden" id="docPhoneNumber"><input type="hidden" id="docIdNumber">
 <input type="hidden" id="docRegion"><input type="hidden" id="docPhoneModel"><input type="hidden" id="docSubmissionId">
 <div class="progress"><span id="docProgress" style="width:33%"></span></div>
-<p style="padding:14px 18px;border-radius:var(--radius);background:var(--surface);border:1px solid var(--border);color:var(--ink);font-size:14px;font-weight:500;margin:0 0 20px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
-<div id="stepMpesa"><div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">M-Pesa statement (6 months)</h3>
+<p style="padding:14px 18px;border-radius:14px;background:var(--surface);border:1px solid var(--line);color:var(--ink);font-size:14px;font-weight:600;margin:0 0 20px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
+<div id="stepMpesa"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:800;font-size:18px;margin-bottom:16px">M-Pesa statement (6 months)</h3>
 <ul class="bullets"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
 <div class="field"><label>Upload the M-Pesa PDF</label><label class="filelabel"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
 <div class="field"><label>Statement password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
 <button class="btn btn-primary" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
-<div id="stepIdentity" class="hidden"><div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">Identity verification</h3>
+<div id="stepIdentity" class="hidden"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:800;font-size:18px;margin-bottom:16px">Identity verification</h3>
 <div class="field"><label>Front of National ID</label><label class="filelabel"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>↑</strong></label></div>
 <div class="field"><label>Back of National ID</label><label class="filelabel"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>↑</strong></label></div>
 <div class="field"><label>Official selfie</label><label class="filelabel"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>↑</strong></label></div>
 <button class="btn btn-primary" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
-<div id="stepKin" class="hidden"><div style="background:#fff;border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px"><h3 style="color:var(--ink);font-weight:700;font-size:18px;margin-bottom:16px">Next of kin</h3>
+<div id="stepKin" class="hidden"><div style="background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px"><h3 style="color:var(--ink);font-weight:800;font-size:18px;margin-bottom:16px">Next of kin</h3>
 <div class="fgrid">
 <div class="field"><label>Full name</label><input id="kName" placeholder="Next of kin name"></div>
 <div class="field"><label>Phone number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
@@ -1076,17 +1100,17 @@ def apply_now():
 <a class="btn btn-outline" href="/">Back home</a>
 </div></div>
 </div></div>"""
-    return base_page("Apply Now", content, "", ps)
+    return base_page("Apply Now", content, "apply", ps)
 
 @app.route("/how-it-works")
 def how_it_works():
     content = f"""
-<section class="hero" style="padding:60px 0 40px"><div class="container">
-<span class="kicker">Simple process</span>
-<h1 style="margin-top:16px">How it <em>works</em></h1>
+<section class="page-hero"><div class="container">
+<span class="eyebrow">Process</span>
+<h1>How it <span>works</span></h1>
 <p class="lead">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
 </div></section>
-<section class="container section" style="padding-top:30px"><div class="steps">
+<section class="container section" style="padding-top:36px"><div class="steps">
 <div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
 <div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) — or installment with an initial payment and weekly M-Pesa installments.</p></div>
 <div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
@@ -1097,7 +1121,7 @@ def how_it_works():
 <h2>Your phone is waiting</h2>
 <p>Start today — it takes two minutes.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn" style="background:#fff;color:var(--primary);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn btn-light" href="/apply-now">Apply Now</a>
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
 </div>
 </div>
@@ -1118,17 +1142,17 @@ def faq():
     ]
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
-<section class="hero" style="padding:60px 0 40px"><div class="container">
-<span class="kicker">Answers</span>
-<h1 style="margin-top:16px">Frequently asked <em>questions</em></h1>
+<section class="page-hero"><div class="container">
+<span class="eyebrow">Support</span>
+<h1>Frequently asked <span>questions</span></h1>
 </div></section>
-<section class="container section" style="padding-top:30px;max-width:840px">{items}
+<section class="container section faq-wrap" style="padding-top:36px">{items}
 <div class="cta-band reveal" style="margin-top:30px">
 <h2>Still have questions?</h2>
 <p>We are open daily 8am–9pm — ask us anything, no pressure.</p>
 <div class="hero-actions" style="justify-content:center">
 <a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn" style="background:#fff;color:var(--primary);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn btn-light" href="/apply-now">Apply Now</a>
 </div></div>
 </section>"""
     return base_page("FAQ", content, "faq")
@@ -1208,22 +1232,22 @@ def api_chat():
 def not_found(err):
     content = """
 <section class="container section" style="text-align:center;padding:90px 0">
-<span class="kicker">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:800">This page doesn't exist</h1>
+<span class="eyebrow">Page not found</span><h1 style="color:var(--ink);margin-top:14px;font-weight:800">This page doesn't exist</h1>
 <p class="muted">Let's get you back to browsing phones.</p>
 <div class="hero-actions" style="justify-content:center;margin-top:20px">
 <a class="btn btn-primary" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
 </div></section>"""
-    return base_page("Not found", content, ""), 404
+    return base_page("Not found", content, "general"), 404
 
 @app.errorhandler(500)
 def server_error(err):
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", ""), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", "general"), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
     if isinstance(err, HTTPException):
-        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Page error.</h1></section>", ""), err.code or 500
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", ""), 500
+        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Page error.</h1></section>", "general"), err.code or 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"color:var(--ink)\">Something went wrong — please try again.</h1></section>", "general"), 500
 
 handler = app
 if __name__ == "__main__":
