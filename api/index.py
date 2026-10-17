@@ -377,8 +377,8 @@ def build_search_index():
             pr = price_for(p, s)
             plan_lines.append(f"{s}: deposit {money(pr['deposit'])}, weekly {money(pr['weekly'])}")
         specs_text = "; ".join(f"{k}: {v}" for k, v in p["specs"].items())
-        searchable = " ".join([p["name"], p.get("condition", "Ex-UK"), " ".join(p["storage"]), " ".join(p["colors"]), specs_text, "installment weekly plan deposit on delivery", p.get("tagline", "")]).lower()
-        context = (f"{p['name']} | Installment Plan | {p.get('condition','Ex-UK')} | Stock: {p.get('stock','In Stock')} | "
+        searchable = " ".join([p["name"], p.get("condition", "Ex-UK"), " ".join(p["storage"]), " ".join(p["colors"]), specs_text, "lipa pole pole installment weekly plan deposit on delivery", p.get("tagline", "")]).lower()
+        context = (f"{p['name']} | Lipa Pole Pole | {p.get('condition','Ex-UK')} | Stock: {p.get('stock','In Stock')} | "
                    f"Storage: {', '.join(p['storage'])} | Colors: {', '.join(p['colors'])} | "
                    f"Plans: {'; '.join(plan_lines)} | Specs: {specs_text} | Page: /device/{p['slug']}")
         first = price_for(p, p["storage"][0])
@@ -545,6 +545,37 @@ button,input,select,textarea{font:inherit}
 .reviewbox strong{font-family:var(--display);font-size:18px;font-weight:500}
 .reviewbox .ref{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:5px 0 10px}
 .device-note{margin-top:20px;padding:16px 18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;color:var(--ink);font-size:14px;line-height:1.65}
+.lp-grid{display:grid;grid-template-columns:.95fr 1.05fr;gap:40px;align-items:start}
+.lp-media{position:relative;background:radial-gradient(circle at 50% 18%, #fffdf9 0%, #f2ece1 100%);border:1px solid var(--line);border-radius:30px;padding:46px;display:grid;place-items:center;min-height:520px;overflow:hidden}
+.lp-media:after{content:"";position:absolute;width:200px;height:200px;border:1px solid rgba(180,138,74,.22);border-radius:50%;right:-50px;bottom:-50px}
+.lp-media img{position:relative;max-width:100%;max-height:420px;width:auto;object-fit:contain}
+.lp-ribbon{position:absolute;top:22px;left:22px;background:var(--ink);color:var(--gold-soft);border:1px solid rgba(214,185,140,.35);font-size:10px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;padding:8px 14px;border-radius:999px}
+.lp-stock{position:absolute;top:22px;right:22px;background:#fffdf9;border:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;padding:8px 12px;border-radius:999px}
+.lp-over{color:var(--gold);font-size:11px;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px}
+.lp-info h1{font-family:var(--display);font-size:clamp(2.2rem,3.4vw,3.2rem);line-height:1.05;font-weight:500;letter-spacing:-.03em;margin-bottom:10px}
+.lp-info .tagline{color:var(--muted);font-size:15px;margin-bottom:6px}
+.lp-ticket{display:grid;grid-template-columns:1fr 1fr;border:1px solid rgba(214,185,140,.35);border-radius:20px;overflow:hidden;margin:20px 0 10px;background:linear-gradient(160deg,#171410,#251c11)}
+.lp-ticket-cell{padding:18px 20px;color:#f3ead9}
+.lp-ticket-cell + .lp-ticket-cell{border-left:1px solid rgba(214,185,140,.2)}
+.lp-ticket-cell span{display:block;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold-soft);margin-bottom:6px;font-weight:700}
+.lp-ticket-cell strong{font-family:var(--display);font-size:25px;font-weight:500;color:#fff;line-height:1.2}
+.lp-fine{color:var(--muted);font-size:13px;margin-bottom:4px}
+.lp-ctas{display:grid;gap:10px;margin:22px 0 16px}
+.lp-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--ink);color:#f6efe2;border:1px solid var(--ink);border-radius:16px;padding:15px 20px;transition:.2s}
+.lp-cta:hover{background:var(--ink-soft);transform:translateY(-1px)}
+.lp-cta-main{font-weight:800;font-size:15px;letter-spacing:.02em;display:block}
+.lp-cta-sub{display:block;font-size:11.5px;color:#cbbfa9;margin-top:3px;font-weight:600}
+.lp-cta-arrow{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold-soft));color:#19140b;display:grid;place-items:center;font-size:17px;font-weight:800;flex:none}
+.lp-wa{display:flex;align-items:center;justify-content:center;gap:10px;border:1px solid rgba(37,211,102,.45);color:#157347;background:#f2fbf5;border-radius:14px;padding:13px 18px;font-weight:700;font-size:13.5px;transition:.2s}
+.lp-wa:hover{background:#e4f7ea}
+.lp-wa-dot{width:9px;height:9px;border-radius:50%;background:#25d366;flex:none}
+.lp-call{text-align:center;color:var(--muted);font-size:13px;font-weight:600;text-decoration:underline;text-underline-offset:4px}
+.lp-call:hover{color:var(--ink)}
+.lp-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:6px 0 6px}
+.lp-steps div{border:1px dashed var(--line);border-radius:14px;padding:12px;text-align:center;background:var(--panel)}
+.lp-steps b{display:block;font-family:var(--display);color:var(--gold);font-size:18px;margin-bottom:4px;font-weight:500}
+.lp-steps span{font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.lp-h3{font-family:var(--display);font-size:22px;font-weight:500;color:var(--ink);margin:24px 0 10px}
 .formcard{background:var(--panel);border:1px solid var(--line);border-radius:28px;padding:34px;box-shadow:0 14px 40px rgba(23,20,16,.04)}
 .formcard h2{font-family:var(--display);font-size:26px;font-weight:500;letter-spacing:-.02em;margin-bottom:8px}
 .fgrid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
@@ -622,7 +653,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 .testi p{color:var(--muted);font-size:14.5px;line-height:1.7;margin:42px 0 16px}
 .testi strong{font-family:var(--display);font-size:16px;font-weight:500;color:var(--ink)}
 .testi .ref{display:block;font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:5px}
-@media(max-width:1000px){.hero-shell,.product-detail{grid-template-columns:1fr}.assurances .container,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img{min-height:400px}}
+@media(max-width:1000px){.hero-shell,.product-detail,.lp-grid{grid-template-columns:1fr}.assurances .container,.steps,.testi-grid{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}.product-img,.lp-media{min-height:400px}}
 @media(max-width:820px){
 .nav{position:fixed;top:0;right:0;bottom:0;left:auto;width:min(320px,84vw);flex-direction:column;align-items:stretch;justify-content:flex-start;gap:10px;background:#14110d;border-left:1px solid rgba(214,185,140,.22);border-radius:0;padding:96px 20px 26px;transform:translateX(110%);visibility:hidden;transition:transform .3s ease, visibility .3s ease;box-shadow:0 30px 80px rgba(0,0,0,.35);z-index:1090;overflow-y:auto}
 .nav.open{transform:translateX(0);visibility:visible}
@@ -633,7 +664,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--gold);box-shadow:0 0 
 .fgrid{grid-template-columns:1fr}
 .topbar .top-left span:not(:first-child),.topbar .sep{display:none}
 }
-@media(max-width:640px){.assurances .container,.steps,.testi-grid{grid-template-columns:1fr}.home-hero{padding:76px 0 64px}.search-shell{flex-direction:column}.search-badge{display:none}.hero-points{gap:12px}.grid{grid-template-columns:1fr}.cta-band{padding:44px 24px}}
+@media(max-width:640px){.assurances .container,.steps,.testi-grid{grid-template-columns:1fr}.home-hero{padding:76px 0 64px}.search-shell{flex-direction:column}.search-badge{display:none}.hero-points{gap:12px}.grid{grid-template-columns:1fr}.cta-band{padding:44px 24px}.lp-ticket{grid-template-columns:1fr}.lp-ticket-cell+.lp-ticket-cell{border-left:none;border-top:1px solid rgba(214,185,140,.2)}.lp-steps{grid-template-columns:1fr}}
 """
 
 JS = r"""
@@ -872,13 +903,13 @@ def feature_card(p):
     fb = placeholder_image(p["name"])
     t = f"{p['name']} • {p['storage'][0]}"
     pr = price_for(p, p["storage"][0])
-    tag = '<span class="tag">Installment</span>'
+    tag = '<span class="tag">Lipa Pole Pole</span>'
     price = f'<div class="price">{money(pr["weekly"])}/week</div><div class="sub">Deposit {money(pr["deposit"])} on delivery</div>'
     return f"""
 <a class="pcard reveal" href="/device/{e(p['slug'])}">{tag}
 <div class="imgwrap"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
 <div class="body"><h3>{e(t)}</h3>{price}
-<div class="go"><span>View details</span><span>→</span></div></div></a>"""
+<div class="go"><span>View plan</span><span>→</span></div></div></a>"""
 
 def cash_card(p):
     fb = placeholder_image(p["model"])
@@ -928,7 +959,7 @@ def home():
 </aside>
 </div></section>
 <section class="container section" style="padding-top:40px">
-<div class="sec-head reveal"><span class="over">Installment picks</span><h2>Popular devices on flexible payment</h2><p>Pay the deposit on delivery, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
+<div class="sec-head reveal"><span class="over">Lipa Pole Pole picks</span><h2>Popular devices on flexible payment</h2><p>Pay the deposit on delivery, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
 </section>
@@ -963,8 +994,8 @@ def installments():
     cards = "".join(feature_card(p) for p in products)
     content = f"""
 <section class="page-hero"><div class="container">
-<span class="eyebrow">Payment plans</span>
-<h1>Installments, <span>structured properly.</span></h1>
+<span class="eyebrow">Lipa Pole Pole</span>
+<h1>Own it now, <span>pay it weekly.</span></h1>
 <p class="lead">Choose your phone, pay the deposit on delivery, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
 <div class="hero-points">
 <span>Deposit on delivery</span><span>Weekly M-Pesa</span><span>Grace period</span><span>Original devices</span>
@@ -1034,23 +1065,23 @@ def device_page(slug):
 </div>
 <h1>{e(p['name'])}</h1>
 <p class="tagline">{e(truncate(p['specs'], 120))}</p>
-<div class="planbox"><h3>Purchase details</h3>
+<div class="planbox"><h3>Cash purchase</h3>
 <div class="prow"><span>Listed price</span><strong>{money(p['price'])} | negotiable</strong></div>
 <div class="prow"><span>Ownership</span><strong>Immediate on full payment</strong></div>
 <div class="prow"><span>Delivery</span><strong>Charged per location</strong></div>
 <div class="prow"><span>Self-pickup</span><strong>Free at our shop</strong></div></div>
 <div class="hero-actions">
-<a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
+<a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Make an offer on WhatsApp</a>
 <a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-<div class="device-note"><strong>Good to know:</strong> this price is negotiable, call or WhatsApp for your best deal. Prefer installments? Ask us, many cash devices can also be taken on a weekly plan.</div>
+<div class="device-note"><strong>Good to know:</strong> this price is negotiable, call or WhatsApp for your best deal. Prefer weekly payments? Ask us, many cash devices can also move onto a Lipa Pole Pole plan.</div>
 <h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Full specifications</h3>
 <ul class="bullets">{specs}</ul>
 </div></div></section>"""
         return base_page(p["name"], content, "cash")
     first = f"{p['apply_name']} ({p['storage'][0]})"
     apply_href = "/apply-now?phone=" + urllib.parse.quote(first)
-    wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want the {p['name']} on installment. Preferred storage: {p['storage'][0]}.")
+    wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want the {p['name']} on Lipa Pole Pole. Preferred storage: {p['storage'][0]}.")
     sb = ""
     for i, s in enumerate(p["storage"]):
         pr = price_for(p, s)
@@ -1060,39 +1091,50 @@ def device_page(slug):
     rows = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in p["specs"].items())
     r, n, ref, rev_txt = p["reviews"][0] if p["reviews"] else (5, "Customer", "PT-000", "Great phone!")
     fp = price_for(p, p["storage"][0])
-    wk = f'<strong id="planWeekly">{money(fp["weekly"])} / week</strong>'
-    dp = f'<strong id="planDeposit">{money(fp["deposit"])}</strong>'
     content = f"""
 <section class="container section"><div class="crumb"><a href="/">Home</a> / <a href="/installments">Payment Plans</a> / <span>{e(p['name'])}</span></div>
-<div class="product-detail">
-<div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="product-info">
-<div class="pills">
-<span class="pill">{e(p.get('condition','Ex-UK'))}</span>
-<span class="pill">{e(p['stock'])}</span>
-<span class="pill gold">Deposit on delivery</span>
+<div class="lp-grid">
+<div class="lp-media">
+<span class="lp-ribbon">Lipa Pole Pole</span>
+<span class="lp-stock">{e(p['stock'])}</span>
+<img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'">
 </div>
+<div class="lp-info">
+<div class="lp-over">{e(p.get('condition','Ex-UK'))} • Weekly ownership plan</div>
 <h1>{e(p['name'])}</h1>
 <p class="tagline">{e(p['tagline'])}</p>
-<div class="planbox"><h3>Installment plan</h3>
-<div class="prow"><span>Weekly payment</span>{wk}</div>
-<div class="prow"><span>Deposit on delivery</span>{dp}</div></div>
-<div class="optgroup"><label>Storage</label><div class="optrow">{sb}</div></div>
-<div class="optgroup"><label>Color</label><div class="optrow">{cb}</div></div>
-<div class="hero-actions">
-<a class="btn btn-gold" id="applyCta" href="{apply_href}">Take on Installment</a>
-<a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
+<div class="lp-ticket">
+<div class="lp-ticket-cell"><span>Every week</span><strong id="planWeekly">{money(fp["weekly"])} / week</strong></div>
+<div class="lp-ticket-cell"><span>Deposit on delivery</span><strong id="planDeposit">{money(fp["deposit"])}</strong></div>
 </div>
-<h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Our guarantee</h3>
+<p class="lp-fine">First installment falls due after your grace period. When the plan completes, the phone is fully yours.</p>
+<div class="optgroup"><label>Choose storage</label><div class="optrow">{sb}</div></div>
+<div class="optgroup"><label>Choose colour</label><div class="optrow">{cb}</div></div>
+<div class="lp-ctas">
+<a class="lp-cta" id="applyCta" href="{apply_href}">
+<span><span class="lp-cta-main">Start Lipa Pole Pole</span><span class="lp-cta-sub">Reserve now, deposit on delivery</span></span>
+<span class="lp-cta-arrow">→</span>
+</a>
+<a class="lp-wa" href="{wa}" target="_blank" rel="noopener"><span class="lp-wa-dot"></span>Chat about this phone</a>
+<a class="lp-call" href="tel:{PHONE_TEL}">or call {e(PHONE_DISPLAY)}</a>
+</div>
+<div class="lp-steps">
+<div><b>1</b><span>Reserve online</span></div>
+<div><b>2</b><span>Deposit on delivery</span></div>
+<div><b>3</b><span>Weekly till it's yours</span></div>
+</div>
+<h3 class="lp-h3">Included with every phone</h3>
 <ul class="bullets">
 <li>Original, thoroughly tested device, exactly as specified below</li>
 <li>You pay the deposit on delivery, when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
 <li>48-hour return period on factory defects</li>
 </ul>
-<h3 style="font-family:var(--display);color:var(--ink);font-weight:500;font-size:22px">Full specifications</h3>
+<h3 class="lp-h3">Full specifications</h3>
 <table class="spec-table">{rows}</table>
-</div></div></section>
+</div>
+</div>
+</section>
 <section class="container section" style="padding-top:0">
 <div class="sec-head reveal"><span class="over">Client note</span><h2>Verified feedback</h2></div>
 <div class="reviewbox reveal"><div class="stars">{"★"*r}{"☆"*(5-r)}</div><strong>{e(n)}</strong><span class="ref">Verified purchase • Ref {e(ref)}</span><p style="color:var(--muted)">{e(rev_txt)}</p></div>
@@ -1205,8 +1247,8 @@ def how_it_works():
 <p class="lead">We are open daily 8:00 AM to 9:00 PM. Walk in, call, or start online anytime.</p>
 </div></section>
 <section class="container section" style="padding-top:38px"><div class="steps">
-<div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
-<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) or installment with a deposit on delivery and weekly M-Pesa payments.</p></div>
+<div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse Lipa Pole Pole plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
+<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) or Lipa Pole Pole with a deposit on delivery and weekly M-Pesa payments.</p></div>
 <div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay the deposit.</p></div>
 <div class="step reveal"><div class="n">4</div><h3>Make weekly payments</h3><p>First installment after your grace period. When the plan completes, the phone is 100% yours.</p></div>
 </div></section>
@@ -1227,7 +1269,7 @@ def faq():
     faqs = [
      ("Are your phones original?", "Yes, 100% original. Every device is hand-inspected and fully tested on display, battery, cameras, network and charging before listing. If anything is not as described, our 48-hour return period covers you."),
      ("Are cash prices really negotiable?", "Yes. Every price on the cash list is a starting point. Call or WhatsApp us with your offer and we will agree a fair price together."),
-     ("How does the installment plan work?", "You pay the deposit on delivery, then manageable weekly M-Pesa payments. Your first installment is due after a grace period. When the plan completes, the phone is fully yours."),
+     ("How does Lipa Pole Pole work?", "You pay the deposit on delivery, then manageable weekly M-Pesa payments. Your first installment is due after a grace period. When the plan completes, the phone is fully yours."),
      ("How fast is approval?", "Usually about 30 minutes after your application and documents are complete."),
      ("Where do you deliver, and what does delivery cost?", f"Delivery is free within {FREE_DELIVERY_ZONES}. For any other location, delivery is arranged at a fee quoted per location. Self-pickup at our shop is always free."),
      ("What are your opening hours?", "We are open every day from 8:00 AM to 9:00 PM, including weekends and most public holidays."),
@@ -1354,9 +1396,9 @@ def api_chat():
     if any(w in msg for w in ["negotia", "offer", "discount", "best price"]):
         return jsonify({"ok": True, "content": "All our cash prices are negotiable. WhatsApp or call with your offer and we will agree a fair price together.",
                         "links": [{"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello! I would like to negotiate a price.")}]})
-    if any(w in msg for w in ["installment", "plan", "initial", "weekly", "payment", "how does", "deposit"]):
-        return jsonify({"ok": True, "content": "Installment plans are straightforward: pay the deposit on delivery, then manageable weekly M-Pesa payments. First installment is due after a grace period. When the plan ends, the phone is fully yours.",
-                        "links": [{"cta": "See installment options", "url": "/installments"}, {"cta": "Apply now", "url": "/apply-now"}]})
+    if any(w in msg for w in ["installment", "plan", "weekly", "payment", "how does", "deposit", "pole"]):
+        return jsonify({"ok": True, "content": "Lipa Pole Pole is straightforward: pay the deposit on delivery, then manageable weekly M-Pesa payments. First installment is due after a grace period. When the plan ends, the phone is fully yours.",
+                        "links": [{"cta": "See Lipa Pole Pole options", "url": "/installments"}, {"cta": "Apply now", "url": "/apply-now"}]})
     if any(w in msg for w in ["under", "budget", "cheap", "afford", "50k", "30k", "20k"]):
         m = re.search(r"(\d{2,3})\s*k", msg)
         cap = int(m.group(1)) * 1000 if m else 50000
@@ -1370,7 +1412,7 @@ def api_chat():
         return jsonify({"ok": True, "content": "I found these for you: " + lines + ".",
                         "links": [{"cta": i["name"], "url": "/device/" + i["product"]["slug"]} for i in items]})
     return jsonify({"ok": True, "content": "I can help with prices, specs, delivery or applications. Tap below to browse today's stock.",
-                    "links": [{"cta": "Installment plans", "url": "/installments"}, {"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub!")}]})
+                    "links": [{"cta": "Lipa Pole Pole plans", "url": "/installments"}, {"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello Pro Tech Phone Hub!")}]})
 
 @app.errorhandler(404)
 def not_found(err):
