@@ -794,9 +794,6 @@ def home():
     cash_cards = "".join(cash_card(p) for p in list(CASH_PRODUCTS.values())[:4])
     content = f"""
 <section class="hero"><div class="container hero-inner">
-<span class="kicker">Nairobi's trusted phone dealer</span>
-<h1>Original phones. Honest pricing. <em>Payments that fit.</em></h1>
-<p class="lead">Hand-picked Samsung and iPhone devices on flexible installment plans — or take any unit outright at a negotiable cash price. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
 <div class="hero-actions">
 <a class="btn btn-primary" href="/installments">Browse Installment Plans</a>
 <a class="btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.3)" href="/cash-prices">View Cash Prices</a>
