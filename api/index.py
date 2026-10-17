@@ -4,9 +4,6 @@ from datetime import datetime, timezone, timedelta
 from flask import Flask, request, jsonify, abort
 from werkzeug.exceptions import HTTPException
 
-# ==========================================
-# PRO TECH PHONE HUB CONFIGURATION
-# ==========================================
 SHOP_NAME = "Pro Tech Phone Hub"
 PHONE_DISPLAY = "0720 890 018"
 PHONE_TEL = "+254720890018"
@@ -21,9 +18,6 @@ APP_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "protech_app
 app = Flask(__name__)
 app.config["MAX_CONTENT_LENGTH"] = 120 * 1024 * 1024
 
-# ==========================================
-# HELPERS
-# ==========================================
 def e(v): return escape(str(v), quote=True)
 def slugify(v):
     v = re.sub(r"[^a-z0-9]+", "-", str(v).lower().strip())
@@ -41,10 +35,10 @@ def placeholder_image(text):
     clean = re.sub(r"[^A-Za-z0-9 ]+", "", str(text))[:18].strip() or "ProTech"
     clean = escape(clean, quote=True)
     svg = ("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='900'>"
-           "<rect width='100%' height='100%' fill='#ffffff'/>"
-           "<rect x='18' y='18' width='864' height='864' rx='48' fill='#f4f6fb'/>"
-           f"<text x='50%' y='54%' fill='#101828' font-family='Arial' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
-           "<text x='50%' y='64%' fill='#667085' font-family='Arial' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
+           "<rect width='100%' height='100%' fill='#7c3aed'/>"
+           "<rect x='18' y='18' width='864' height='864' rx='48' fill='#9333ea'/>"
+           f"<text x='50%' y='54%' fill='#fdf4ff' font-family='Arial' font-size='42' font-weight='700' text-anchor='middle'>{clean}</text>"
+           "<text x='50%' y='64%' fill='#e9d5ff' font-family='Arial' font-size='22' text-anchor='middle'>Pro Tech Phone Hub</text>"
            "</svg>")
     return "data:image/svg+xml;utf8," + urllib.parse.quote(svg, safe="")
 
@@ -141,60 +135,58 @@ for lp in LIPA_PRODUCTS:
     lp["stock"] = "In Stock"
     PRODUCTS_BY_SLUG[lp["slug"]] = lp
 
-# ==========================================
-# PRO TECH CASH PRODUCTS
-# ==========================================
-SP_S26U = 'Display: 6.9" Dynamic AMOLED 2X, 144Hz, 3000 nits • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 200MP main + 50MP periscope (5x) + 50MP telephoto (3x) + 50MP ultrawide • Front: 12MP • Battery: 5000mAh, 60W wired • OS: Android 16, 7 years updates • Build: Titanium frame, IP68, S-Pen'
-SP_S26P = 'Display: 6.7" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4900mAh, 45W wired • OS: Android 16 • Build: Armor Aluminum, IP68'
-SP_S26 = 'Display: 6.36" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4300mAh, 45W wired • OS: Android 16 • Build: IP68, Gorilla Glass Victus 2'
-SP_S25U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz, 2600 nits • Processor: Snapdragon 8 Elite • Rear Camera: 200MP main + 50MP periscope (5x) + 10MP telephoto (3x) + 50MP ultrawide • Front: 12MP • Battery: 5000mAh, 45W wired • OS: Android 15, 7 years updates • Build: Titanium, IP68, S-Pen'
-SP_S24U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz, Gorilla Armor • Processor: Snapdragon 8 Gen 3 • Rear Camera: 200MP main + 50MP periscope (5x) + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 5000mAh, 45W wired • OS: Android 14, 7 years updates • Build: Titanium frame, IP68, S-Pen'
-SP_S23U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 2 • Rear Camera: 200MP main + 10MP periscope (10x) + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 5000mAh, 45W wired • OS: Android 13, 4 OS upgrades • Build: Armor Aluminum, IP68, S-Pen'
-SP_S23P = 'Display: 6.6" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 2 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 12MP • Battery: 4700mAh, 45W wired • OS: Android 13, 4 OS upgrades • Build: IP68, stereo speakers'
-SP_S22U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 1 • Rear Camera: 108MP main + 10MP periscope (10x) + 10MP telephoto (3x) + 12MP ultrawide • Front: 40MP • Battery: 5000mAh, 45W wired • OS: Android 12, upgradable • Build: IP68, S-Pen built-in'
-SP_S22P = 'Display: 6.6" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 1 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 10MP • Battery: 4500mAh, 45W wired • OS: Android 12, upgradable • Build: IP68, Armor Aluminum'
-SP_S21U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz, 1440p • Processor: Snapdragon 888 • Rear Camera: 108MP main + 10MP (3x) + 10MP (10x) + 12MP ultrawide • Front: 40MP • Battery: 5000mAh, 25W wired • OS: Android 11, upgradable • Build: IP68, S-Pen support'
-SP_S21P = 'Display: 6.7" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 888 • Rear Camera: 12MP main + 64MP telephoto (3x) + 12MP ultrawide • Front: 10MP • Battery: 4800mAh, 25W wired • OS: Android 11, upgradable • Build: IP68, stereo speakers'
-SP_S21FE = 'Display: 6.4" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 888 • Rear Camera: 12MP main (OIS) + 12MP ultrawide + 8MP telephoto (3x) • Front: 32MP • Battery: 4500mAh, 25W wired • OS: Android 12, upgradable • Build: IP68, in-display fingerprint'
-SP_S20U = 'Display: 6.9" Dynamic AMOLED 2X, 120Hz, 1440p • Processor: Snapdragon 865 • Rear Camera: 108MP main + 48MP periscope (10x) + 12MP ultrawide + ToF • Front: 40MP • Battery: 5000mAh, 45W wired • OS: Android 10, upgradable • Build: IP68, microSD slot'
-SP_S10 = 'Display: 6.1" Dynamic AMOLED, 1440p • Processor: Snapdragon 855 • Rear Camera: 12MP main (dual aperture) + 12MP telephoto (2x) + 16MP ultrawide • Front: 10MP • Battery: 3400mAh, 15W wired • OS: Android 9, upgradable • Build: IP68, microSD, 3.5mm jack'
-SP_S105G = 'Display: 6.7" Dynamic AMOLED, 1440p • Processor: Snapdragon 855 • Rear Camera: 12MP main + 12MP telephoto + 16MP ultrawide + ToF • Front: 10MP + ToF • Battery: 4500mAh, 25W wired • OS: Android 9, upgradable • Build: IP68, 5G'
-SP_N20U = 'Display: 6.9" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 865+ • Rear Camera: 108MP main + 12MP periscope (5x) + 12MP ultrawide • Front: 10MP • Battery: 4500mAh, 25W wired • OS: Android 10, upgradable • Build: IP68, S-Pen built-in'
-SP_N20 = 'Display: 6.7" Super AMOLED Plus, 60Hz • Processor: Snapdragon 865+ • Rear Camera: 12MP main + 64MP telephoto + 12MP ultrawide • Front: 10MP • Battery: 4300mAh, 25W wired • OS: Android 10, upgradable • Build: IP68, S-Pen'
-SP_N10 = 'Display: 6.3" Dynamic AMOLED, HDR10+ • Processor: Snapdragon 855 • Rear Camera: 12MP main + 12MP telephoto (2x) + 16MP ultrawide • Front: 10MP • Battery: 3500mAh, 25W wired • OS: Android 9, upgradable • Build: IP68, S-Pen'
-SP_N10P = 'Display: 6.8" Dynamic AMOLED, 1440p • Processor: Snapdragon 855 • Rear Camera: 12MP main + 12MP telephoto + 16MP ultrawide + ToF • Front: 10MP + ToF • Battery: 4300mAh, 45W wired • OS: Android 9, upgradable • Build: IP68, S-Pen, microSD'
-SP_F6 = 'Display: 7.6" Foldable Dynamic AMOLED 2X, 120Hz + 6.3" cover • Processor: Snapdragon 8 Gen 3 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 10MP + 4MP under-display • Battery: 4400mAh, 25W wired • OS: Android 14 • Build: IP48, Armor Aluminum hinge'
-SP_F5 = 'Display: 7.6" Foldable Dynamic AMOLED 2X, 120Hz + 6.2" cover • Processor: Snapdragon 8 Gen 2 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 10MP + 4MP • Battery: 4400mAh, 25W wired • OS: Android 13 • Build: IPX8'
-SP_F4 = 'Display: 7.6" Foldable Dynamic AMOLED 2X, 120Hz + 6.2" cover • Processor: Snapdragon 8+ Gen 1 • Rear Camera: 50MP main + 10MP telephoto (3x) + 12MP ultrawide • Front: 10MP + 4MP • Battery: 4400mAh, 25W wired • OS: Android 12 • Build: IPX8'
-SP_F3 = 'Display: 7.6" Foldable Dynamic AMOLED 2X, 120Hz + 6.2" cover • Processor: Snapdragon 888 • Rear Camera: 12MP main + 12MP telephoto (2x) + 12MP ultrawide • Front: 10MP + 4MP • Battery: 4400mAh, 25W wired • OS: Android 11 • Build: IPX8'
-SP_L7 = 'Display: 6.9" Foldable AMOLED, 120Hz + 4.1" cover • Processor: Exynos 2500 • Rear Camera: 50MP main + 12MP ultrawide • Front: 10MP • Battery: 4300mAh, 25W wired • OS: Android 16 • Build: IP48, FlexWindow'
-SP_L6 = 'Display: 6.7" Foldable Dynamic AMOLED 2X, 120Hz + 3.4" cover • Processor: Snapdragon 8 Gen 3 • Rear Camera: 50MP main + 12MP ultrawide • Front: 10MP • Battery: 4000mAh, 25W wired • OS: Android 14 • Build: IP48'
-SP_L5 = 'Display: 6.7" Foldable Dynamic AMOLED 2X, 120Hz + 3.4" cover • Processor: Snapdragon 8 Gen 2 • Rear Camera: 12MP main + 12MP ultrawide • Front: 10MP • Battery: 3700mAh, 25W wired • OS: Android 13 • Build: IPX8'
-SP_L4 = 'Display: 6.7" Foldable Dynamic AMOLED 2X, 120Hz + 1.9" cover • Processor: Snapdragon 8+ Gen 1 • Rear Camera: 12MP main + 12MP ultrawide • Front: 10MP • Battery: 3700mAh, 25W wired • OS: Android 12 • Build: IPX8'
-SP_A57 = 'Display: 6.7" Super AMOLED, 120Hz • Processor: Octa-core • Rear Camera: 50MP main (OIS) + 12MP ultrawide • Front: 12MP • Battery: 5000mAh, 45W wired • OS: Android 15 • Build: IP68, Gorilla Glass Victus+'
-SP_A37 = 'Display: 6.6" Super AMOLED, 120Hz • Processor: Octa-core • Rear Camera: 50MP main (OIS) + 8MP ultrawide • Front: 12MP • Battery: 5000mAh, 25W wired • OS: Android 15 • Build: IP67'
-SP_A56 = 'Display: 6.7" Super AMOLED, 120Hz • Processor: Exynos 1580 • Rear Camera: 50MP main (OIS) + 12MP ultrawide + 5MP macro • Front: 12MP • Battery: 5000mAh, 45W wired • OS: Android 15 • Build: IP67, Gorilla Glass Victus+'
-SP_A26 = 'Display: 6.7" Super AMOLED, 120Hz • Processor: Exynos 1380 • Rear Camera: 50MP main (OIS) + 8MP ultrawide + 2MP macro • Front: 13MP • Battery: 5000mAh, 25W wired • OS: Android 15 • Build: IP67'
-SP_A27 = 'Display: 6.7" Super AMOLED, 120Hz • Processor: Octa-core • Rear Camera: 50MP main (OIS) + 8MP ultrawide • Front: 13MP • Battery: 5000mAh, 25W wired • OS: Android 15 • Build: IP67'
-SP_A17 = 'Display: 6.7" Super AMOLED, 90Hz • Processor: Octa-core (4G/5G variants) • Rear Camera: 50MP main (OIS) + 5MP ultrawide • Front: 13MP • Battery: 5000mAh, 25W wired • OS: Android 15 • Build: IP54'
-SP_A16 = 'Display: 6.7" Super AMOLED, 90Hz • Processor: Helio G99 / Dimensity 6300 • Rear Camera: 50MP main + 5MP ultrawide + 2MP macro • Front: 13MP • Battery: 5000mAh, 25W wired • OS: Android 14 • Build: IP54'
-SP_A07 = 'Display: 6.7" PLS LCD, 90Hz • Processor: Octa-core • Rear Camera: 50MP main + 2MP depth • Front: 8MP • Battery: 5000mAh, 25W wired • OS: Android 15 • Build: IP54'
-SP_A07S = 'Display: 6.7" PLS LCD, 90Hz • Processor: Octa-core • Rear Camera: 50MP main + 2MP depth • Front: 8MP • Battery: 5000mAh, 25W wired • OS: Android 15 • Build: IP54, big-battery variant'
-SP_A06 = 'Display: 6.7" PLS LCD, HD+ • Processor: MediaTek Helio G85 • Rear Camera: 50MP main + 2MP depth • Front: 8MP • Battery: 5000mAh, 25W wired • OS: Android 14 • Build: Side fingerprint, dual SIM'
-SP_I16PM = 'Display: 6.9" LTPO Super Retina XDR OLED, 120Hz • Processor: Apple A18 Pro • Rear Camera: 48MP Fusion + 48MP ultrawide + 12MP telephoto (5x) • Front: 12MP • Battery: 4685mAh, USB-C • OS: iOS 18 • Build: Titanium, IP68, MagSafe'
-SP_I15PM = 'Display: 6.7" LTPO Super Retina XDR OLED, 120Hz • Processor: Apple A17 Pro • Rear Camera: 48MP main + 12MP ultrawide + 12MP telephoto (5x) • Front: 12MP • Battery: 4422mAh, USB-C • OS: iOS 17 • Build: Titanium, IP68, MagSafe'
-SP_I15 = 'Display: 6.1" Super Retina XDR OLED • Processor: Apple A16 Bionic • Rear Camera: 48MP main + 12MP ultrawide • Front: 12MP • Battery: 3349mAh, USB-C • OS: iOS 17 • Build: Aluminum, Dynamic Island, IP68'
-SP_I14PM = 'Display: 6.7" LTPO Super Retina XDR OLED, 120Hz • Processor: Apple A16 Bionic • Rear Camera: 48MP main + 12MP ultrawide + 12MP telephoto (3x) • Front: 12MP • Battery: 4323mAh • OS: iOS 16 • Build: Stainless steel, Dynamic Island, IP68'
-SP_I14P = 'Display: 6.1" LTPO Super Retina XDR OLED, 120Hz • Processor: Apple A16 Bionic • Rear Camera: 48MP main + 12MP ultrawide + 12MP telephoto (3x) • Front: 12MP • Battery: 3200mAh • OS: iOS 16 • Build: Stainless steel, Dynamic Island, IP68'
-SP_I14PL = 'Display: 6.7" Super Retina XDR OLED • Processor: Apple A15 Bionic • Rear Camera: 12MP main + 12MP ultrawide • Front: 12MP • Battery: 4325mAh • OS: iOS 16 • Build: Aluminum, IP68'
-SP_I14 = 'Display: 6.1" Super Retina XDR OLED • Processor: Apple A15 Bionic • Rear Camera: 12MP main + 12MP ultrawide • Front: 12MP • Battery: 3279mAh • OS: iOS 16 • Build: Aluminum, IP68'
-SP_I13PM = 'Display: 6.7" LTPO Super Retina XDR OLED, 120Hz • Processor: Apple A15 Bionic • Rear Camera: 12MP main + 12MP ultrawide + 12MP telephoto (3x) • Front: 12MP • Battery: 4352mAh • OS: iOS 15 • Build: Stainless steel, IP68'
-SP_I13 = 'Display: 6.1" Super Retina XDR OLED • Processor: Apple A15 Bionic • Rear Camera: 12MP main (sensor-shift) + 12MP ultrawide • Front: 12MP • Battery: 3240mAh • OS: iOS 15 • Build: Aluminum, IP68'
-SP_I12 = 'Display: 6.1" Super Retina XDR OLED • Processor: Apple A14 Bionic • Rear Camera: 12MP main + 12MP ultrawide • Front: 12MP • Battery: 2815mAh, MagSafe • OS: iOS 14 • Build: Aluminum, IP68'
-SP_I12P = 'Display: 6.1" Super Retina XDR OLED • Processor: Apple A14 Bionic • Rear Camera: 12MP main + 12MP ultrawide + 12MP telephoto (2x) + LiDAR • Front: 12MP • Battery: 2815mAh, MagSafe • OS: iOS 14 • Build: Stainless steel, IP68'
-SP_I12PM = 'Display: 6.7" Super Retina XDR OLED • Processor: Apple A14 Bionic • Rear Camera: 12MP main + 12MP ultrawide + 12MP telephoto (2.5x) + LiDAR • Front: 12MP • Battery: 3687mAh, MagSafe • OS: iOS 14 • Build: Stainless steel, IP68'
-SP_I11PM = 'Display: 6.5" Super Retina XDR OLED • Processor: Apple A13 Bionic • Rear Camera: 12MP main + 12MP ultrawide + 12MP telephoto (2x) • Front: 12MP • Battery: 3969mAh • OS: iOS 13 • Build: Stainless steel, IP68'
-SP_I11P = 'Display: 5.8" Super Retina XDR OLED • Processor: Apple A13 Bionic • Rear Camera: 12MP main + 12MP ultrawide + 12MP telephoto (2x) • Front: 12MP • Battery: 3046mAh • OS: iOS 13 • Build: Stainless steel, IP68'
+# CASH PRODUCTS
+SP_S26U = 'Display: 6.9" Dynamic AMOLED 2X, 144Hz, 3000 nits • Processor: Snapdragon 8 Elite Gen 5 • Camera: 200MP + 50MP + 50MP + 50MP • Battery: 5000mAh, 60W • OS: Android 16, 7 years • Build: Titanium, IP68, S-Pen'
+SP_S26P = 'Display: 6.7" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Camera: 50MP + 10MP + 12MP • Battery: 4900mAh, 45W • OS: Android 16 • Build: Armor Aluminum, IP68'
+SP_S26 = 'Display: 6.36" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Elite Gen 5 • Camera: 50MP + 10MP + 12MP • Battery: 4300mAh, 45W • OS: Android 16 • Build: IP68'
+SP_S25U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz, 2600 nits • Processor: Snapdragon 8 Elite • Camera: 200MP + 50MP + 10MP + 50MP • Battery: 5000mAh, 45W • OS: Android 15, 7 years • Build: Titanium, IP68, S-Pen'
+SP_S24U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 3 • Camera: 200MP + 50MP + 10MP + 12MP • Battery: 5000mAh, 45W • OS: Android 14, 7 years • Build: Titanium, IP68, S-Pen'
+SP_S23U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 2 • Camera: 200MP + 10MP + 10MP + 12MP • Battery: 5000mAh, 45W • OS: Android 13 • Build: Armor Aluminum, IP68, S-Pen'
+SP_S23P = 'Display: 6.6" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 2 • Camera: 50MP + 10MP + 12MP • Battery: 4700mAh, 45W • OS: Android 13 • Build: IP68'
+SP_S22U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 1 • Camera: 108MP + 10MP + 10MP + 12MP • Battery: 5000mAh, 45W • OS: Android 12 • Build: IP68, S-Pen'
+SP_S22P = 'Display: 6.6" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 8 Gen 1 • Camera: 50MP + 10MP + 12MP • Battery: 4500mAh, 45W • OS: Android 12 • Build: IP68'
+SP_S21U = 'Display: 6.8" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 888 • Camera: 108MP + 10MP + 10MP + 12MP • Battery: 5000mAh, 25W • OS: Android 11 • Build: IP68, S-Pen support'
+SP_S21P = 'Display: 6.7" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 888 • Camera: 12MP + 64MP + 12MP • Battery: 4800mAh, 25W • OS: Android 11 • Build: IP68'
+SP_S21FE = 'Display: 6.4" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 888 • Camera: 12MP + 12MP + 8MP • Battery: 4500mAh, 25W • OS: Android 12 • Build: IP68'
+SP_S20U = 'Display: 6.9" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 865 • Camera: 108MP + 48MP + 12MP + ToF • Battery: 5000mAh, 45W • OS: Android 10 • Build: IP68'
+SP_S10 = 'Display: 6.1" Dynamic AMOLED • Processor: Snapdragon 855 • Camera: 12MP + 12MP + 16MP • Battery: 3400mAh • OS: Android 9 • Build: IP68'
+SP_S105G = 'Display: 6.7" Dynamic AMOLED • Processor: Snapdragon 855 • Camera: 12MP + 12MP + 16MP + ToF • Battery: 4500mAh • OS: Android 9 • Build: IP68, 5G'
+SP_N20U = 'Display: 6.9" Dynamic AMOLED 2X, 120Hz • Processor: Snapdragon 865+ • Camera: 108MP + 12MP + 12MP • Battery: 4500mAh, 25W • OS: Android 10 • Build: IP68, S-Pen'
+SP_N20 = 'Display: 6.7" Super AMOLED Plus • Processor: Snapdragon 865+ • Camera: 12MP + 64MP + 12MP • Battery: 4300mAh • OS: Android 10 • Build: IP68, S-Pen'
+SP_N10 = 'Display: 6.3" Dynamic AMOLED • Processor: Snapdragon 855 • Camera: 12MP + 12MP + 16MP • Battery: 3500mAh • OS: Android 9 • Build: IP68, S-Pen'
+SP_N10P = 'Display: 6.8" Dynamic AMOLED • Processor: Snapdragon 855 • Camera: 12MP + 12MP + 16MP + ToF • Battery: 4300mAh • OS: Android 9 • Build: IP68, S-Pen'
+SP_F6 = 'Display: 7.6" Foldable AMOLED, 120Hz • Processor: Snapdragon 8 Gen 3 • Camera: 50MP + 10MP + 12MP • Battery: 4400mAh • OS: Android 14 • Build: IP48'
+SP_F5 = 'Display: 7.6" Foldable AMOLED, 120Hz • Processor: Snapdragon 8 Gen 2 • Camera: 50MP + 10MP + 12MP • Battery: 4400mAh • OS: Android 13 • Build: IPX8'
+SP_F4 = 'Display: 7.6" Foldable AMOLED, 120Hz • Processor: Snapdragon 8+ Gen 1 • Camera: 50MP + 10MP + 12MP • Battery: 4400mAh • OS: Android 12 • Build: IPX8'
+SP_F3 = 'Display: 7.6" Foldable AMOLED, 120Hz • Processor: Snapdragon 888 • Camera: 12MP + 12MP + 12MP • Battery: 4400mAh • OS: Android 11 • Build: IPX8'
+SP_L7 = 'Display: 6.9" Foldable AMOLED, 120Hz • Processor: Exynos 2500 • Camera: 50MP + 12MP • Battery: 4300mAh • OS: Android 16 • Build: IP48'
+SP_L6 = 'Display: 6.7" Foldable AMOLED, 120Hz • Processor: Snapdragon 8 Gen 3 • Camera: 50MP + 12MP • Battery: 4000mAh • OS: Android 14 • Build: IP48'
+SP_L5 = 'Display: 6.7" Foldable AMOLED, 120Hz • Processor: Snapdragon 8 Gen 2 • Camera: 12MP + 12MP • Battery: 3700mAh • OS: Android 13 • Build: IPX8'
+SP_L4 = 'Display: 6.7" Foldable AMOLED, 120Hz • Processor: Snapdragon 8+ Gen 1 • Camera: 12MP + 12MP • Battery: 3700mAh • OS: Android 12 • Build: IPX8'
+SP_A57 = 'Display: 6.7" Super AMOLED, 120Hz • Camera: 50MP + 12MP • Battery: 5000mAh, 45W • OS: Android 15 • Build: IP68'
+SP_A37 = 'Display: 6.6" Super AMOLED, 120Hz • Camera: 50MP + 8MP • Battery: 5000mAh, 25W • OS: Android 15 • Build: IP67'
+SP_A56 = 'Display: 6.7" Super AMOLED, 120Hz • Processor: Exynos 1580 • Camera: 50MP + 12MP + 5MP • Battery: 5000mAh, 45W • OS: Android 15'
+SP_A26 = 'Display: 6.7" Super AMOLED, 120Hz • Processor: Exynos 1380 • Camera: 50MP + 8MP + 2MP • Battery: 5000mAh • OS: Android 15'
+SP_A27 = 'Display: 6.7" Super AMOLED, 120Hz • Camera: 50MP + 8MP • Battery: 5000mAh • OS: Android 15 • Build: IP67'
+SP_A17 = 'Display: 6.7" Super AMOLED, 90Hz • Camera: 50MP + 5MP • Battery: 5000mAh • OS: Android 15 • Build: IP54'
+SP_A16 = 'Display: 6.7" Super AMOLED, 90Hz • Processor: Helio G99 • Camera: 50MP + 5MP + 2MP • Battery: 5000mAh • OS: Android 14'
+SP_A07 = 'Display: 6.7" PLS LCD, 90Hz • Camera: 50MP + 2MP • Battery: 5000mAh • OS: Android 15'
+SP_A07S = 'Display: 6.7" PLS LCD, 90Hz • Camera: 50MP + 2MP • Battery: 5000mAh • OS: Android 15'
+SP_A06 = 'Display: 6.7" PLS LCD • Processor: Helio G85 • Camera: 50MP + 2MP • Battery: 5000mAh • OS: Android 14'
+SP_I16PM = 'Display: 6.9" LTPO OLED, 120Hz • Processor: A18 Pro • Camera: 48MP + 48MP + 12MP • Battery: 4685mAh • OS: iOS 18 • Build: Titanium, IP68'
+SP_I15PM = 'Display: 6.7" LTPO OLED, 120Hz • Processor: A17 Pro • Camera: 48MP + 12MP + 12MP • Battery: 4422mAh • OS: iOS 17 • Build: Titanium'
+SP_I15 = 'Display: 6.1" OLED • Processor: A16 Bionic • Camera: 48MP + 12MP • Battery: 3349mAh • OS: iOS 17 • Dynamic Island'
+SP_I14PM = 'Display: 6.7" LTPO OLED, 120Hz • Processor: A16 Bionic • Camera: 48MP + 12MP + 12MP • Battery: 4323mAh • OS: iOS 16 • Dynamic Island'
+SP_I14P = 'Display: 6.1" LTPO OLED, 120Hz • Processor: A16 Bionic • Camera: 48MP + 12MP + 12MP • Battery: 3200mAh • OS: iOS 16'
+SP_I14PL = 'Display: 6.7" OLED • Processor: A15 Bionic • Camera: 12MP + 12MP • Battery: 4325mAh • OS: iOS 16'
+SP_I14 = 'Display: 6.1" OLED • Processor: A15 Bionic • Camera: 12MP + 12MP • Battery: 3279mAh • OS: iOS 16'
+SP_I13PM = 'Display: 6.7" LTPO OLED, 120Hz • Processor: A15 Bionic • Camera: 12MP + 12MP + 12MP • Battery: 4352mAh • OS: iOS 15'
+SP_I13 = 'Display: 6.1" OLED • Processor: A15 Bionic • Camera: 12MP + 12MP • Battery: 3240mAh • OS: iOS 15'
+SP_I12 = 'Display: 6.1" OLED • Processor: A14 Bionic • Camera: 12MP + 12MP • Battery: 2815mAh • OS: iOS 14'
+SP_I12P = 'Display: 6.1" OLED • Processor: A14 Bionic • Camera: 12MP + 12MP + 12MP + LiDAR • Battery: 2815mAh • OS: iOS 14'
+SP_I12PM = 'Display: 6.7" OLED • Processor: A14 Bionic • Camera: 12MP + 12MP + 12MP + LiDAR • Battery: 3687mAh • OS: iOS 14'
+SP_I11PM = 'Display: 6.5" OLED • Processor: A13 Bionic • Camera: 12MP + 12MP + 12MP • Battery: 3969mAh • OS: iOS 13'
+SP_I11P = 'Display: 5.8" OLED • Processor: A13 Bionic • Camera: 12MP + 12MP + 12MP • Battery: 3046mAh • OS: iOS 13'
 
 CASH_CATEGORIES = []
 CASH_PRODUCTS = {}
@@ -288,9 +280,7 @@ C(S3, "Apple iPhone 11 Pro 256GB", 42999, SP_I11P, AM + "61UC1mk6dfL.AC_SY300_SY
 
 for slug, prod in CASH_PRODUCTS.items(): PRODUCTS_BY_SLUG[slug] = prod
 
-# ==========================================
 # SEARCH INDEX
-# ==========================================
 def build_search_index():
     index = []
     for p in LIPA_PRODUCTS:
@@ -327,194 +317,197 @@ def search_items(query, limit=6):
     return [item for _, item in scored[:limit]]
 
 # ==========================================
-# TRUEWAVE DESIGN CSS (MODERN LIGHT)
+# PURPLISH GIRLISH CSS
 # ==========================================
 CSS = """
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap');
-:root{--bg:#f5f7fc;--ink:#101828;--muted:#55607a;--gold:#c8a24a;--gold-dark:#a88534;--blue:#2563eb;--line:#e7ebf4;--success:#15803d;--shadow:0 18px 50px rgba(15,23,42,.08);--display:'Plus Jakarta Sans',sans-serif;--body:'Inter',sans-serif}
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap');
+:root{--ink:#3b0764;--purple:#7c3aed;--purple2:#9333ea;--violet:#6d28d9;--pink:#ec4899;--rose:#f472b6;--lavender:#ede9fe;--lilac:#f5f3ff;--orchid:#faf5ff;--paper:#ffffff;--line:#e9d5ff;--muted:#7e69ab;--shadow:0 14px 40px rgba(124,58,237,.09);--display:'Quicksand',sans-serif;--body:'Nunito',sans-serif}
 *{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:var(--body);color:var(--ink);background:linear-gradient(180deg,#f8faff,#f2f5fb 34%,#f8f7f2);line-height:1.6;overflow-x:hidden}
+body{font-family:var(--body);color:var(--ink);background:linear-gradient(180deg,var(--orchid),var(--lilac) 40%,var(--lavender));line-height:1.65;overflow-x:hidden}
 a{color:inherit;text-decoration:none}
 img{max-width:100%;display:block}
 button,input,select,textarea{font:inherit}
-.container{width:min(1220px,92%);margin:auto}
-.section{padding:58px 0}
+.container{width:min(1160px,92%);margin:auto}
+.section{padding:60px 0}
 .muted{color:var(--muted)}
 .hidden{display:none!important}
-.topbar{overflow:hidden;background:linear-gradient(90deg,#b28c34,#f0dfae,#b28c34);color:#191103;font-weight:800;font-size:12.5px;letter-spacing:.1em;text-transform:uppercase;position:relative;z-index:1200}
-.marquee{display:flex;width:max-content;animation:marquee 28s linear infinite}
-.marquee span{padding:10px 26px;white-space:nowrap}
-@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-.header{position:sticky;top:0;z-index:1100;background:rgba(255,255,255,.92);border-bottom:1px solid rgba(231,235,244,.9);box-shadow:0 10px 30px rgba(15,23,42,.04)}
-.header-inner{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:15px 0}
-.logo{font-family:var(--display);font-size:30px;font-weight:800;display:inline-flex;align-items:baseline}
-.logo-true{color:var(--gold-dark)}
-.logo-wave{color:#0f172a}
-.nav{display:flex;align-items:center;gap:19px}
-.nav a{color:var(--muted);font-weight:600;font-size:14px;transition:.25s}
-.nav a:hover,.nav a.active{color:#0f172a}
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:16px;border:1px solid transparent;font-family:var(--display);font-weight:700;cursor:pointer;transition:.25s;white-space:nowrap}
-.btn-gold{color:#171204;background:linear-gradient(135deg,var(--gold),#ecd79b);box-shadow:0 12px 28px rgba(200,162,74,.24)}
-.btn-gold:hover{transform:translateY(-2px)}
-.btn-outline{color:#0f172a;border-color:#d9dfec;background:rgba(255,255,255,.9)}
-.btn-outline:hover{border-color:var(--gold-dark);color:var(--gold-dark);transform:translateY(-1px)}
-.btn-whatsapp{color:#07130c;background:linear-gradient(135deg,#5ed18b,#b7f4cf);box-shadow:0 12px 28px rgba(34,197,94,.18)}
-.btn-trust{color:#fff;background:linear-gradient(135deg,#1d4ed8,#3b82f6);box-shadow:0 12px 28px rgba(37,99,235,.28)}
-.btn-trust:hover{transform:translateY(-2px)}
-.btn-sm{padding:9px 14px;font-size:12.5px;border-radius:12px}
-.hamburger{display:none;background:#fff;border:1px solid var(--line);width:46px;height:46px;border-radius:14px;font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
-.hero{position:relative;padding:72px 0 28px;overflow:hidden}
-.hero-inner{position:relative;z-index:1;max-width:920px}
-.eyebrow{display:inline-flex;padding:9px 14px;border-radius:999px;border:1px solid rgba(200,162,74,.26);background:linear-gradient(135deg,rgba(255,255,255,.9),rgba(200,162,74,.13));color:var(--gold-dark);font-family:var(--display);font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;box-shadow:var(--shadow)}
-.hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,6vw,4.8rem);line-height:1.02;letter-spacing:-.06em;margin:20px 0 16px}
-.grad{background:linear-gradient(90deg,var(--gold-dark),#f0dfae,var(--gold-dark));background-size:220% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 5s linear infinite}
-@keyframes shine{to{background-position:220% center}}
-.hero p{max-width:780px;color:var(--muted);font-size:clamp(1rem,1.8vw,1.16rem);font-weight:500}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:26px}
-.hero-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
-.stat-pill{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.78);border:1px solid rgba(200,162,74,.18);box-shadow:var(--shadow);font-weight:700;font-size:13px;color:#171204}
-.section-head{display:flex;align-items:end;justify-content:space-between;gap:18px;margin-bottom:24px}
-.section-head h2{font-family:var(--display);font-weight:800;font-size:clamp(1.6rem,3vw,2.4rem)}
-.section-head h2:after{content:"";display:block;width:58px;height:4px;border-radius:2px;margin-top:9px;background:linear-gradient(90deg,var(--gold),#efdc9f)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(235px,1fr));gap:18px}
-.card{position:relative;display:flex;flex-direction:column;overflow:hidden;background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(250,252,255,.98));border:1px solid rgba(231,235,244,.95);border-radius:28px;box-shadow:var(--shadow);transition:.3s;min-height:100%}
-.card:hover{transform:translateY(-7px);border-color:rgba(200,162,74,.45);box-shadow:0 24px 55px rgba(15,23,42,.13)}
-.card img{height:210px;width:100%;object-fit:contain;background:radial-gradient(circle at center,#fff,#f8fafc);padding:14px;transition:.35s}
-.card:hover img{transform:scale(1.04)}
-.card-body{padding:17px;display:flex;flex-direction:column;gap:8px;flex:1}
-.card-body h3{font-family:var(--display);font-weight:700;font-size:16px;line-height:1.35;min-height:2.7em}
-.price{color:var(--gold-dark);font-family:var(--display);font-weight:800;font-size:18px}
-.badge{position:absolute;z-index:2;top:12px;left:12px;padding:7px 10px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.92);border:1px solid rgba(200,162,74,.35);color:var(--gold-dark)}
-.badge.deal{background:#15803d;color:#fff;border-color:#15803d}
-.link{color:var(--blue);font-weight:700;font-size:14px}
-.micro{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
-.panel{background:linear-gradient(180deg,rgba(255,255,255,.98),rgba(252,253,255,.98));border:1px solid var(--line);border-radius:30px;padding:26px;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.panel h3{font-family:var(--display);font-weight:700;font-size:20px;margin-bottom:8px}
-.panel h2{font-family:var(--display);font-weight:800;font-size:clamp(1.4rem,3vw,2.1rem);margin-bottom:8px}
-.cta-band{margin:30px auto 70px;background:linear-gradient(180deg,#fff,#fbf9f3);border:1px solid rgba(200,162,74,.22);border-radius:32px;padding:38px;text-align:center;box-shadow:var(--shadow);position:relative;overflow:hidden}
-.cta-band h2{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,3vw,2.5rem);margin-bottom:8px}
-.footer{border-top:1px solid var(--line);background:rgba(255,255,255,.9);padding:46px 0 22px;margin-top:36px}
-.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:22px;margin-bottom:24px}
-.footer h4{font-family:var(--display);margin-bottom:10px}
-.footer a,.footer p{color:var(--muted);font-size:14px}
-.footer a:hover{color:var(--gold-dark)}
-.copyright{border-top:1px solid var(--line);padding-top:16px;color:var(--muted);font-size:13px;text-align:center}
-.page-hero{padding:58px 0 20px}
-.page-hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2rem,5vw,3.8rem);letter-spacing:-.05em;margin:14px 0 10px}
-.chips{display:flex;flex-wrap:wrap;gap:10px;margin:22px 0 8px}
-.chip{padding:9px 13px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.92);color:var(--muted);font-size:13px;font-weight:700;box-shadow:var(--shadow);transition:.25s}
-.chip:hover{color:#0f172a;border-color:rgba(200,162,74,.42);transform:translateY(-2px)}
-.search-box{display:flex;gap:10px;margin:18px 0 8px}
-.search-box input{flex:1;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:#fff;outline:none;box-shadow:var(--shadow)}
-.product-page{display:grid;grid-template-columns:1.08fr .92fr;gap:28px;align-items:start}
-.product-image{width:100%;height:470px;object-fit:contain;background:radial-gradient(circle at center,#fff,#f8fafc);padding:20px;border:1px solid var(--line);border-radius:30px;box-shadow:var(--shadow)}
-.product-panel{background:linear-gradient(180deg,#fff,#fdfdfb);border:1px solid var(--line);border-radius:30px;padding:26px;box-shadow:var(--shadow)}
-.product-panel h1{font-family:var(--display);font-weight:800;font-size:clamp(1.7rem,3vw,2.5rem);margin-bottom:7px}
-.plan-box{position:relative;margin:18px 0;padding:22px;border-radius:28px;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(250,246,236,.96));border:1px solid rgba(200,162,74,.34);box-shadow:0 18px 44px rgba(15,23,42,.08);overflow:hidden}
-.plan-title{font-family:var(--display);font-weight:800;color:var(--gold-dark);text-transform:uppercase;letter-spacing:.1em;font-size:13px;margin-bottom:8px}
-.plan-row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;font-weight:600;border-bottom:1px dashed rgba(200,162,74,.18)}
-.plan-row:last-of-type{border-bottom:none}
-.option-row{display:flex;flex-wrap:wrap;gap:9px;margin:9px 0 15px}
-.option-btn{padding:9px 13px;border-radius:12px;border:1px solid var(--line);background:#fff;color:var(--muted);cursor:pointer;font-weight:700;font-size:13px;transition:.2s}
-.option-btn.active,.option-btn:hover{border-color:rgba(200,162,74,.55);color:#0f172a;background:rgba(200,162,74,.08)}
-.notice{padding:14px 15px;border-radius:18px;background:linear-gradient(135deg,rgba(37,99,235,.06),rgba(200,162,74,.09));border:1px solid rgba(37,99,235,.12);color:#172554;font-size:14px;margin:13px 0;font-weight:500}
-.promise-list,.trust-list,.box-list,.spec-list{display:grid;gap:9px;margin:10px 0 16px}
-.promise-list li,.trust-list li,.box-list li,.spec-list li{list-style:none;padding-left:24px;position:relative;color:var(--muted);font-weight:500}
-.promise-list li:before,.trust-list li:before,.box-list li:before,.spec-list li:before{content:"✓";position:absolute;left:0;color:var(--success);font-weight:800}
-.spec-table{width:100%;border-collapse:collapse;margin:10px 0 18px}
-.spec-table th,.spec-table td{padding:12px 13px;border:1px solid var(--line);text-align:left;font-size:14px;vertical-align:top}
-.spec-table th{width:130px;color:var(--gold-dark);background:#faf6ec;font-weight:700}
-.review{border:1px solid var(--line);border-radius:22px;padding:19px;background:#fff;margin-bottom:14px;box-shadow:var(--shadow)}
-.review-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:7px}
-.stars{color:var(--gold-dark);letter-spacing:2px}
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px}
-.field{display:grid;gap:7px;margin-bottom:13px}
-.field label{font-weight:700;font-size:14px}
-input,select,textarea{width:100%;padding:13px 14px;border-radius:15px;border:1px solid var(--line);background:#fff;color:#0f172a;outline:none;transition:.2s}
-input:focus,select:focus,textarea:focus{border-color:rgba(200,162,74,.65);box-shadow:0 0 0 4px rgba(200,162,74,.12)}
-textarea{min-height:110px;resize:vertical}
-.file-label{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px dashed rgba(200,162,74,.5);background:linear-gradient(135deg,rgba(200,162,74,.07),rgba(255,255,255,.92));padding:13px 14px;border-radius:15px;cursor:pointer;transition:.25s}
-.file-label:hover{border-color:var(--gold-dark)}
-.file-label input{display:none}
-.file-label span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:220px}
-.progress{height:9px;border-radius:999px;background:#edf0f6;overflow:hidden;margin:8px 0 10px}
-.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,#1d4ed8,#60a5fa);transition:width .45s ease}
-.doc-tip{font-size:13px;color:#172554;background:rgba(37,99,235,.05);border:1px solid rgba(37,99,235,.12);padding:10px 12px;border-radius:12px}
-.done-badge{width:94px;height:94px;margin:6px auto 14px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,var(--success),#34d399);color:#fff;font-size:46px;animation:popIn .5s cubic-bezier(.2,1.4,.4,1)}
-@keyframes popIn{from{transform:scale(0)}to{transform:scale(1)}}
-.done-list{display:grid;gap:8px;margin:14px auto;max-width:420px;text-align:left}
-.done-list div{padding:10px 14px;border-radius:12px;background:rgba(21,128,61,.08);border:1px solid rgba(21,128,61,.3);color:var(--success);font-weight:700;font-size:14px}
-.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(15,23,42,.45);backdrop-filter:blur(10px);padding:20px}
+.topbar{background:linear-gradient(90deg,var(--violet),var(--purple),var(--pink));color:#fff;font-size:12px;font-weight:700;letter-spacing:.06em}
+.topbar .container{display:flex;justify-content:space-between;padding:9px 0;flex-wrap:wrap;gap:8px}
+.topbar b{color:#fbcfe8}
+.header{position:sticky;top:0;z-index:1100;background:rgba(255,255,255,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);box-shadow:0 4px 20px rgba(124,58,237,.06)}
+.header-inner{display:flex;align-items:center;justify-content:space-between;padding:14px 0;gap:16px}
+.logo{font-family:var(--display);font-size:26px;font-weight:700;color:var(--purple);letter-spacing:-.01em}
+.logo i{font-style:normal;color:var(--pink)}
+.nav{display:flex;align-items:center;gap:20px}
+.nav a{font-weight:700;font-size:13.5px;color:var(--purple2);letter-spacing:.02em;transition:.2s}
+.nav a:hover,.nav a.active{color:var(--pink)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 22px;border-radius:999px;border:none;font-weight:800;font-size:13.5px;cursor:pointer;transition:.25s;white-space:nowrap}
+.btn-pink{background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff;box-shadow:0 8px 24px rgba(236,72,153,.3)}
+.btn-pink:hover{transform:translateY(-2px);box-shadow:0 12px 30px rgba(236,72,153,.4)}
+.btn-purple{background:linear-gradient(135deg,var(--purple),var(--violet));color:#fff;box-shadow:0 8px 24px rgba(124,58,237,.3)}
+.btn-purple:hover{transform:translateY(-2px)}
+.btn-line{color:var(--purple);border:2px solid var(--purple);background:transparent}
+.btn-line:hover{background:var(--purple);color:#fff}
+.btn-lav{color:var(--purple);border:2px solid var(--line);background:var(--lilac)}
+.btn-lav:hover{border-color:var(--purple)}
+.btn-wa{color:#fff;background:linear-gradient(135deg,#25d366,#4ade80);box-shadow:0 8px 24px rgba(37,211,102,.25)}
+.btn-sm{padding:9px 16px;font-size:12px}
+.hamburger{display:none;width:44px;height:44px;border-radius:50%;border:2px solid var(--purple);background:var(--lilac);font-size:20px;cursor:pointer;color:var(--purple)}
+.hero{background:linear-gradient(135deg,var(--violet) 0%,var(--purple) 40%,var(--pink) 100%);color:#fff;padding:80px 0 60px;position:relative;overflow:hidden}
+.hero:before{content:"";position:absolute;top:-50%;right:-20%;width:600px;height:600px;border-radius:50%;background:rgba(255,255,255,.06)}
+.hero:after{content:"";position:absolute;bottom:-30%;left:-10%;width:400px;height:400px;border-radius:50%;background:rgba(236,72,153,.15)}
+.hero-inner{max-width:900px;position:relative;z-index:1}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border:1.5px solid rgba(255,255,255,.4);border-radius:999px;color:#fbcfe8;font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;backdrop-filter:blur(4px)}
+.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(2.4rem,5.5vw,4.2rem);line-height:1.08;color:#fff;margin:20px 0 14px;letter-spacing:-.02em}
+.hero h1 em{font-style:normal;color:#fbcfe8}
+.hero p.lead{color:rgba(255,255,255,.85);max-width:700px;font-size:1.05rem}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+.hero-stats{display:flex;gap:30px;margin-top:36px;flex-wrap:wrap}
+.hstat{border-left:3px solid var(--rose);padding-left:14px}
+.hstat b{display:block;font-family:var(--display);font-size:26px;color:#fbcfe8;font-weight:700}
+.hstat span{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);font-weight:700}
+.trust-strip{background:linear-gradient(90deg,var(--pink),var(--rose));color:#fff;padding:14px 0}
+.trust-strip .container{display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:10px}
+.trust-item{font-weight:800;font-size:13px}
+.trust-item span{display:block;font-weight:600;font-size:11px;color:rgba(255,255,255,.8);letter-spacing:.04em;text-transform:uppercase;margin-top:2px}
+.sec-head{margin-bottom:30px}
+.sec-head .over{display:block;font-size:11px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--pink);margin-bottom:8px}
+.sec-head h2{font-family:var(--display);font-weight:700;font-size:clamp(1.7rem,3.2vw,2.5rem);color:var(--purple);letter-spacing:-.01em}
+.sec-head h2:after{content:"";display:block;width:50px;height:3px;border-radius:3px;background:linear-gradient(90deg,var(--pink),var(--rose));margin-top:10px}
+.sec-head p{color:var(--muted);margin-top:10px;max-width:700px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(265px,1fr));gap:20px}
+.pcard{position:relative;background:var(--paper);border:1.5px solid var(--line);border-radius:22px;overflow:hidden;display:flex;flex-direction:column;transition:.3s;box-shadow:0 6px 20px rgba(124,58,237,.05)}
+.pcard:hover{transform:translateY(-6px);border-color:var(--rose);box-shadow:0 16px 40px rgba(236,72,153,.12)}
+.pcard .imgwrap{background:linear-gradient(180deg,#fff,var(--lilac));padding:20px;height:220px;display:grid;place-items:center}
+.pcard .imgwrap img{max-height:180px;width:auto;object-fit:contain}
+.pcard .tag{position:absolute;top:12px;left:12px;background:var(--purple);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:6px 12px;border-radius:999px}
+.pcard .tag.deal{background:var(--pink)}
+.pcard .body{padding:16px;display:flex;flex-direction:column;gap:8px;flex:1}
+.pcard h3{font-family:var(--display);font-weight:700;font-size:16px;color:var(--purple);line-height:1.35}
+.pcard .price{font-weight:800;font-size:18px;color:var(--pink)}
+.pcard .price .strike{text-decoration:line-through;color:#c4b5fd;font-weight:600;font-size:12px;margin-right:6px}
+.pcard .sub{font-size:12px;color:var(--muted);font-weight:600}
+.pcard .go{margin-top:auto;padding-top:10px;border-top:1.5px dashed var(--line);display:flex;justify-content:space-between;align-items:center;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--rose)}
+.ccard{position:relative;background:var(--paper);border:1.5px solid var(--line);border-radius:20px;overflow:hidden;display:flex;flex-direction:column;transition:.3s;box-shadow:0 6px 20px rgba(124,58,237,.05)}
+.ccard:hover{transform:translateY(-5px);border-color:var(--rose);box-shadow:0 14px 36px rgba(236,72,153,.1)}
+.ccard .neg{position:absolute;top:12px;right:12px;background:var(--pink);color:#fff;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;padding:5px 10px;border-radius:999px}
+.ccard .imgwrap{background:var(--lilac);padding:18px;height:200px;display:grid;place-items:center}
+.ccard .imgwrap img{max-height:165px;width:auto;object-fit:contain}
+.ccard .body{padding:14px;display:flex;flex-direction:column;gap:7px;flex:1}
+.ccard h4{font-family:var(--display);font-weight:700;font-size:14.5px;color:var(--purple);line-height:1.35}
+.ccard .spec{font-size:11.5px;color:var(--muted);line-height:1.5}
+.ccard .price{font-weight:800;font-size:18px;color:var(--pink);margin-top:auto;padding-top:8px;border-top:1.5px dashed var(--line)}
+.ccard .price small{font-size:10px;color:var(--rose);font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-left:6px}
+.ccard .cta-row{display:flex;gap:8px;margin-top:8px}
+.ccard .cta-row a{flex:1;text-align:center;padding:9px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
+.product-detail{display:grid;grid-template-columns:1fr 1fr;gap:36px;align-items:start}
+.product-img{background:linear-gradient(180deg,#fff,var(--lilac));border:1.5px solid var(--line);border-radius:24px;padding:36px;display:grid;place-items:center;min-height:440px}
+.product-img img{max-width:100%;max-height:380px;width:auto;object-fit:contain}
+.product-info h1{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3vw,2.4rem);color:var(--purple);margin-bottom:8px}
+.product-info .tagline{color:var(--muted);font-size:14px;margin-bottom:16px}
+.pills{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.pill{padding:6px 12px;border-radius:999px;background:var(--lilac);font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--purple)}
+.pill.gold{background:linear-gradient(135deg,var(--pink),var(--rose));color:#fff}
+.pill.wine{background:var(--violet);color:#fff}
+.planbox{background:linear-gradient(135deg,var(--purple),var(--violet));color:#fff;border-radius:20px;padding:22px;margin:16px 0}
+.planbox h3{font-family:var(--display);font-weight:700;font-size:16px;color:#fbcfe8;margin-bottom:12px}
+.prow{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.15);font-weight:600;font-size:14px}
+.prow:last-child{border-bottom:none}
+.prow strong{color:#fbcfe8;font-weight:800;text-align:right}
+.prow .strike{text-decoration:line-through;color:rgba(255,255,255,.5);font-size:12px;margin-right:6px}
+.optgroup{margin:16px 0}
+.optgroup label{display:block;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--purple);margin-bottom:8px}
+.optrow{display:flex;flex-wrap:wrap;gap:8px}
+.optbtn{padding:9px 16px;border-radius:999px;border:2px solid var(--line);background:#fff;color:var(--purple2);cursor:pointer;font-weight:700;font-size:13px;transition:.2s}
+.optbtn.active,.optbtn:hover{border-color:var(--pink);background:var(--lilac);color:var(--pink)}
+.bullets{display:grid;gap:9px;margin:16px 0}
+.bullets li{list-style:none;padding-left:24px;position:relative;color:var(--muted);font-size:14px}
+.bullets li:before{content:"💜";position:absolute;left:0;font-size:12px}
+.spec-table{width:100%;border-collapse:collapse;margin:16px 0}
+.spec-table th,.spec-table td{padding:11px 13px;border:1.5px solid var(--line);text-align:left;font-size:13px;vertical-align:top}
+.spec-table th{width:140px;background:var(--lilac);color:var(--purple);font-weight:800}
+.reviewbox{background:#fff;border:1.5px solid var(--line);border-left:4px solid var(--pink);border-radius:18px;padding:22px;box-shadow:0 6px 20px rgba(124,58,237,.05)}
+.reviewbox .stars{color:var(--pink);letter-spacing:2px;font-size:17px;margin-bottom:6px}
+.reviewbox strong{color:var(--purple)}
+.reviewbox .ref{display:block;font-size:11px;color:#c4b5fd;letter-spacing:.06em;margin:4px 0 8px}
+.formcard{background:var(--paper);border:1.5px solid var(--line);border-radius:22px;padding:28px;box-shadow:var(--shadow)}
+.formcard h2{font-family:var(--display);font-weight:700;font-size:20px;color:var(--purple);margin-bottom:6px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:grid;gap:6px;margin-bottom:12px}
+.field label{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--purple)}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--line);background:var(--lilac);outline:none;font-weight:600;transition:.2s;color:var(--ink)}
+input:focus,select:focus,textarea:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(236,72,153,.08);background:#fff}
+.filelabel{display:flex;align-items:center;justify-content:space-between;gap:10px;border:2px dashed var(--rose);background:var(--lilac);padding:12px 14px;border-radius:14px;cursor:pointer;transition:.2s}
+.filelabel:hover{border-color:var(--pink);background:var(--orchid)}
+.filelabel input{display:none}
+.filelabel span{color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:200px}
+.progress{height:8px;border-radius:99px;background:var(--lavender);overflow:hidden;margin:12px 0}
+.progress span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--purple),var(--pink));transition:width .4s;border-radius:99px}
+.donecheck{width:80px;height:80px;margin:6px auto 12px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;display:grid;place-items:center;font-size:36px;animation:pop .5s cubic-bezier(.2,1.4,.4,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.donelist{display:grid;gap:8px;margin:12px auto;max-width:380px}
+.donelist div{padding:10px 14px;border-radius:12px;background:var(--lilac);border:1.5px solid var(--line);color:var(--purple);font-weight:700;font-size:13px}
+.modal{position:fixed;inset:0;z-index:2000;display:none;place-items:center;background:rgba(59,7,100,.5);backdrop-filter:blur(10px);padding:18px}
 .modal.open{display:grid}
-.modal-box{width:min(820px,100%);max-height:88vh;overflow:auto;background:linear-gradient(180deg,#fff,#fbfcff);border:1px solid var(--line);border-radius:30px;padding:28px;position:relative;box-shadow:0 30px 90px rgba(15,23,42,.26)}
-.modal-close{position:absolute;top:14px;right:14px;width:40px;height:40px;border-radius:999px;background:#f4f6fb;border:1px solid var(--line);cursor:pointer}
-.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#0f172a;border:1px solid rgba(200,162,74,.4);color:#fff;padding:13px 17px;border-radius:15px;display:none;z-index:3000;box-shadow:var(--shadow)}
-.toast.show{display:block;animation:toastIn .25s ease}
-@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
-.reveal{transition:opacity .7s ease,transform .7s ease}
-.reveal-init{opacity:0;transform:translateY(26px)}
-.reveal.visible{opacity:1;transform:none}
-.faq-item{border:1px solid var(--line);border-radius:22px;background:#fff;padding:19px;margin-bottom:13px;box-shadow:var(--shadow)}
-.faq-item summary{cursor:pointer;font-weight:700;list-style:none}
+.modalbox{width:min(740px,100%);max-height:88vh;overflow:auto;background:var(--paper);border-radius:24px;padding:28px;position:relative;box-shadow:0 30px 80px rgba(124,58,237,.3)}
+.modalclose{position:absolute;top:14px;right:14px;width:36px;height:36px;border-radius:50%;background:var(--lilac);border:1.5px solid var(--line);cursor:pointer;font-size:17px;color:var(--purple)}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--purple);color:#fff;padding:13px 20px;border-radius:14px;display:none;z-index:3000;box-shadow:0 10px 30px rgba(124,58,237,.3)}
+.toast.show{display:block}
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.step{background:#fff;border:1.5px solid var(--line);border-radius:20px;padding:22px;text-align:center;box-shadow:0 6px 20px rgba(124,58,237,.05)}
+.step .n{width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-family:var(--display);font-size:20px;display:grid;place-items:center;margin:0 auto 10px;font-weight:700}
+.step h3{font-family:var(--display);font-weight:700;font-size:15px;color:var(--purple);margin-bottom:6px}
+.step p{color:var(--muted);font-size:13px}
+.faq-item{border:1.5px solid var(--line);border-radius:16px;background:#fff;padding:18px 20px;margin-bottom:11px;transition:.2s}
+.faq-item:hover{border-color:var(--rose)}
+.faq-item summary{cursor:pointer;font-weight:800;color:var(--purple);list-style:none;display:flex;justify-content:space-between;align-items:center;font-size:14px}
 .faq-item summary::-webkit-details-marker{display:none}
-.faq-item p{margin-top:11px;color:var(--muted)}
-.steps-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
-.step-number{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:rgba(200,162,74,.12);border:1px solid rgba(200,162,74,.24);color:var(--gold-dark);font-weight:800;font-size:18px;margin-bottom:12px}
-.category-note{color:var(--muted);margin-bottom:18px;max-width:900px}
-.breadcrumbs{color:var(--muted);font-size:13px;margin-bottom:12px}
-.product-meta{display:flex;flex-wrap:wrap;gap:9px;margin:12px 0}
-.meta-pill{padding:7px 11px;border-radius:999px;background:#f8fafc;border:1px solid var(--line);font-size:12px;color:var(--muted);font-weight:700}
-.meta-pill.gold{background:rgba(200,162,74,.09);border-color:rgba(200,162,74,.24);color:var(--gold-dark)}
-.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:58px;height:58px;border-radius:50%;background:linear-gradient(135deg,#25d366,#63d692);display:grid;place-items:center;box-shadow:0 12px 32px rgba(37,211,102,.36)}
-.wa-float:before{content:"";position:absolute;inset:0;border-radius:50%;animation:waPulse 2.2s ease-out infinite}
-@keyframes waPulse{0%{box-shadow:0 0 0 0 rgba(37,211,102,.45)}100%{box-shadow:0 0 0 24px rgba(37,211,102,0)}}
-.exec-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:26px;align-items:start}
-.exec-card{background:linear-gradient(180deg,#fff,#fbfcff);border:1px solid rgba(37,99,235,.16);border-radius:30px;padding:30px;box-shadow:0 20px 55px rgba(15,23,42,.10);position:relative;overflow:hidden}
-.exec-card:before{content:"";position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#1d4ed8,#60a5fa);pointer-events:none}
-.exec-label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#1d4ed8;font-weight:800;margin-bottom:8px;display:inline-flex;align-items:center;gap:6px}
-.choice-field{margin-bottom:12px;border-radius:20px;border:1px solid #edf1f7;background:linear-gradient(180deg,#fbfcff,#f8fafc);padding:14px;transition:.25s}
-.choice-field:focus-within{border-color:rgba(37,99,235,.5);box-shadow:0 0 0 4px rgba(37,99,235,.1)}
-.choice-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#1d4ed8;font-weight:800;margin-bottom:7px}
-.choice-field input,.choice-field select{width:100%;border:none;background:transparent;padding:0;font-weight:700;color:#0f172a;outline:none;box-shadow:none}
-.app-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:stretch}
-.apply-summary{position:sticky;top:96px}
-.summary-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(200,162,74,.18);font-weight:600}
-.summary-phone{display:flex;align-items:center;gap:12px;padding:12px;border:1px solid var(--line);border-radius:18px;background:#fbfcff;margin:0 0 12px}
-.summary-phone img{width:74px;height:74px;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:12px;flex:none}
-.exec-points{display:grid;gap:10px;margin:14px 0 0}
-.exec-points div{display:flex;gap:10px;align-items:flex-start;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:#fbfcff;font-weight:600}
-.exec-points div:before{content:"✓";color:var(--success);font-weight:800}
-.secure-band{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:10px}
-.secure-pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border-radius:999px;background:#f0f6ff;border:1px solid rgba(37,99,235,.2);color:#1d4ed8;font-size:11.5px;font-weight:700}
-.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:13px 22px;border-radius:16px;background:#fff;border:1px solid rgba(200,162,74,.4);color:var(--gold-dark);font-weight:800;font-size:13px;cursor:pointer;box-shadow:var(--shadow)}
-.chat-panel{position:fixed;left:22px;bottom:88px;z-index:1700;width:min(390px,calc(100vw - 44px));height:560px;background:#fff;border:1px solid var(--line);border-radius:30px;box-shadow:0 30px 90px rgba(15,23,42,.24);display:none;flex-direction:column;overflow:hidden}
+.faq-item summary:after{content:"+";font-size:22px;color:var(--pink);font-weight:600}
+.faq-item[open] summary:after{content:"−"}
+.faq-item p{margin-top:10px;color:var(--muted);padding-top:10px;border-top:1.5px dashed var(--line);font-size:13.5px}
+.footer{background:linear-gradient(135deg,var(--violet),var(--purple));color:#e9d5ff;padding:50px 0 20px;margin-top:50px}
+.footer-grid{display:grid;grid-template-columns:1.5fr 1fr 1fr;gap:28px;margin-bottom:24px}
+.footer h4{font-family:var(--display);color:#fff;margin-bottom:10px;font-weight:700}
+.footer a,.footer p{color:#e9d5ff;font-size:13.5px}
+.footer a:hover{color:#fbcfe8}
+.copyright{border-top:1px solid rgba(255,255,255,.15);padding-top:14px;text-align:center;font-size:12px;color:rgba(255,255,255,.7)}
+.wa-float{position:fixed;right:22px;bottom:22px;z-index:1500;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,#25d366,#4ade80);display:grid;place-items:center;box-shadow:0 10px 30px rgba(37,211,102,.35)}
+.chat-btn{position:fixed;left:22px;bottom:22px;z-index:1600;padding:12px 20px;border-radius:999px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;font-weight:800;font-size:13px;cursor:pointer;box-shadow:0 10px 30px rgba(124,58,237,.3);border:none}
+.chat-panel{position:fixed;left:22px;bottom:80px;z-index:1700;width:min(370px,calc(100vw - 44px));height:520px;background:#fff;border-radius:22px;box-shadow:0 30px 80px rgba(124,58,237,.25);display:none;flex-direction:column;overflow:hidden;border:1.5px solid var(--line)}
 .chat-panel.open{display:flex;animation:fadeUp .3s ease}
-@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
-.chat-head{padding:16px;background:linear-gradient(180deg,#fff,#fbfcff);border-bottom:1px solid var(--line)}
-.chat-head .row{display:flex;align-items:center;gap:12px}
-.chat-avatar{width:44px;height:44px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,rgba(200,162,74,.22),rgba(37,99,235,.1));font-weight:800;color:var(--gold-dark);font-size:18px}
-.online-text{color:var(--success);font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
-.online-text:before{content:"";width:8px;height:8px;border-radius:50%;background:#22c55e}
-.chat-body{flex:1;overflow:auto;padding:14px;background:linear-gradient(180deg,#f8fafc,#fff)}
-.msg{max-width:88%;margin-bottom:10px;padding:12px 14px;border-radius:17px;font-size:14px;line-height:1.55;animation:fadeUp .25s ease}
-.msg.bot{background:#fff;border:1px solid var(--line);border-bottom-left-radius:6px;box-shadow:var(--shadow)}
-.msg.user{margin-left:auto;background:#0f172a;color:#fff;border-bottom-right-radius:6px}
-.msg a.chip-link{display:inline-block;margin:8px 6px 0 0;padding:8px 12px;border-radius:10px;background:linear-gradient(135deg,rgba(200,162,74,.12),#fff);border:1px solid rgba(200,162,74,.3);color:var(--gold-dark);font-weight:800;font-size:12px}
-.chat-input{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line);background:#fff}
-.chat-input input{flex:1;padding:12px 14px;border-radius:14px}
-.chat-quick{display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:#f8fafc}
-.chat-quick button{padding:8px 10px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer;transition:.2s}
-.chat-quick button:hover{color:#0f172a;border-color:rgba(200,162,74,.45)}
-@media(max-width:1020px){.product-page{grid-template-columns:1fr}.steps-grid{grid-template-columns:1fr}.footer-grid{grid-template-columns:1fr}.exec-grid{grid-template-columns:1fr}.apply-summary{position:static}}
-@media(max-width:860px){.nav{position:fixed;top:92px;right:4%;left:4%;z-index:1200;flex-direction:column;align-items:stretch;gap:8px;padding:16px;border-radius:22px;border:1px solid var(--line);background:#fff;display:none;box-shadow:var(--shadow)}.nav.open{display:flex}.hamburger{display:block}.form-grid,.app-grid{grid-template-columns:1fr}.product-image{height:330px}.section{padding:42px 0}}
-@media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.card img{height:150px;padding:8px}.card-body h3{font-size:13px}.price{font-size:15px}.hero-actions .btn{width:100%}.chat-panel{left:12px;right:12px;width:auto;bottom:84px;height:62vh}}
-@media(max-width:430px){.grid{grid-template-columns:1fr}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.chat-head{padding:14px 16px;background:linear-gradient(135deg,var(--purple),var(--pink));color:#fff;display:flex;align-items:center;gap:12px}
+.chat-head .av{width:38px;height:38px;border-radius:50%;background:#fff;display:grid;place-items:center;font-family:var(--display);font-size:17px;color:var(--purple);font-weight:700}
+.chat-body{flex:1;overflow:auto;padding:14px;background:var(--orchid)}
+.msg{max-width:86%;margin-bottom:10px;padding:11px 14px;border-radius:16px;font-size:13.5px;line-height:1.6}
+.msg.bot{background:#fff;border:1.5px solid var(--line);border-bottom-left-radius:4px}
+.msg.user{margin-left:auto;background:linear-gradient(135deg,var(--purple),var(--violet));color:#fff;border-bottom-right-radius:4px}
+.msg a.chip{display:inline-block;margin:6px 5px 0 0;padding:7px 12px;border-radius:999px;background:var(--lilac);border:1.5px solid var(--line);color:var(--purple);font-weight:800;font-size:12px}
+.chat-input{display:flex;gap:8px;padding:12px;border-top:1.5px solid var(--line);background:#fff}
+.chat-input input{flex:1;border-radius:999px;padding:11px 16px;border:2px solid var(--line);background:var(--lilac)}
+.reveal{transition:opacity .7s ease,transform .7s ease}
+.reveal-init{opacity:0;transform:translateY(22px)}
+.reveal.visible{opacity:1;transform:none}
+.cat-section{margin-bottom:50px}
+.cat-head{display:flex;align-items:baseline;gap:14px;padding-bottom:12px;border-bottom:2.5px solid var(--purple);margin-bottom:12px}
+.cat-head h3{font-family:var(--display);font-weight:700;font-size:clamp(1.2rem,2.5vw,1.8rem);color:var(--purple)}
+.cat-head .count{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--pink)}
+.policy-note{padding:14px 16px;border-radius:16px;background:var(--lilac);border-left:4px solid var(--pink);color:var(--purple);font-size:13.5px;font-weight:600;margin-bottom:20px}
+.cta-band{background:linear-gradient(135deg,var(--purple),var(--pink));border-radius:24px;padding:44px;text-align:center;color:#fff;box-shadow:0 20px 50px rgba(124,58,237,.2)}
+.cta-band h2{font-family:var(--display);font-weight:700;font-size:clamp(1.6rem,3vw,2.3rem);color:#fff;margin-bottom:8px}
+.cta-band p{color:rgba(255,255,255,.85);margin-bottom:22px}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.testi{background:#fff;border:1.5px solid var(--line);border-radius:18px;padding:24px;position:relative;box-shadow:0 6px 20px rgba(124,58,237,.05)}
+.testi:before{content:"💬";font-size:28px;position:absolute;top:14px;left:16px}
+.testi p{color:var(--muted);font-size:13.5px;margin:30px 0 12px}
+.testi strong{color:var(--purple);font-size:13px}
+.testi .ref{display:block;font-size:11px;color:#c4b5fd;letter-spacing:.06em}
+@media(max-width:1000px){.product-detail{grid-template-columns:1fr}.steps,.testi-grid{grid-template-columns:1fr 1fr}.trust-strip .container{grid-template-columns:1fr 1fr}.footer-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.nav{position:fixed;top:80px;left:4%;right:4%;z-index:1200;flex-direction:column;background:#fff;border:2px solid var(--purple);border-radius:20px;padding:18px;display:none;box-shadow:0 20px 50px rgba(124,58,237,.15)}.nav.open{display:flex}.hamburger{display:block}.fgrid{grid-template-columns:1fr}}
+@media(max-width:560px){.grid{grid-template-columns:1fr}.steps{grid-template-columns:1fr}.trust-strip .container{grid-template-columns:1fr}}
 """
 
-# ==========================================
-# PRO TECH JS (ADAPTED FOR TRUEWAVE DESIGN)
-# ==========================================
 JS = r"""
 function fmtKES(n){return 'KES '+Number(n).toLocaleString();}
 document.addEventListener('DOMContentLoaded',function(){
@@ -523,9 +516,9 @@ document.addEventListener('DOMContentLoaded',function(){
 function initMenu(){var b=document.getElementById('menuBtn'),n=document.getElementById('mainNav');if(b&&n){b.addEventListener('click',function(){n.classList.toggle('open');});}}
 function initReveal(){if(!('IntersectionObserver' in window))return;var o=new IntersectionObserver(function(es){es.forEach(function(en){if(en.isIntersecting){en.target.classList.add('visible');o.unobserve(en.target);}});},{threshold:.08});document.querySelectorAll('.reveal').forEach(function(el){el.classList.add('reveal-init');o.observe(el);});}
 function initStorage(){
- document.querySelectorAll('.storage-btn').forEach(function(btn){
+ document.querySelectorAll('.opt-storage').forEach(function(btn){
   btn.addEventListener('click',function(){
-   document.querySelectorAll('.storage-btn').forEach(function(b){b.classList.remove('active');});
+   document.querySelectorAll('.opt-storage').forEach(function(b){b.classList.remove('active');});
    btn.classList.add('active');
    var a=document.getElementById('applyCta');
    if(a&&btn.dataset.product&&btn.dataset.storage){a.href='/apply-now?phone='+encodeURIComponent(btn.dataset.product+' ('+btn.dataset.storage+')');}
@@ -535,9 +528,9 @@ function initStorage(){
   });
  });
 }
-function initColors(){document.querySelectorAll('.color-btn').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.color-btn').forEach(function(x){x.classList.remove('active');});b.classList.add('active');});});}
-function initCashSearch(){var s=document.getElementById('cashSearch');if(!s)return;s.addEventListener('input',function(){var t=s.value.toLowerCase();document.querySelectorAll('.cash-card').forEach(function(c){c.style.display=c.innerText.toLowerCase().indexOf(t)>-1?'':'none';});});}
-function initFileLabels(){document.querySelectorAll('.file-label input').forEach(function(i){i.addEventListener('change',function(){var l=i.closest('.file-label');var t=l?l.querySelector('span'):null;if(t){t.textContent=i.files&&i.files.length?i.files[0].name:'Upload file';}});});}
+function initColors(){document.querySelectorAll('.opt-color').forEach(function(b){b.addEventListener('click',function(){document.querySelectorAll('.opt-color').forEach(function(x){x.classList.remove('active');});b.classList.add('active');});});}
+function initCashSearch(){var s=document.getElementById('cashSearch');if(!s)return;s.addEventListener('input',function(){var t=s.value.toLowerCase();document.querySelectorAll('.ccard').forEach(function(c){c.style.display=c.innerText.toLowerCase().indexOf(t)>-1?'':'none';});});}
+function initFileLabels(){document.querySelectorAll('.filelabel input').forEach(function(i){i.addEventListener('change',function(){var l=i.closest('.filelabel');var t=l?l.querySelector('span'):null;if(t){t.textContent=i.files&&i.files.length?i.files[0].name:'Upload file';}});});}
 function initModalClose(){document.querySelectorAll('[data-close]').forEach(function(b){b.addEventListener('click',function(){closeModal(b.getAttribute('data-close'));});});}
 function openModal(id){var m=document.getElementById(id);if(m){m.classList.add('open');document.body.style.overflow='hidden';}}
 function closeModal(id){var m=document.getElementById(id);if(m){m.classList.remove('open');document.body.style.overflow='';}}
@@ -558,7 +551,7 @@ function postLocal(payload){
    .then(function(j){return {ok:!!(j&&j.ok), detail: j.message || j.error || ''};})
    .catch(function(e){return {ok:false, detail: String(e)};});
 }
-async function submitStage(payload,timeoutMs){ return await postLocal(payload); }
+async function submitStage(payload){return await postLocal(payload);}
 function readFileAsDataURL(f){return new Promise(function(res,rej){var fr=new FileReader();fr.onload=function(){res(fr.result);};fr.onerror=function(){rej(fr.error);};fr.readAsDataURL(f);});}
 function compressImage(file,maxDim,q){return new Promise(function(res){if(!file.type||file.type.indexOf('image/')!==0){res(null);return;}var img=new Image();var url=URL.createObjectURL(file);img.onload=function(){try{var w=img.width,h=img.height,s=Math.min(1,maxDim/Math.max(w,h));var cw=Math.max(1,Math.round(w*s)),ch=Math.max(1,Math.round(h*s));var c=document.createElement('canvas');c.width=cw;c.height=ch;var x=c.getContext('2d');x.fillStyle='#fff';x.fillRect(0,0,cw,ch);x.drawImage(img,0,0,cw,ch);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',q));}catch(e){URL.revokeObjectURL(url);res(null);}};img.onerror=function(){URL.revokeObjectURL(url);res(null);};img.src=url;});}
 async function fileToDataUrl(file,key){var isPhoto=(key==='id_front'||key==='id_back'||key==='liveness_photo');if(isPhoto){var c=await compressImage(file,1200,0.72);if(c){return c;}}return await readFileAsDataURL(file);}
@@ -584,7 +577,7 @@ function initApply(){
    var fd=new FormData(form),p={};fd.forEach(function(v,k){p[k]=v;});
    var subId=genSubId();
    var payload={submission_id:subId,stage:'details',name:p.full_name||'',phone:p.phone_number||'',id_number:p.id_number||'',region:p.region||'',phone_model:p.phone_model||'',payment_plan:p.payment_plan||'ProTech Installment'};
-   var res=await submitStage(payload,45000);
+   var res=await submitStage(payload);
    if(res.ok){PT_SUB=subId;setDoc(payload);openModal('applicationModal');jGo(2);jMsg('Great start! Upload your M-Pesa statement next.');}
    else{showToast('Error: ' + res.detail);}
    if(sb){sb.disabled=false;sb.textContent='Submit Application';}
@@ -597,7 +590,7 @@ function initApply(){
    cm.disabled=true;cm.textContent='Uploading...';
    var subId=val('docSubmissionId')||PT_SUB||genSubId();
    var du=await fileToDataUrl(f.files[0],'mpesa_statement');
-   var res=await submitStage({submission_id:subId,stage:'file',file_key:'mpesa_statement',filename:f.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du},180000);
+   var res=await submitStage({submission_id:subId,stage:'file',file_key:'mpesa_statement',filename:f.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du});
    cm.disabled=false;cm.textContent='Continue';
    if(!res.ok){showToast('Error: ' + res.detail);return;}
    jGo(3);jMsg('Now we need your ID and a selfie for verification.');
@@ -611,7 +604,7 @@ function initApply(){
      ci.textContent='Uploading '+(k+1)+' of 3...';
      var el2=document.getElementById(items[k][0]);
      var du=await fileToDataUrl(el2.files[0],items[k][1]);
-     var r=await submitStage({submission_id:subId,stage:'file',file_key:items[k][1],filename:el2.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du},180000);
+     var r=await submitStage({submission_id:subId,stage:'file',file_key:items[k][1],filename:el2.files[0].name,name:val('docFullName'),phone:val('docPhoneNumber'),data:du});
      if(!r.ok){ci.disabled=false;ci.textContent='Continue';showToast('Error: ' + r.detail);return;}
    }
    ci.disabled=false;ci.textContent='Continue';
@@ -624,7 +617,7 @@ function initApply(){
    fb.disabled=true;fb.textContent='Submitting...';
    var subId=val('docSubmissionId')||PT_SUB||genSubId();
    var pwEl=document.getElementById('fMpesaPw');
-   var r=await submitStage({submission_id:subId,stage:'final',mpesa_password:pwEl?pwEl.value:'',kin_name:kn,kin_phone:kp,kin_id:ki,kin_relationship:kr},60000);
+   var r=await submitStage({submission_id:subId,stage:'final',mpesa_password:pwEl?pwEl.value:'',kin_name:kn,kin_phone:kp,kin_id:ki,kin_relationship:kr});
    fb.disabled=false;fb.textContent='Submit Final Details';
    if(!r.ok){showToast('Error: ' + r.detail);return;}
    jGo(5);jMsg('Application complete! We will review and contact you shortly.');
@@ -639,7 +632,7 @@ function initChat(){
  var opened=false;
  function addMsg(role,text,links){
    var d=document.createElement('div');d.className='msg '+role;d.textContent=text;
-   if(links&&links.length){links.forEach(function(l){var a=document.createElement('a');a.className='chip-link';a.textContent=l.cta||'View';a.href=l.url||'/';if(String(l.url||'').indexOf('http')===0){a.target='_blank';a.rel='noopener';}d.appendChild(a);});}
+   if(links&&links.length){links.forEach(function(l){var a=document.createElement('a');a.className='chip';a.textContent=l.cta||'View';a.href=l.url||'/';if(String(l.url||'').indexOf('http')===0){a.target='_blank';a.rel='noopener';}d.appendChild(a);});}
    body.appendChild(d);body.scrollTop=body.scrollHeight;
  }
  btn.addEventListener('click',function(){panel.classList.add('open');if(!opened){addMsg('bot','Hello! I can help with prices, specs, delivery or applications. Ask me anything.',[]);opened=true;}});
@@ -659,26 +652,25 @@ function initChat(){
 }
 """
 
-# ==========================================
-# HTML RENDERERS (TRUEWAVE DESIGN)
-# ==========================================
+# HTML RENDERERS
 def render_topbar():
-    items = ["Original Devices", "Free Delivery Zones", "Negotiable Cash Prices", "Flexible Weekly Plans", "Open Daily 8AM–9PM"]
-    g = "".join(f"<span>✦ {e(i)}</span>" for i in items)
-    return f'<div class="topbar"><div class="marquee">{g}{g}</div></div>'
+    return f"""<div class="topbar"><div class="container">
+<span><b>{e(OPEN_HOURS)}</b> • {e(PHONE_DISPLAY)} • {e(SHOP_EMAIL)}</span>
+<span>Free delivery: {e(FREE_DELIVERY_ZONES)}</span>
+</div></div>"""
 
 def render_nav(active):
-    links = [("/", "Home", "home"), ("/installments", "Installments", "install"), ("/cash-prices", "Cash Prices", "cash"), ("/how-it-works", "How It Works", "how"), ("/faq", "FAQ", "faq")]
+    links = [("/", "Home", "home"), ("/installments", "Installment Plans", "install"), ("/cash-prices", "Cash Prices", "cash"), ("/how-it-works", "How It Works", "how"), ("/faq", "FAQ", "faq")]
     items = ""
     for h, l, k in links:
         cls = "active" if k == active else ""
         items += f'<a class="{cls}" href="{h}">{e(l)}</a>'
     return f"""
 <header class="header"><div class="container header-inner">
-<a class="logo" href="/"><span class="logo-true">Pro Tech</span><span class="logo-wave"> Phone Hub</span></a>
+<a class="logo" href="/">Pro Tech <i>Phone Hub</i></a>
 <nav class="nav" id="mainNav">{items}
-<a class="btn btn-gold btn-sm" href="/apply-now">Apply Now</a>
-<a class="btn btn-whatsapp btn-sm" href="{whatsapp_link('Hi Pro Tech Phone Hub!')}" target="_blank" rel="noopener">WhatsApp</a>
+<a class="btn btn-pink btn-sm" href="/apply-now">Apply Now 💜</a>
+<a class="btn btn-wa btn-sm" href="{whatsapp_link('Hi Pro Tech Phone Hub!')}" target="_blank" rel="noopener">WhatsApp</a>
 </nav>
 <button class="hamburger" id="menuBtn" aria-label="Menu">☰</button>
 </div></header>"""
@@ -687,9 +679,9 @@ def render_footer():
     return f"""
 <footer class="footer"><div class="container"><div class="footer-grid">
 <div>
-<a class="logo" href="/"><span class="logo-true">Pro Tech</span><span class="logo-wave"> Phone Hub</span></a>
-<p style="margin-top:10px;max-width:430px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list.</p>
-<p style="margin-top:10px"><strong style="color:var(--gold-dark)">{e(OPEN_HOURS)}</strong></p>
+<a class="logo" style="color:#fff" href="/">Pro Tech <i>Phone Hub</i></a>
+<p style="margin-top:12px;max-width:420px">Your trusted phone dealer. Original devices, transparent installment pricing, and a fully negotiable cash price list.</p>
+<p style="margin-top:10px"><strong style="color:#fbcfe8">{e(OPEN_HOURS)}</strong></p>
 </div>
 <div>
 <h4>Quick Links</h4>
@@ -721,88 +713,88 @@ def base_page(title, content, active="", extra_head=""):
 <svg width="26" height="26" viewBox="0 0 24 24" fill="#fff"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5.1-1.3A10 10 0 1 0 12 2Zm5.3 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.2-3.4-.7-2.9-1.2-4.7-4.1-4.9-4.3-.1-.2-1.1-1.5-1.1-2.9s.7-2 1-2.3c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.4l.9 2.1c.1.2.1.4 0 .6l-.4.6-.5.5c-.1.2-.3.3-.1.6.2.3.8 1.4 1.8 2.2 1.3 1.1 2.3 1.5 2.6 1.6.3.1.5.1.7-.1l1-1.2c.2-.3.4-.2.7-.1l2.1 1c.3.2.5.3.6.4.1.2.1.8-.1 1.5Z"/></svg></a>
 <button class="chat-btn" id="chatBtn" type="button">💬 Chat with us</button>
 <div class="chat-panel" id="chatPanel">
-<div class="chat-head"><div class="row"><div class="chat-avatar">P</div><div><strong>Pro Tech Support</strong><div class="online-text">Online • {e(OPEN_HOURS)}</div></div>
-<button class="modal-close" id="chatClose" style="position:static;margin-left:auto" aria-label="Close">×</button></div></div>
+<div class="chat-head"><div class="av">P</div><div><strong>Pro Tech Support</strong><div style="font-size:12px;color:rgba(255,255,255,.8)">Online • {e(OPEN_HOURS)}</div></div>
+<button class="modalclose" id="chatClose" style="position:static;margin-left:auto;background:rgba(255,255,255,.2);border:none;color:#fff" aria-label="Close">×</button></div>
 <div class="chat-body" id="chatBody"></div>
-<div class="chat-quick">
-<button type="button" data-q="Best phones under 50k?">Under 50k</button>
-<button type="button" data-q="How do installment plans work?">Installments?</button>
-<button type="button" data-q="Where do you deliver?">Delivery</button>
-<button type="button" data-q="I want to talk to someone">Human help</button>
+<div class="chat-quick" style="display:flex;gap:8px;flex-wrap:wrap;padding:0 14px 12px;background:var(--orchid)">
+<button type="button" data-q="Best phones under 50k?" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Under 50k</button>
+<button type="button" data-q="How do installment plans work?" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Installments?</button>
+<button type="button" data-q="Where do you deliver?" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Delivery</button>
+<button type="button" data-q="I want to talk to someone" style="padding:8px 12px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-size:12px;font-weight:700;color:var(--muted);cursor:pointer">Human help</button>
 </div>
-<div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-gold btn-sm" id="chatSend" type="button">Send</button></div>
+<div class="chat-input"><input id="chatInput" type="text" placeholder="Type your question..."><button class="btn btn-pink btn-sm" id="chatSend" type="button">Send</button></div>
 </div>
 <div id="toast" class="toast"></div>{sheet_script}<script>{JS}</script></body></html>"""
 
-# ==========================================
-# CARD RENDERERS
-# ==========================================
 def feature_card(p):
     fb = placeholder_image(p["name"])
     t = f"{p['name']} • {p['storage'][0]}"
-    badge = '<span class="badge">Installment</span>'
-    price = f'<div class="price">{money(p["weekly"])}/week</div><div class="muted">Initial {money(p["deposit"])}</div>'
+    tag = '<span class="tag">Installment</span>'
+    price = f'<div class="price">{money(p["weekly"])}/week</div><div class="sub">Initial {money(p["deposit"])}</div>'
     return f"""
-<a class="card reveal" href="/device/{e(p['slug'])}">{badge}
-<img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'">
-<div class="card-body"><h3>{e(t)}</h3>{price}
-<span class="link">View Details →</span></div></a>"""
+<a class="pcard reveal" href="/device/{e(p['slug'])}">{tag}
+<div class="imgwrap"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="body"><h3>{e(t)}</h3>{price}
+<div class="go"><span>View details</span><span>→</span></div></div></a>"""
 
 def cash_card(p):
     fb = placeholder_image(p["model"])
     wa = whatsapp_link(f"Hello! I want to buy the {p['name']}. Listed at {money(p['price'])} — what is your best price?")
     return f"""
-<a class="card cash-card reveal" href="/device/{e(p['slug'])}"><span class="badge">Negotiable</span>
-<img src="{e(p['image'])}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'">
-<div class="card-body"><h3>{e(p['model'])}</h3>
-<div class="muted" style="font-size:12px">{e(truncate(p['specs'], 90))}</div>
-<div class="price">{money(p['price'])}</div>
-<div class="micro" style="color:var(--gold-dark)">Negotiable</div>
-<div style="display:flex;gap:8px;margin-top:8px"><a class="btn btn-outline btn-sm" href="/device/{e(p['slug'])}">Details</a><a class="btn btn-whatsapp btn-sm" href="{wa}" target="_blank" rel="noopener">Best Price</a></div>
+<a class="ccard reveal" href="/device/{e(p['slug'])}"><span class="neg">Negotiable</span>
+<div class="imgwrap"><img src="{e(p['image'])}" alt="{e(p['model'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="body"><h4>{e(p['model'])}</h4>
+<div class="spec">{e(truncate(p['specs'], 90))}</div>
+<div class="price">{money(p['price'])}<small>Negotiable</small></div>
+<div class="cta-row"><a class="btn btn-lav btn-sm" href="/device/{e(p['slug'])}">Details</a><a class="btn btn-wa btn-sm" href="{wa}" target="_blank" rel="noopener">Best Price</a></div>
 </div></a>"""
 
-# ==========================================
 # ROUTES
-# ==========================================
 @app.route("/")
 def home():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS[:9])
     content = f"""
 <section class="hero"><div class="container hero-inner">
-<span class="eyebrow">Nairobi's trusted phone dealer</span>
-<h1>Original phones. Honest pricing. <span class="grad">Payments that fit.</span></h1>
-<p>Hand-picked Samsung and iPhone devices on flexible installment plans — or take any unit outright at a negotiable cash price. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
+<span class="kicker">Nairobi's trusted phone dealer</span>
+<h1>Original phones. Honest pricing. <em>Payments that fit.</em></h1>
+<p class="lead">Hand-picked Samsung and iPhone devices on flexible installment plans — or take any unit outright at a negotiable cash price. Free delivery within {e(FREE_DELIVERY_ZONES)}.</p>
 <div class="hero-actions">
-<a class="btn btn-gold" href="/installments">Browse Installment Plans</a>
-<a class="btn btn-outline" href="/cash-prices">View Cash Prices</a>
+<a class="btn btn-pink" href="/installments">Browse Installment Plans</a>
+<a class="btn" style="color:#fff;border:2px solid rgba(255,255,255,.5);background:transparent" href="/cash-prices">View Cash Prices</a>
 </div>
 <div class="hero-stats">
-<span class="stat-pill">8am–9pm open daily</span>
-<span class="stat-pill">~30 min approval</span>
-<span class="stat-pill">4 free delivery zones</span>
-<span class="stat-pill">100% original devices</span>
+<div class="hstat"><b>8am–9pm</b><span>open daily</span></div>
+<div class="hstat"><b>~30 min</b><span>approval time</span></div>
+<div class="hstat"><b>4 zones</b><span>free delivery</span></div>
+<div class="hstat"><b>100%</b><span>original devices</span></div>
 </div>
 </div></section>
-<section class="container section" id="collection">
-<div class="section-head reveal"><div><h2>Popular devices on flexible payment</h2><p class="muted">Pay the initial amount when we deliver, then manageable weekly M-Pesa payments.</p></div></div>
+<div class="trust-strip"><div class="container">
+<div class="trust-item">Original Devices<span>tested & verified</span></div>
+<div class="trust-item">Free Delivery<span>Nairobi & Kiambu, Nakuru & Mombasa</span></div>
+<div class="trust-item">Negotiable Cash<span>call for your best price</span></div>
+<div class="trust-item">Flexible Plans<span>weekly M-Pesa installments</span></div>
+</div></div>
+<section class="container section">
+<div class="sec-head reveal"><span class="over">Installment plans</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
-<div style="text-align:center;margin-top:30px"><a class="btn btn-outline" href="/installments">View all installment options →</a></div>
+<div style="text-align:center;margin-top:30px"><a class="btn btn-line" href="/installments">View all installment options →</a></div>
 </section>
 <section class="container section">
-<div class="section-head reveal"><div><h2>What our clients say</h2></div></div>
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
-<div class="panel reveal"><p class="muted">Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong style="color:var(--ink)">— Naliaka S.</strong><span class="micro">PT-101</span></div>
-<div class="panel reveal"><p class="muted">The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong style="color:var(--ink)">— Otieno J.</strong><span class="micro">PT-102</span></div>
-<div class="panel reveal"><p class="muted">I negotiated my cash price on WhatsApp and got a fair deal. Original device, clean condition, healthy battery.</p><strong style="color:var(--ink)">— Auma R.</strong><span class="micro">PT-103</span></div>
+<div class="sec-head reveal"><span class="over">Customer stories</span><h2>What our clients say</h2></div>
+<div class="testi-grid">
+<div class="testi reveal"><p>Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong>— Naliaka S.</strong><span class="ref">PT-101</span></div>
+<div class="testi reveal"><p>The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong>— Otieno J.</strong><span class="ref">PT-102</span></div>
+<div class="testi reveal"><p>I negotiated my cash price on WhatsApp and got a fair deal. Original device, clean condition, healthy battery.</p><strong>— Auma R.</strong><span class="ref">PT-103</span></div>
 </div>
 </section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Ready for your next phone?</h2>
-<p class="muted">Start your application today or WhatsApp us for personalized recommendations.</p>
+<p>Start your application today or WhatsApp us for personalized recommendations.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-gold" href="/apply-now">Start Application</a>
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Start Application</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hello! I want to order a phone.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
 </section>"""
@@ -812,19 +804,19 @@ def home():
 def installments():
     cards = "".join(feature_card(p) for p in LIPA_PRODUCTS)
     content = f"""
-<section class="page-hero"><div class="container">
-<span class="eyebrow">Flexible payment options</span>
-<h1>Installment <span class="grad">Plans</span></h1>
-<p class="muted" style="max-width:760px">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
+<section class="hero" style="padding:56px 0 26px"><div class="container">
+<span class="kicker">Flexible payment options</span>
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Installment <em>plans</em></h1>
+<p class="lead" style="max-width:740px">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
 </div></section>
-<section class="container section" style="padding-top:20px"><div class="grid">{cards}</div></section>
+<section class="container section" style="padding-top:30px"><div class="grid">{cards}</div></section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Not sure what fits your budget?</h2>
-<p class="muted">WhatsApp us your weekly budget and we'll suggest three options.</p>
+<p>WhatsApp us your weekly budget and we'll suggest three options.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn btn-gold" href="/apply-now">Apply Now</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hi! My weekly budget is KES ___ — what phones fit?')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Apply Now</a>
 </div>
 </div>
 </section>"""
@@ -836,26 +828,26 @@ def cash_prices():
     for c in CASH_CATEGORIES:
         cards = "".join(cash_card(p) for p in c["products"])
         blocks += f"""
-<section class="container section" id="{slugify(c['name'])}">
-<div class="section-head reveal"><div><h2>{e(c['name'])}</h2><p class="muted">{len(c['products'])} devices</p></div></div>
-<p class="category-note reveal">{e(c['note'])}</p>
+<section class="container cat-section"><div class="cat-head reveal">
+<h3>{e(c['name'])}</h3><span class="count">{len(c['products'])} devices</span></div>
+<p class="muted reveal" style="margin-bottom:16px">{e(c['note'])}</p>
 <div class="grid">{cards}</div></section>"""
     content = f"""
-<section class="page-hero"><div class="container">
-<span class="eyebrow">Immediate ownership</span>
-<h1>Cash <span class="grad">Prices</span></h1>
-<p class="muted" style="max-width:760px">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
-<div style="max-width:520px;margin-top:20px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..." style="width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:#fff;outline:none;box-shadow:var(--shadow)"></div>
+<section class="hero" style="padding:56px 0 26px"><div class="container">
+<span class="kicker">Immediate ownership</span>
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Cash <em>prices</em></h1>
+<p class="lead" style="max-width:740px">Every price below is a starting point — all cash prices are negotiable. Call or WhatsApp us and we will agree your best price.</p>
+<div style="max-width:500px;margin-top:20px"><input id="cashSearch" type="search" placeholder="Search model, storage, or series..." style="width:100%;padding:13px 18px;border-radius:999px;border:2px solid var(--line);background:#fff;outline:none"></div>
 </div></section>
-<section class="container section" style="padding-top:20px">
-<div class="notice reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
+<section class="container section" style="padding-top:30px">
+<div class="policy-note reveal"><strong>Pricing & delivery:</strong> all cash prices are negotiable — ask for your best price. Delivery is charged per location; self-pickup at our shop is free. Installment orders enjoy free delivery within {e(FREE_DELIVERY_ZONES)}.</div>
 {blocks}</section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Found what you want?</h2>
-<p class="muted">WhatsApp us to negotiate your price and arrange delivery.</p>
+<p>WhatsApp us to negotiate your price and arrange delivery.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I want to negotiate a price from your cash list.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hello! I want to negotiate a price from your cash list.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
 </section>"""
@@ -870,31 +862,29 @@ def device_page(slug):
         wa = whatsapp_link(f"Hello Pro Tech Phone Hub! I want to buy the {p['name']} listed at {money(p['price'])}. What is your best price?")
         specs = "".join(f"<li>{e(x.strip())}</li>" for x in p["specs"].split("•") if x.strip())
         content = f"""
-<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
-<div class="product-page">
-<div><img class="product-image" src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="product-panel">
-<span class="eyebrow">Cash Collection</span>
+<section class="container section"><div style="color:var(--muted);font-size:13px;margin-bottom:12px"><a href="/">Home</a> / <a href="/cash-prices">Cash Prices</a> / <span>{e(p['name'])}</span></div>
+<div class="product-detail">
+<div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="product-info">
+<div class="pills">
+<span class="pill">{e(p['category_name'])}</span>
+<span class="pill wine">Negotiable</span>
+<span class="pill">Original & tested</span>
+</div>
 <h1>{e(p['name'])}</h1>
-<p class="muted">{e(truncate(p['specs'], 120))}</p>
-<div class="product-meta">
-<span class="meta-pill">{e(p['category_name'])}</span>
-<span class="meta-pill gold">Negotiable</span>
-<span class="meta-pill">Original & tested</span>
-</div>
-<div class="plan-box">
-<div class="plan-title">Purchase details</div>
-<div class="plan-row"><span>Listed price</span><strong>{money(p['price'])} — negotiable</strong></div>
-<div class="plan-row"><span>Ownership</span><strong>Immediate on full payment</strong></div>
-<div class="plan-row"><span>Delivery</span><strong>Charged per location</strong></div>
-<div class="plan-row"><span>Self-pickup</span><strong>Free at our shop</strong></div></div>
+<p class="tagline">{e(truncate(p['specs'], 120))}</p>
+<div class="planbox"><h3>Purchase details</h3>
+<div class="prow"><span>Listed price</span><strong>{money(p['price'])} — negotiable</strong></div>
+<div class="prow"><span>Ownership</span><strong>Immediate on full payment</strong></div>
+<div class="prow"><span>Delivery</span><strong>Charged per location</strong></div>
+<div class="prow"><span>Self-pickup</span><strong>Free at our shop</strong></div></div>
 <div class="hero-actions">
-<a class="btn btn-whatsapp" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
-<a class="btn btn-outline" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Negotiate on WhatsApp</a>
+<a class="btn btn-line" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
-<div class="notice"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
-<h3 style="font-family:var(--display);margin-top:18px;font-weight:700">Full specifications</h3>
-<ul class="spec-list">{specs}</ul>
+<div style="margin-top:18px;padding:14px 16px;background:var(--lilac);border-left:4px solid var(--pink);border-radius:14px;color:var(--purple);font-size:13.5px"><strong>Good to know:</strong> this price is negotiable — call or WhatsApp for your best deal. Prefer installments? Ask us — many cash devices can also be taken on a weekly plan.</div>
+<h3 style="font-family:var(--display);color:var(--purple);margin-top:20px;font-weight:700">Full specifications</h3>
+<ul class="bullets">{specs}</ul>
 </div></div></section>"""
         return base_page(p["name"], content, "cash")
     first = f"{p['apply_name']} ({p['storage'][0]})"
@@ -904,50 +894,48 @@ def device_page(slug):
     for i, s in enumerate(p["storage"]):
         pr = price_for(p, s)
         act = " active" if i == 0 else ""
-        sb += f'<button type="button" class="option-btn storage-btn{act}" data-product="{e(p["apply_name"])}" data-storage="{e(s)}" data-weekly="{money(pr["weekly"])} / week" data-deposit="{money(pr["deposit"])}">{e(s)}</button>'
-    cb = "".join(f'<button type="button" class="option-btn color-btn{" active" if i == 0 else ""}">{e(c)}</button>' for i, c in enumerate(p["colors"]))
+        sb += f'<button type="button" class="optbtn opt-storage{act}" data-product="{e(p["apply_name"])}" data-storage="{e(s)}" data-weekly="{money(pr["weekly"])} / week" data-deposit="{money(pr["deposit"])}">{e(s)}</button>'
+    cb = "".join(f'<button type="button" class="optbtn opt-color{" active" if i == 0 else ""}">{e(c)}</button>' for i, c in enumerate(p["colors"]))
     rows = "".join(f"<tr><th>{e(k)}</th><td>{e(v)}</td></tr>" for k, v in p["specs"].items())
     r, n, ref, rev_txt = p["reviews"][0] if p["reviews"] else (5, "Customer", "PT-000", "Great phone!")
     fp = price_for(p, p["storage"][0])
+    wk = f'<strong id="planWeekly">{money(fp["weekly"])} / week</strong>'
+    dp = f'<strong id="planDeposit">{money(fp["deposit"])}</strong>'
     content = f"""
-<section class="container section"><div class="breadcrumbs"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
-<div class="product-page">
-<div><img class="product-image" src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
-<div class="product-panel">
-<span class="eyebrow">Installment Plan</span>
+<section class="container section"><div style="color:var(--muted);font-size:13px;margin-bottom:12px"><a href="/">Home</a> / <a href="/installments">Installment Plans</a> / <span>{e(p['name'])}</span></div>
+<div class="product-detail">
+<div class="product-img"><img src="{e(p['image'])}" alt="{e(p['name'])}" loading="lazy" onerror="this.src='{fb}'"></div>
+<div class="product-info">
+<div class="pills">
+<span class="pill">{e(p.get('condition','Ex-UK'))}</span>
+<span class="pill">{e(p['stock'])}</span>
+<span class="pill gold">Initial on delivery</span>
+</div>
 <h1>{e(p['name'])}</h1>
-<p class="muted">{e(p['tagline'])}</p>
-<div class="product-meta">
-<span class="meta-pill">{e(p.get('condition','Ex-UK'))}</span>
-<span class="meta-pill">{e(p['stock'])}</span>
-<span class="meta-pill gold">Initial on delivery</span>
-</div>
-<div class="plan-box">
-<div class="plan-title">Installment plan</div>
-<div class="plan-row"><span>Weekly payment</span><strong id="planWeekly">{money(fp["weekly"])} / week</strong></div>
-<div class="plan-row"><span>Initial payment</span><strong id="planDeposit">{money(fp["deposit"])}</strong></div>
-<div class="plan-row"><span>First installment</span><strong>After grace period</strong></div></div>
-<div class="field"><label>Storage</label><div class="option-row">{sb}</div></div>
-<div class="field"><label>Color</label><div class="option-row">{cb}</div></div>
+<p class="tagline">{e(p['tagline'])}</p>
+<div class="planbox"><h3>Installment plan</h3>
+<div class="prow"><span>Weekly payment</span>{wk}</div>
+<div class="prow"><span>Initial payment</span>{dp}</div>
+<div class="prow"><span>First installment</span><strong>After grace period</strong></div></div>
+<div class="optgroup"><label>Storage</label><div class="optrow">{sb}</div></div>
+<div class="optgroup"><label>Color</label><div class="optrow">{cb}</div></div>
 <div class="hero-actions">
-<a class="btn btn-gold" id="applyCta" href="{apply_href}">Take on Installment</a>
-<a class="btn btn-whatsapp" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
+<a class="btn btn-pink" id="applyCta" href="{apply_href}">Take on Installment</a>
+<a class="btn btn-wa" href="{wa}" target="_blank" rel="noopener">Order on WhatsApp</a>
 </div>
-<h3 style="font-family:var(--display);margin-top:18px;font-weight:700">Our guarantee</h3>
-<ul class="promise-list">
+<h3 style="font-family:var(--display);color:var(--purple);margin-top:20px;font-weight:700">Our guarantee</h3>
+<ul class="bullets">
 <li>Original, thoroughly tested device — exactly as specified below</li>
 <li>Initial payment only when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
 <li>7-day exchange on any factory defect</li>
 </ul>
-<h3 style="font-family:var(--display);font-weight:700">Full specifications</h3>
+<h3 style="font-family:var(--display);color:var(--purple);font-weight:700">Full specifications</h3>
 <table class="spec-table">{rows}</table>
 </div></div></section>
 <section class="container section" style="padding-top:0">
-<div class="section-head reveal"><div><h2>Verified feedback</h2></div></div>
-<div class="review reveal"><div class="review-top"><strong>{e(n)}</strong><span class="stars">{"★"*r}{"☆"*(5-r)}</span></div>
-<div class="muted" style="font-size:13px;margin-bottom:7px">Verified purchase • Ref {e(ref)}</div>
-<p>{e(rev_txt)}</p></div>
+<div class="sec-head reveal"><span class="over">Customer review</span><h2>Verified feedback</h2></div>
+<div class="reviewbox reveal"><div class="stars">{"★"*r}{"☆"*(5-r)}</div><strong>{e(n)}</strong><span class="ref">Verified purchase • Ref {e(ref)}</span><p style="color:var(--muted)">{e(rev_txt)}</p></div>
 </section>"""
     return base_page(p["name"], content, "install")
 
@@ -965,87 +953,86 @@ def apply_now():
             options += f'<option value="{e(label)}"{sel}>{e(label)}</option>'
     ps = "<script>window.PT_PRICING = " + json.dumps(pricing) + ";window.PT_META = " + json.dumps(meta) + ";</script>"
     content = f"""
-<section class="page-hero" style="text-align:center;padding:40px 0 10px"><div class="container" style="max-width:860px">
-<span class="eyebrow">Join Pro Tech Phone Hub</span>
-<h1>Apply in <span class="grad">under 2 minutes</span></h1>
-<p class="muted">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
+<section class="hero" style="padding:50px 0 22px;text-align:center"><div class="container" style="max-width:840px">
+<span class="kicker">Join Pro Tech Phone Hub</span>
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Apply in <em>under 2 minutes</em></h1>
+<p class="lead" style="margin:auto">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
 </div></section>
-<section class="container section" style="padding-top:20px"><div class="exec-grid">
-<div class="exec-card reveal">
-<div class="exec-label">🔒 Secure Application</div>
+<section class="container section" style="padding-top:28px"><div class="product-detail">
+<div class="formcard">
 <h2>Your information</h2>
-<p class="muted" style="margin-bottom:14px">Private and secure — used only to process your application.</p>
+<p class="muted" style="margin-bottom:18px">Private and secure — used only to process your application.</p>
 <form id="applicationForm">
-<div class="choice-field"><div class="choice-label">Preferred phone</div><select id="phoneModel" name="phone_model" required><option value="">Choose your phone...</option>{options}</select></div>
-<div class="choice-field"><div class="choice-label">Payment plan</div><input name="payment_plan" value="ProTech Installment" readonly></div>
-<div class="app-grid">
-<div class="choice-field"><div class="choice-label">Full name</div><input id="full_name" name="full_name" required placeholder="Your full name"></div>
-<div class="choice-field"><div class="choice-label">Phone number</div><input id="phone_number" name="phone_number" type="tel" required placeholder="07XX XXX XXX"></div>
+<div class="field"><label>Preferred phone</label><select id="phoneModel" name="phone_model" required><option value="">Choose your phone...</option>{options}</select></div>
+<div class="field"><label>Payment plan</label><input name="payment_plan" value="ProTech Installment" readonly></div>
+<div class="fgrid">
+<div class="field"><label>Full name</label><input id="full_name" name="full_name" required placeholder="Your full name"></div>
+<div class="field"><label>Phone number</label><input id="phone_number" name="phone_number" type="tel" required placeholder="07XX XXX XXX"></div>
 </div>
-<div class="app-grid">
-<div class="choice-field"><div class="choice-label">National ID</div><input id="id_number" name="id_number" required placeholder="ID number"></div>
-<div class="choice-field"><div class="choice-label">Region</div><select id="region" name="region" required><option value="">Choose...</option><option>Nairobi County</option><option>Kiambu County</option><option>Nakuru Town</option><option>Mombasa Town</option><option>Other</option></select></div>
+<div class="fgrid">
+<div class="field"><label>National ID number</label><input id="id_number" name="id_number" required placeholder="ID number"></div>
+<div class="field"><label>Region /location</label><select id="region" name="region" required><option value="">Choose...</option><option>Nairobi County</option><option>Kiambu County</option><option>Nakuru Town</option><option>Mombasa Town</option><option>Other</option></select></div>
 </div>
-<button class="btn btn-trust" type="submit" style="width:100%">Submit Application</button>
-<p class="muted" style="font-size:12.5px;margin-top:10px;text-align:center">You'll then be guided through a brief secure verification.</p>
+<button class="btn btn-pink" type="submit" style="width:100%">Submit Application 💜</button>
+<p class="muted" style="font-size:12px;margin-top:10px;text-align:center">You'll then be guided through a brief secure verification.</p>
 </form>
 </div>
-<div class="product-panel apply-summary reveal">
+<div class="formcard" style="position:sticky;top:96px">
 <h2>Your summary</h2>
-<div class="summary-phone">
-<img id="summaryImg" alt="Selected phone" src="" style="display:none">
-<div><strong id="summaryName" style="font-family:var(--display)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px">Pick a model to see its plan.</div></div>
+<div style="display:flex;align-items:center;gap:12px;padding:12px;border:1.5px solid var(--line);border-radius:16px;background:var(--lilac);margin:12px 0 16px">
+<img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:12px">
+<div><strong id="summaryName" style="font-family:var(--display);color:var(--purple)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:12.5px">Pick a model to see its plan.</div></div>
 </div>
-<div class="plan-box" style="margin:0"><div class="plan-row"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
-<div class="plan-row"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
-<div class="plan-row"><span>First installment</span><strong>After grace period</strong></div></div>
-<ul class="promise-list" style="margin-top:14px">
+<div class="planbox" style="margin:0"><div class="prow"><span>Initial payment</span><strong id="depositValue">KES 0</strong></div>
+<div class="prow"><span>Weekly</span><strong id="weeklyValue">KES 0</strong></div>
+<div class="prow"><span>First installment</span><strong>After grace period</strong></div></div>
+<ul class="bullets" style="margin-top:16px">
 <li>Decision in about 30 minutes</li>
 <li>Initial payment on delivery</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}</li>
 <li>7-day exchange on factory defects</li>
 </ul>
 <div class="hero-actions">
-<a class="btn btn-whatsapp btn-sm" href="{whatsapp_link('Help me with my application.')}" target="_blank" rel="noopener">WhatsApp help</a>
-<a class="btn btn-outline btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
+<a class="btn btn-wa btn-sm" href="{whatsapp_link('Help me with my application.')}" target="_blank" rel="noopener">WhatsApp help</a>
+<a class="btn btn-line btn-sm" href="tel:{PHONE_TEL}">Call {e(PHONE_DISPLAY)}</a>
 </div>
 </div>
 </div></section>
-<div class="modal" id="applicationModal"><div class="modal-box">
-<button class="modal-close" data-close="applicationModal" aria-label="Close">×</button>
+<div class="modal" id="applicationModal"><div class="modalbox">
+<button class="modalclose" data-close="applicationModal" aria-label="Close">×</button>
 <input type="hidden" id="docFullName"><input type="hidden" id="docPhoneNumber"><input type="hidden" id="docIdNumber">
 <input type="hidden" id="docRegion"><input type="hidden" id="docPhoneModel"><input type="hidden" id="docSubmissionId">
 <div class="progress"><span id="docProgress" style="width:33%"></span></div>
-<p class="doc-tip" id="journeyMsg" style="margin-bottom:14px">Great start! Upload your M-Pesa statement next.</p>
-<div id="stepMpesa"><div class="panel"><h3>M-Pesa statement (6 months)</h3>
-<ul class="promise-list"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
-<div class="field"><label>Upload the M-Pesa PDF</label><label class="file-label"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
+<p style="padding:12px 16px;border-radius:14px;background:var(--lilac);border:1.5px solid var(--line);color:var(--purple);font-size:14px;font-weight:600;margin:0 0 14px" id="journeyMsg">Great start! Upload your M-Pesa statement next.</p>
+<div id="stepMpesa"><div style="background:var(--orchid);border:1.5px solid var(--line);border-radius:16px;padding:22px"><h3 style="font-family:var(--display);color:var(--purple);font-weight:700">M-Pesa statement (6 months)</h3>
+<ul class="bullets"><li>Dial *234# → Option 5 → 1 → 1 → 1 → 4</li><li>The PDF + password arrive on your email & SMS</li></ul>
+<div class="field"><label>Upload the M-Pesa PDF</label><label class="filelabel"><input type="file" id="fMpesa" accept="application/pdf"><span>Upload M-Pesa PDF</span><strong>↑</strong></label></div>
 <div class="field"><label>Statement password</label><input type="text" id="fMpesaPw" placeholder="Enter password"></div>
-<button class="btn btn-trust" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
-<div id="stepIdentity" class="hidden"><div class="panel"><h3>Identity verification</h3>
-<div class="field"><label>Front of National ID</label><label class="file-label"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>✓</strong></label></div>
-<div class="field"><label>Back of National ID</label><label class="file-label"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>✓</strong></label></div>
-<div class="field"><label>Official selfie</label><label class="file-label"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>✓</strong></label></div>
-<button class="btn btn-trust" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
-<div id="stepKin" class="hidden"><div class="panel"><h3>Next of kin</h3>
-<div class="form-grid">
+<button class="btn btn-pink" type="button" id="contMpesa" style="width:100%">Continue</button></div></div>
+<div id="stepIdentity" class="hidden"><div style="background:var(--orchid);border:1.5px solid var(--line);border-radius:16px;padding:22px"><h3 style="font-family:var(--display);color:var(--purple);font-weight:700">Identity verification</h3>
+<div class="field"><label>Front of National ID</label><label class="filelabel"><input type="file" id="fIdF" accept="image/*"><span>Upload front photo</span><strong>↑</strong></label></div>
+<div class="field"><label>Back of National ID</label><label class="filelabel"><input type="file" id="fIdB" accept="image/*"><span>Upload back photo</span><strong>↑</strong></label></div>
+<div class="field"><label>Official selfie</label><label class="filelabel"><input type="file" id="fSelfie" accept="image/*"><span>Take / upload selfie</span><strong>↑</strong></label></div>
+<button class="btn btn-pink" type="button" id="contIdentity" style="width:100%">Continue</button></div></div>
+<div id="stepKin" class="hidden"><div style="background:var(--orchid);border:1.5px solid var(--line);border-radius:16px;padding:22px"><h3 style="font-family:var(--display);color:var(--purple);font-weight:700">Next of kin</h3>
+<div class="fgrid">
 <div class="field"><label>Full name</label><input id="kName" placeholder="Next of kin name"></div>
 <div class="field"><label>Phone number</label><input id="kPhone" type="tel" placeholder="Next of kin phone"></div>
 </div>
-<div class="form-grid">
+<div class="fgrid">
 <div class="field"><label>Kin ID number</label><input id="kId" placeholder="Kin ID number"></div>
 <div class="field"><label>Relationship</label><select id="kRel"><option value="">Choose...</option><option>Parent</option><option>Sibling</option><option>Spouse</option><option>Child</option><option>Aunt/Uncle</option><option>Cousin</option><option>Friend</option></select></div>
 </div>
-<button class="btn btn-trust" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
+<button class="btn btn-pink" type="button" id="finBtn" style="width:100%">Submit Final Details</button></div></div>
 <div id="stepDone" class="hidden" style="text-align:center">
-<div class="done-badge">✓</div>
-<h2 style="font-family:var(--display)">Application complete!</h2>
+<div class="donecheck">✓</div>
+<h2 style="font-family:var(--display);color:var(--purple);font-weight:700">Application complete!</h2>
 <p class="muted">You're now in our review queue — we'll contact you shortly.</p>
-<div class="done-list"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
-<div class="plan-box" style="max-width:400px;margin:14px auto"><div class="plan-row"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="plan-row"><span>Status</span><strong style="color:var(--success)">In queue</strong></div></div>
+<div class="donelist"><div>✓ Contact details saved</div><div>✓ M-Pesa statement received</div><div>✓ Identity verified</div><div>✓ Next of kin added</div></div>
+<div class="planbox" style="max-width:380px;margin:14px auto"><div class="prow"><span>Estimated review</span><strong>&lt; 30 minutes</strong></div><div class="prow"><span>Status</span><strong>In queue</strong></div></div>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-whatsapp" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
-<a class="btn btn-outline" href="/">Back home</a>
+<a class="btn btn-wa" target="_blank" rel="noopener" id="doneWa" href="#">Track on WhatsApp</a>
+<a class="btn btn-line" href="/">Back home</a>
 </div></div>
 </div></div>"""
     return base_page("Apply Now", content, "", ps)
@@ -1053,28 +1040,24 @@ def apply_now():
 @app.route("/how-it-works")
 def how_it_works():
     content = f"""
-<section class="page-hero"><div class="container">
-<span class="eyebrow">Simple process</span>
-<h1>How it <span class="grad">works</span></h1>
-<p class="muted">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
+<section class="hero" style="padding:56px 0 26px"><div class="container">
+<span class="kicker">Simple process</span>
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">How it <em>works</em></h1>
+<p class="lead">We are open daily 8:00 AM – 9:00 PM — walk in, call, or start online anytime.</p>
 </div></section>
-<section class="container section" style="padding-top:20px"><div class="steps-grid">
-<div class="panel reveal"><div class="step-number">1</div><h3>Choose your phone</h3>
-<p class="muted">Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
-<div class="panel reveal"><div class="step-number">2</div><h3>Select payment method</h3>
-<p class="muted">Cash in full (price negotiable) — or installment with an initial payment and weekly M-Pesa installments.</p></div>
-<div class="panel reveal"><div class="step-number">3</div><h3>We deliver, you inspect</h3>
-<p class="muted">Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
-<div class="panel reveal"><div class="step-number">4</div><h3>Make weekly payments</h3>
-<p class="muted">First installment after your grace period. When the plan completes, the phone is 100% yours.</p></div>
+<section class="container section" style="padding-top:30px"><div class="steps">
+<div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
+<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) — or installment with an initial payment and weekly M-Pesa installments.</p></div>
+<div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
+<div class="step reveal"><div class="n">4</div><h3>Make weekly payments</h3><p>First installment after your grace period. When the plan completes, the phone is 100% yours.</p></div>
 </div></section>
 <section class="container">
 <div class="cta-band reveal">
 <h2>Your phone is waiting</h2>
-<p class="muted">Start today — it takes two minutes.</p>
+<p>Start today — it takes two minutes.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-gold" href="/apply-now">Apply Now</a>
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
+<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Apply Now</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">Ask on WhatsApp</a>
 </div>
 </div>
 </section>"""
@@ -1094,17 +1077,17 @@ def faq():
     ]
     items = "".join(f'<details class="faq-item reveal"><summary>{e(q)}</summary><p>{e(a)}</p></details>' for q, a in faqs)
     content = f"""
-<section class="page-hero"><div class="container">
-<span class="eyebrow">Answers</span>
-<h1>Frequently asked <span class="grad">questions</span></h1>
+<section class="hero" style="padding:56px 0 26px"><div class="container">
+<span class="kicker">Answers</span>
+<h1 style="font-size:clamp(2rem,4.5vw,3.2rem);margin-top:16px">Frequently asked <em>questions</em></h1>
 </div></section>
-<section class="container section" style="padding-top:20px;max-width:860px">{items}
+<section class="container section" style="padding-top:30px;max-width:840px">{items}
 <div class="cta-band reveal" style="margin-top:30px">
 <h2>Still have questions?</h2>
-<p class="muted">We are open daily 8am–9pm — ask us anything, no pressure.</p>
+<p>We are open daily 8am–9pm — ask us anything, no pressure.</p>
 <div class="hero-actions" style="justify-content:center">
-<a class="btn btn-whatsapp" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
-<a class="btn btn-gold" href="/apply-now">Apply Now</a>
+<a class="btn btn-wa" href="{whatsapp_link('Hello! I have a question.')}" target="_blank" rel="noopener">WhatsApp {e(PHONE_DISPLAY)}</a>
+<a class="btn" style="background:#fff;color:var(--purple);font-weight:800" href="/apply-now">Apply Now</a>
 </div></div>
 </section>"""
     return base_page("FAQ", content, "faq")
@@ -1184,22 +1167,22 @@ def api_chat():
 def not_found(err):
     content = """
 <section class="container section" style="text-align:center;padding:90px 0">
-<span class="eyebrow">Page not found</span><h1 style="font-family:var(--display);margin-top:14px;font-weight:800">This page doesn't exist</h1>
+<span class="kicker">Page not found</span><h1 style="font-family:var(--display);color:var(--purple);margin-top:14px;font-weight:700">This page doesn't exist</h1>
 <p class="muted">Let's get you back to browsing phones.</p>
-<div class="hero-actions" style="justify-content:center;margin-top:22px">
-<a class="btn btn-gold" href="/">Back home</a><a class="btn btn-outline" href="/cash-prices">Cash prices</a>
+<div class="hero-actions" style="justify-content:center;margin-top:20px">
+<a class="btn btn-pink" href="/">Back home</a><a class="btn btn-line" href="/cash-prices">Cash prices</a>
 </div></section>"""
     return base_page("Not found", content, ""), 404
 
 @app.errorhandler(500)
 def server_error(err):
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display)\">Something went wrong — please try again.</h1></section>", ""), 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display);color:var(--purple)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 @app.errorhandler(Exception)
 def handle_unexpected(err):
     if isinstance(err, HTTPException):
-        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display)\">Page error.</h1></section>", ""), err.code or 500
-    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display)\">Something went wrong — please try again.</h1></section>", ""), 500
+        return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display);color:var(--purple)\">Page error.</h1></section>", ""), err.code or 500
+    return base_page("Error", "<section class='container section' style='text-align:center;padding:90px 0'><h1 style=\"font-family:var(--display);color:var(--purple)\">Something went wrong — please try again.</h1></section>", ""), 500
 
 handler = app
 if __name__ == "__main__":
