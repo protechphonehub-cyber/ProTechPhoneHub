@@ -377,13 +377,13 @@ def build_search_index():
             pr = price_for(p, s)
             plan_lines.append(f"{s}: deposit {money(pr['deposit'])}, weekly {money(pr['weekly'])}")
         specs_text = "; ".join(f"{k}: {v}" for k, v in p["specs"].items())
-        searchable = " ".join([p["name"], p.get("condition", "Ex-UK"), " ".join(p["storage"]), " ".join(p["colors"]), specs_text, "installment weekly plan deposit", p.get("tagline", "")]).lower()
+        searchable = " ".join([p["name"], p.get("condition", "Ex-UK"), " ".join(p["storage"]), " ".join(p["colors"]), specs_text, "installment weekly plan deposit on delivery", p.get("tagline", "")]).lower()
         context = (f"{p['name']} | Installment Plan | {p.get('condition','Ex-UK')} | Stock: {p.get('stock','In Stock')} | "
                    f"Storage: {', '.join(p['storage'])} | Colors: {', '.join(p['colors'])} | "
                    f"Plans: {'; '.join(plan_lines)} | Specs: {specs_text} | Page: /device/{p['slug']}")
         first = price_for(p, p["storage"][0])
         index.append({"type": "lipa", "product": p, "text": searchable, "context": context, "name": p["name"],
-                      "line": f"{p['name']} | {money(first['deposit'])} initial, {money(first['weekly'])}/week"})
+                      "line": f"{p['name']} | {money(first['deposit'])} deposit, {money(first['weekly'])}/week"})
     for p in CASH_PRODUCTS.values():
         searchable = " ".join([p["name"], p["category_name"], p["specs"], "cash full payment negotiable"]).lower()
         context = (f"{p['name']} | Cash Collection | {p['category_name']} | "
@@ -690,7 +690,7 @@ function updateSummary(){
  var im=document.getElementById('summaryImg'),nm=document.getElementById('summaryName'),me=document.getElementById('summaryMeta');
  if(meta&&im){im.src=meta.img;im.style.display='block';im.onerror=function(){im.style.display='none';};}
  if(nm){nm.textContent=sel.value||'No phone chosen yet';}
- if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Initial payment on delivery';}
+ if(me&&meta){me.textContent=meta.cond+' • '+meta.store+' • Deposit on delivery';}
  var r=(window.PT_PRICING||{})[sel.value]||[0,0];
  var d=document.getElementById('depositValue'),w=document.getElementById('weeklyValue');
  if(d){d.textContent=fmtKES(r[0]);}
@@ -873,7 +873,7 @@ def feature_card(p):
     t = f"{p['name']} • {p['storage'][0]}"
     pr = price_for(p, p["storage"][0])
     tag = '<span class="tag">Installment</span>'
-    price = f'<div class="price">{money(pr["weekly"])}/week</div><div class="sub">Initial {money(pr["deposit"])}</div>'
+    price = f'<div class="price">{money(pr["weekly"])}/week</div><div class="sub">Deposit {money(pr["deposit"])} on delivery</div>'
     return f"""
 <a class="pcard reveal" href="/device/{e(p['slug'])}">{tag}
 <div class="imgwrap"><img src="{e(p['image'])}" alt="{e(t)}" loading="lazy" onerror="this.src='{fb}'"></div>
@@ -899,16 +899,14 @@ def home():
     cards = "".join(feature_card(p) for p in products[:9])
     cash_cards = "".join(cash_card(p) for p in list(CASH_PRODUCTS.values())[:4])
     content = f"""
-<section class="home-hero" style="padding-bottom:56px"><div class="container hero-shell">
+<section class="home-hero" style="padding:64px 0 56px"><div class="container hero-shell">
 <div class="hero-copy">
-<span class="hero-eyebrow">Pro Tech Phone Hub</span>
-<h1>Exceptional phones. <span>Considered ownership.</span></h1>
-<div class="hero-actions" style="margin-top:20px">
+<div class="hero-actions" style="margin-top:0">
 <a class="btn btn-gold" href="/installments">Explore Installments</a>
 <a class="btn btn-ghost" href="/cash-prices">View Cash Prices</a>
 </div>
-<div class="hero-points">
-<span>Genuine stock</span><span>Initial on delivery</span><span>Weekly plans</span><span>Negotiable cash</span>
+<div class="hero-points" style="margin-top:18px">
+<span>Genuine stock</span><span>Deposit on delivery</span><span>Weekly plans</span><span>Negotiable cash</span>
 </div>
 </div>
 <aside class="hero-side">
@@ -917,7 +915,7 @@ def home():
 <h3>A calmer way to buy</h3>
 <ul>
 <li>Each device is inspected before dispatch</li>
-<li>Initial payment is completed on delivery</li>
+<li>The deposit is paid on delivery</li>
 <li>Weekly plan terms are shown upfront</li>
 <li>Cash prices remain open to discussion</li>
 </ul>
@@ -930,7 +928,7 @@ def home():
 </aside>
 </div></section>
 <section class="container section" style="padding-top:40px">
-<div class="sec-head reveal"><span class="over">Installment picks</span><h2>Popular devices on flexible payment</h2><p>Pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
+<div class="sec-head reveal"><span class="over">Installment picks</span><h2>Popular devices on flexible payment</h2><p>Pay the deposit on delivery, then manageable weekly M-Pesa payments. Your first installment falls due after your grace period.</p></div>
 <div class="grid">{cards}</div>
 <div style="text-align:center;margin-top:40px"><a class="btn btn-outline" href="/installments">View all installment options</a></div>
 </section>
@@ -942,7 +940,7 @@ def home():
 <section class="container section">
 <div class="sec-head reveal"><span class="over">Client notes</span><h2>What our clients say</h2></div>
 <div class="testi-grid">
-<div class="testi reveal"><p>Explained everything clearly, delivered same day within Nairobi. Initial payment on delivery, no complications.</p><strong>Naliaka S.</strong><span class="ref">PT-101</span></div>
+<div class="testi reveal"><p>Explained everything clearly, delivered same day within Nairobi. Deposit paid on delivery, no complications.</p><strong>Naliaka S.</strong><span class="ref">PT-101</span></div>
 <div class="testi reveal"><p>The installment plan fits my budget perfectly. Finished my payments and the phone is fully mine now.</p><strong>Otieno J.</strong><span class="ref">PT-102</span></div>
 <div class="testi reveal"><p>I negotiated my cash price on WhatsApp and got a fair deal. Original device, clean condition, healthy battery.</p><strong>Auma R.</strong><span class="ref">PT-103</span></div>
 </div>
@@ -967,9 +965,9 @@ def installments():
 <section class="page-hero"><div class="container">
 <span class="eyebrow">Payment plans</span>
 <h1>Installments, <span>structured properly.</span></h1>
-<p class="lead">Choose your phone, pay the initial amount when we deliver, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
+<p class="lead">Choose your phone, pay the deposit on delivery, then manageable weekly M-Pesa payments. Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions arranged at a fee.</p>
 <div class="hero-points">
-<span>Initial on delivery</span><span>Weekly M-Pesa</span><span>Grace period</span><span>Original devices</span>
+<span>Deposit on delivery</span><span>Weekly M-Pesa</span><span>Grace period</span><span>Original devices</span>
 </div>
 </div></section>
 <section class="container section" style="padding-top:36px"><div class="grid">{cards}</div></section>
@@ -1072,13 +1070,13 @@ def device_page(slug):
 <div class="pills">
 <span class="pill">{e(p.get('condition','Ex-UK'))}</span>
 <span class="pill">{e(p['stock'])}</span>
-<span class="pill gold">Initial on delivery</span>
+<span class="pill gold">Deposit on delivery</span>
 </div>
 <h1>{e(p['name'])}</h1>
 <p class="tagline">{e(p['tagline'])}</p>
 <div class="planbox"><h3>Installment plan</h3>
 <div class="prow"><span>Weekly payment</span>{wk}</div>
-<div class="prow"><span>Initial deposit</span>{dp}</div></div>
+<div class="prow"><span>Deposit on delivery</span>{dp}</div></div>
 <div class="optgroup"><label>Storage</label><div class="optrow">{sb}</div></div>
 <div class="optgroup"><label>Color</label><div class="optrow">{cb}</div></div>
 <div class="hero-actions">
@@ -1088,7 +1086,7 @@ def device_page(slug):
 <h3 style="font-family:var(--display);color:var(--ink);margin-top:22px;font-weight:500;font-size:22px">Our guarantee</h3>
 <ul class="bullets">
 <li>Original, thoroughly tested device, exactly as specified below</li>
-<li>Initial payment only when the phone is in your hands</li>
+<li>You pay the deposit on delivery, when the phone is in your hands</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}; other regions at a fee</li>
 <li>48-hour return period on factory defects</li>
 </ul>
@@ -1118,7 +1116,7 @@ def apply_now():
 <section class="page-hero"><div class="container" style="max-width:840px">
 <span class="eyebrow">Private application</span>
 <h1>Apply with <span>confidence.</span></h1>
-<p class="lead" style="margin:auto">Decision usually takes about 30 minutes. You pay the initial amount only when the phone is delivered to you.</p>
+<p class="lead" style="margin:auto">Decision usually takes about 30 minutes. You pay the deposit on delivery.</p>
 </div></section>
 <section class="container section" style="padding-top:38px"><div class="product-detail">
 <div class="formcard">
@@ -1145,11 +1143,11 @@ def apply_now():
 <img id="summaryImg" alt="Selected phone" src="" style="display:none;width:70px;height:70px;object-fit:contain;background:#fff;border-radius:12px">
 <div><strong id="summaryName" style="color:var(--ink);font-size:16px;font-family:var(--display)">No phone chosen yet</strong><div class="muted" id="summaryMeta" style="font-size:13px;margin-top:4px">Pick a model to see its plan.</div></div>
 </div>
-<div class="planbox" style="margin:0"><div class="prow"><span>Initial deposit</span><strong id="depositValue">KES 0</strong></div>
+<div class="planbox" style="margin:0"><div class="prow"><span>Deposit on delivery</span><strong id="depositValue">KES 0</strong></div>
 <div class="prow"><span>Weekly payment</span><strong id="weeklyValue">KES 0</strong></div></div>
 <ul class="bullets" style="margin-top:24px">
 <li>Decision in about 30 minutes</li>
-<li>Initial payment on delivery</li>
+<li>Pay the deposit on delivery</li>
 <li>Free delivery within {e(FREE_DELIVERY_ZONES)}</li>
 <li>48-hour return period on factory defects</li>
 </ul>
@@ -1208,8 +1206,8 @@ def how_it_works():
 </div></section>
 <section class="container section" style="padding-top:38px"><div class="steps">
 <div class="step reveal"><div class="n">1</div><h3>Choose your phone</h3><p>Browse installment plans or the negotiable cash price list. Every device is original and fully tested.</p></div>
-<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) or installment with an initial payment and weekly M-Pesa installments.</p></div>
-<div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay.</p></div>
+<div class="step reveal"><div class="n">2</div><h3>Select payment method</h3><p>Cash in full (price negotiable) or installment with a deposit on delivery and weekly M-Pesa payments.</p></div>
+<div class="step reveal"><div class="n">3</div><h3>We deliver, you inspect</h3><p>Free delivery within {e(FREE_DELIVERY_ZONES)}. Other regions arranged at a fee. Check the phone, then pay the deposit.</p></div>
 <div class="step reveal"><div class="n">4</div><h3>Make weekly payments</h3><p>First installment after your grace period. When the plan completes, the phone is 100% yours.</p></div>
 </div></section>
 <section class="container">
@@ -1229,7 +1227,7 @@ def faq():
     faqs = [
      ("Are your phones original?", "Yes, 100% original. Every device is hand-inspected and fully tested on display, battery, cameras, network and charging before listing. If anything is not as described, our 48-hour return period covers you."),
      ("Are cash prices really negotiable?", "Yes. Every price on the cash list is a starting point. Call or WhatsApp us with your offer and we will agree a fair price together."),
-     ("How does the installment plan work?", "You pay an initial amount when we deliver, then manageable weekly M-Pesa payments. Your first installment is due after a grace period. When the plan completes, the phone is fully yours."),
+     ("How does the installment plan work?", "You pay the deposit on delivery, then manageable weekly M-Pesa payments. Your first installment is due after a grace period. When the plan completes, the phone is fully yours."),
      ("How fast is approval?", "Usually about 30 minutes after your application and documents are complete."),
      ("Where do you deliver, and what does delivery cost?", f"Delivery is free within {FREE_DELIVERY_ZONES}. For any other location, delivery is arranged at a fee quoted per location. Self-pickup at our shop is always free."),
      ("What are your opening hours?", "We are open every day from 8:00 AM to 9:00 PM, including weekends and most public holidays."),
@@ -1356,8 +1354,8 @@ def api_chat():
     if any(w in msg for w in ["negotia", "offer", "discount", "best price"]):
         return jsonify({"ok": True, "content": "All our cash prices are negotiable. WhatsApp or call with your offer and we will agree a fair price together.",
                         "links": [{"cta": "Cash price list", "url": "/cash-prices"}, {"cta": f"WhatsApp {PHONE_DISPLAY}", "url": whatsapp_link("Hello! I would like to negotiate a price.")}]})
-    if any(w in msg for w in ["installment", "plan", "initial", "weekly", "payment", "how does"]):
-        return jsonify({"ok": True, "content": "Installment plans are straightforward: pay an initial amount on delivery, then manageable weekly M-Pesa payments. First installment is due after a grace period. When the plan ends, the phone is fully yours.",
+    if any(w in msg for w in ["installment", "plan", "initial", "weekly", "payment", "how does", "deposit"]):
+        return jsonify({"ok": True, "content": "Installment plans are straightforward: pay the deposit on delivery, then manageable weekly M-Pesa payments. First installment is due after a grace period. When the plan ends, the phone is fully yours.",
                         "links": [{"cta": "See installment options", "url": "/installments"}, {"cta": "Apply now", "url": "/apply-now"}]})
     if any(w in msg for w in ["under", "budget", "cheap", "afford", "50k", "30k", "20k"]):
         m = re.search(r"(\d{2,3})\s*k", msg)
